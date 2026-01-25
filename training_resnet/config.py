@@ -49,6 +49,11 @@ class R3DTransferConfig:
 
     USE_PRETRAINED = True
 
+    USE_SMART_CROP = False
+    PRETRAINED_MODEL_PATH = None
+    SMART_CROP_PROB = 0.8
+    SMART_CROP_THRESHOLD = 0.6
+
     AVAILABLE_DATASETS = {
         'Crowd': {
             'path': DATASET_PATH / 'Crowd',

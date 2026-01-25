@@ -119,19 +119,16 @@ class R3D18Trainer:
             self.scheduler = None
 
     def _create_dataloader(self, training):
-        if self.config.DATASET_NAME == 'Mix':
-            violence_paths, non_violence_paths = self.config.get_mix_paths()
-        else:
-            violence_paths = self.config.VIOLENCE_PATH
-            non_violence_paths = self.config.NON_VIOLENCE_PATH
+        violence_path = self.config.VIOLENCE_PATH
+        non_violence_path = self.config.NON_VIOLENCE_PATH
 
         dataset = VideoSequenceDataset(
-            violence_path=violence_paths,
-            non_violence_path=non_violence_paths,
+            violence_path=violence_path,
+            non_violence_path=non_violence_path,
             n_frames=self.config.N_FRAMES,
             split_ratio=self.config.SPLIT_RATIO,
             training=training,
-            augment=True,
+            augment=training,
             mean=self.config.KINETICS_MEAN,
             std=self.config.KINETICS_STD
         )
@@ -238,7 +235,6 @@ class R3D18Trainer:
             print("-" * 50)
 
             if epoch == self.config.UNFREEZE_EPOCH:
-                print("Unfreezing all layers")
                 self.model.unfreeze_all()
                 self._setup_optimizer()
 
@@ -267,36 +263,31 @@ class R3D18Trainer:
             if is_best:
                 best_val_loss = val_loss
                 self.save_checkpoint(epoch, is_best=True)
-                print(f"New best model saved!")
 
             if (epoch + 1) % 5 == 0:
                 self.save_checkpoint(epoch)
 
             self.early_stopping(val_loss)
             if self.early_stopping.early_stop:
-                print(f"\nEarly stopping triggered at epoch {epoch + 1}")
                 break
 
         history_path = self.config.SAVE_DIR / "training_history.json"
         with open(history_path, 'w') as f:
             json.dump(self.history, f, indent=4)
 
-        print(f"\nTraining history saved to {history_path}")
-
 
 def main():
-    config = R3DTransferConfig()
+    config = R3DTransferConfig(dataset_name='Mix')
 
-    print(f"Device: {config.DEVICE}")
-    print(f"Training R3D-18 with {config.OPTIMIZER.upper()} optimizer on {config.DATASET_NAME} dataset")
-    print(f"Pretrained: {config.USE_PRETRAINED}")
-    print(f"Frozen layers: {config.FREEZE_LAYERS}")
-    print(f"Dropout: {config.DROPOUT_P}")
-    print(f"Label Smoothing: {config.LABEL_SMOOTHING}")
-    print(f"Weight Decay: {config.WEIGHT_DECAY}")
-    print(f"Backbone LR: {config.BACKBONE_LR}, Head LR: {config.HEAD_LR}")
-    if config.USE_SCHEDULER:
-        print(f"Scheduler: {config.SCHEDULER_TYPE}")
+    config.VIOLENCE_PATH = Path("../../Datasets/Mix_SmartCropped/Violence")
+    config.NON_VIOLENCE_PATH = Path("../../Datasets/Mix_SmartCropped/NonViolence")
+
+    config.SAVE_DIR = Path("checkpoints_r3d18_mix_smart_crop")
+    config.MODEL_NAME = "r3d18_violence_mix_smart_crop"
+    config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
+
+    config.NUM_EPOCHS = 50
+    config.BATCH_SIZE = 32
 
     trainer = R3D18Trainer(config)
     trainer.train()

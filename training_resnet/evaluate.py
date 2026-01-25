@@ -158,13 +158,6 @@ def evaluate_model(model_path, config):
         violence_paths = config.VIOLENCE_PATH
         non_violence_paths = config.NON_VIOLENCE_PATH
 
-    # Validate paths are not None
-    if violence_paths is None or non_violence_paths is None:
-        print(f"Error: Dataset paths are None for dataset {config.DATASET_NAME}")
-        print(f"Violence path: {violence_paths}")
-        print(f"Non-violence path: {non_violence_paths}")
-        return 0, [], [], []
-
     print(f"Loading validation dataset for {config.DATASET_NAME}...")
 
     val_dataset = VideoSequenceDataset(
