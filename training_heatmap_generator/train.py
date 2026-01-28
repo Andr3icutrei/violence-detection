@@ -111,7 +111,6 @@ class R3D18Trainer:
                     mode='min',
                     factor=0.1,
                     patience=5,
-                    verbose=True
                 )
             else:
                 self.scheduler = None

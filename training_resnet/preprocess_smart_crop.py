@@ -205,7 +205,6 @@ def preprocess_dataset(model_path, config, output_base_path, smart_crop_prob=0.8
 
             preprocessor.save_cropped_video(frames, crop_coords, output_path)
 
-            # Convert crop_coords to Python int for JSON serialization
             crop_coords_serializable = None
             if crop_coords:
                 crop_coords_serializable = tuple(int(x) for x in crop_coords)
@@ -223,10 +222,10 @@ def preprocess_dataset(model_path, config, output_base_path, smart_crop_prob=0.8
 
 
 def main():
-    config = R3DTransferConfig(dataset_name='Mix')
+    config = R3DTransferConfig(dataset_name='Hockey', use_smart_crop=False)
 
-    model_path = "checkpoints_r3d18_mix/r3d18_violence_mix_best.pth"
-    output_path = "../../Datasets/Mix_SmartCropped"
+    model_path = config.get_heatmap_model_path(config.DATASET_NAME)
+    output_path = "../../Datasets/Hockey_SmartCropped"
 
     if not Path(model_path).exists():
         raise FileNotFoundError(f"Model not found at {model_path}")

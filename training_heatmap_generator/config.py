@@ -65,11 +65,6 @@ class R3DTransferConfig:
             'violence': DATASET_PATH / 'Movies' / 'Violence',
             'non_violence': DATASET_PATH / 'Movies' / 'NonViolence'
         },
-        'RLVS': {
-            'path': DATASET_PATH / 'RLVS',
-            'violence': DATASET_PATH / 'RLVS' / 'Violence',
-            'non_violence': DATASET_PATH / 'RLVS' / 'NonViolence'
-        }
     }
 
     def __init__(self, dataset_name='Crowd'):

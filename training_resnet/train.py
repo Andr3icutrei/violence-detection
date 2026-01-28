@@ -277,13 +277,13 @@ class R3D18Trainer:
 
 
 def main():
-    config = R3DTransferConfig(dataset_name='Mix')
+    config = R3DTransferConfig(dataset_name='Hockey')
 
-    config.VIOLENCE_PATH = Path("../../Datasets/Mix_SmartCropped/Violence")
-    config.NON_VIOLENCE_PATH = Path("../../Datasets/Mix_SmartCropped/NonViolence")
+    config.VIOLENCE_PATH = Path("../../Datasets/Hockey_SmartCropped/Violence")
+    config.NON_VIOLENCE_PATH = Path("../../Datasets/Hockey_SmartCropped/NonViolence")
 
-    config.SAVE_DIR = Path("checkpoints_r3d18_mix_smart_crop")
-    config.MODEL_NAME = "r3d18_violence_mix_smart_crop"
+    config.SAVE_DIR = Path("checkpoints_r3d18_Hockey_smart_crop")
+    config.MODEL_NAME = "r3d18_violence_hockey_smart_crop"
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     config.NUM_EPOCHS = 50

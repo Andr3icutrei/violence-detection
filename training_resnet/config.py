@@ -3,7 +3,7 @@ from pathlib import Path
 
 class R3DTransferConfig:
     DATASET_PATH = Path("../../Datasets")
-    DATASET_NAME = "Mix"
+    DATASET_NAME = "Hockey"
 
     VIOLENCE_PATH = DATASET_PATH / DATASET_NAME / "Violence"
     NON_VIOLENCE_PATH = DATASET_PATH / DATASET_NAME / "NonViolence"
@@ -39,8 +39,11 @@ class R3DTransferConfig:
     T_MULT = 2
     ETA_MIN = 1e-7
 
-    SAVE_DIR = Path("checkpoints_r3d18_mix")
+    SAVE_DIR = Path("./heatmap_models/checkpoints_r3d18_hockey")
     MODEL_NAME = "r3d18_violence"
+
+    HEATMAP_MODEL_BASE_DIR = Path("./heatmap_models")
+    SMARTCROP_MODEL_BASE_DIR = Path("./models")
 
     DEVICE = "cuda"
 
@@ -77,24 +80,32 @@ class R3DTransferConfig:
         }
     }
 
-    def __init__(self, dataset_name='Crowd'):
+    def __init__(self, dataset_name='Crowd', use_smart_crop=False):
+        self.use_smart_crop = use_smart_crop
         self.set_dataset(dataset_name)
-        self.SAVE_DIR.mkdir(exist_ok=True)
+        self.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     def set_dataset(self, dataset_name):
+        if self.use_smart_crop:
+            base_dir = self.SMARTCROP_MODEL_BASE_DIR
+            suffix = "_smartcrop"
+        else:
+            base_dir = self.HEATMAP_MODEL_BASE_DIR
+            suffix = ""
+
         if dataset_name == 'Mix':
             self.DATASET_NAME = 'Mix'
             self.VIOLENCE_PATH = None
             self.NON_VIOLENCE_PATH = None
-            self.SAVE_DIR = Path(f"checkpoints_r3d18_mix")
-            self.MODEL_NAME = "r3d18_violence_mix"
+            self.SAVE_DIR = base_dir / f"checkpoints_r3d18_mix{suffix}"
+            self.MODEL_NAME = f"r3d18_violence_mix{suffix}"
         elif dataset_name in self.AVAILABLE_DATASETS:
             self.DATASET_NAME = dataset_name
             dataset_info = self.AVAILABLE_DATASETS[dataset_name]
             self.VIOLENCE_PATH = dataset_info['violence']
             self.NON_VIOLENCE_PATH = dataset_info['non_violence']
-            self.SAVE_DIR = Path(f"checkpoints_r3d18_{dataset_name.lower()}")
-            self.MODEL_NAME = f"r3d18_violence_{dataset_name.lower()}"
+            self.SAVE_DIR = base_dir / f"checkpoints_r3d18_{dataset_name.lower()}{suffix}"
+            self.MODEL_NAME = f"r3d18_violence_{dataset_name.lower()}{suffix}"
         else:
             raise ValueError(
                 f"Dataset {dataset_name} not found. Available: {list(self.AVAILABLE_DATASETS.keys()) + ['Mix']}")
@@ -110,3 +121,23 @@ class R3DTransferConfig:
                 non_violence_paths.append(dataset_info['non_violence'])
 
         return violence_paths, non_violence_paths
+
+    def get_heatmap_model_path(self, dataset_name):
+        if dataset_name == 'Mix':
+            model_dir = self.HEATMAP_MODEL_BASE_DIR / "checkpoints_r3d18_mix"
+            model_name = "r3d18_violence_mix_best.pth"
+        else:
+            model_dir = self.HEATMAP_MODEL_BASE_DIR / f"checkpoints_r3d18_{dataset_name.lower()}"
+            model_name = f"r3d18_violence_{dataset_name.lower()}_best.pth"
+
+        return model_dir / model_name
+
+    def get_smartcrop_model_path(self, dataset_name):
+        if dataset_name == 'Mix':
+            model_dir = self.SMARTCROP_MODEL_BASE_DIR / "checkpoints_r3d18_mix_smartcrop"
+            model_name = "r3d18_violence_mix_smartcrop_best.pth"
+        else:
+            model_dir = self.SMARTCROP_MODEL_BASE_DIR / f"checkpoints_r3d18_{dataset_name.lower()}_smartcrop"
+            model_name = f"r3d18_violence_{dataset_name.lower()}_smartcrop_best.pth"
+
+        return model_dir / model_name

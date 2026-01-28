@@ -4,7 +4,7 @@ import argparse
 
 from config import R3DTransferConfig
 from train import R3D18Trainer
-from evaluate import evaluate_model, HeatmapGenerator3D
+from evaluate import evaluate_model, evaluate_model_with_json_export, HeatmapGenerator3D
 from smart_crop import SmartCropDataset
 from torch.utils.data import DataLoader
 
@@ -32,8 +32,8 @@ def train_model(config):
             nv_val = len(nv_videos) - nv_train
 
             print(f"{dataset_names[i]}:")
-            print(f"  Violence: {len(v_videos)} total → {v_train} train, {v_val} val")
-            print(f"  Non-Violence: {len(nv_videos)} total → {nv_train} train, {nv_val} val")
+            print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
+            print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
 
         total_violence = sum(len(list(p.rglob('*'))) for p in violence_paths if p.exists())
         total_non_violence = sum(len(list(p.rglob('*'))) for p in non_violence_paths if p.exists())
@@ -51,25 +51,31 @@ def train_model(config):
     print("\nTraining completed!")
 
 
-def evaluate_trained_model(config):
+def evaluate_trained_model(config, max_sequences=3):
     print("=" * 60)
     print(f"EVALUATING MODEL ON {config.DATASET_NAME.upper()} DATASET")
     print("=" * 60)
 
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    if config.use_smart_crop:
+        model_path = config.get_smartcrop_model_path(config.DATASET_NAME)
+    else:
+        model_path = config.get_heatmap_model_path(config.DATASET_NAME)
 
     if not model_path.exists():
         print(f"Model not found at {model_path}")
         return
 
-    accuracy, preds, labels, probs = evaluate_model(model_path, config)
+    accuracy, preds, labels, probs, json_preds = evaluate_model_with_json_export(
+        model_path, config, max_sequences=max_sequences
+    )
 
     print("\n" + "=" * 60)
     print("GENERATING GRAD-CAM VISUALIZATIONS")
     print("=" * 60)
 
     generator = HeatmapGenerator3D(model_path, config)
-    output_dir = Path(f"heatmap_visualizations_{config.DATASET_NAME.lower()}")
+    suffix = "_smartcrop" if config.use_smart_crop else ""
+    output_dir = Path(f"heatmap_visualizations_{config.DATASET_NAME.lower()}{suffix}")
     generator.save_visualization(output_dir, num_samples=10)
 
     print(f"\nVisualizations saved to {output_dir}")
@@ -80,7 +86,7 @@ def test_smart_crop_dataset(config):
     print("TESTING SMART CROP DATASET")
     print("=" * 60)
 
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    model_path = config.get_heatmap_model_path(config.DATASET_NAME)
 
     if not model_path.exists():
         print(f"Model not found at {model_path}")
@@ -123,7 +129,7 @@ def train_with_smart_crop(config):
     print(f"TRAINING WITH SMART CROP ON {config.DATASET_NAME.upper()}")
     print("=" * 60)
 
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    model_path = config.get_heatmap_model_path(config.DATASET_NAME)
 
     if not model_path.exists():
         print("No pretrained model found. Train base model first:")
@@ -198,6 +204,9 @@ def train_with_smart_crop(config):
 
     num_epochs = 30
 
+    smartcrop_config = R3DTransferConfig(dataset_name=config.DATASET_NAME, use_smart_crop=True)
+    smartcrop_config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
+
     for epoch in range(num_epochs):
         print(f"\nEpoch {epoch + 1}/{num_epochs}")
         print("-" * 50)
@@ -258,7 +267,7 @@ def train_with_smart_crop(config):
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            save_path = config.SAVE_DIR / f"{config.MODEL_NAME}_smart_crop_best.pth"
+            save_path = smartcrop_config.SAVE_DIR / f"{smartcrop_config.MODEL_NAME}_best.pth"
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
@@ -308,9 +317,9 @@ def show_dataset_info(config):
             dataset_train = v_train + nv_train
             dataset_val = v_val + nv_val
 
-            print(f"  Violence: {len(v_videos)} total → {v_train} train, {v_val} val")
-            print(f"  Non-Violence: {len(nv_videos)} total → {nv_train} train, {nv_val} val")
-            print(f"  Dataset total: {len(v_videos) + len(nv_videos)} → {dataset_train} train, {dataset_val} val")
+            print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
+            print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
+            print(f"  Dataset total: {len(v_videos) + len(nv_videos)} -> {dataset_train} train, {dataset_val} val")
 
             total_violence += len(v_videos)
             total_non_violence += len(nv_videos)
@@ -326,9 +335,6 @@ def show_dataset_info(config):
         print()
         print(f"Training set: {total_train} videos ({total_train / (total_violence + total_non_violence) * 100:.1f}%)")
         print(f"Validation set: {total_val} videos ({total_val / (total_violence + total_non_violence) * 100:.1f}%)")
-        print()
-        print("✓ All datasets contribute equally to train and val")
-        print("✓ No domain shift - model sees all scene types in training")
 
     else:
         print(f"\n{config.DATASET_NAME} Dataset")
@@ -342,8 +348,8 @@ def show_dataset_info(config):
         nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
         nv_val = len(nv_videos) - nv_train
 
-        print(f"Violence: {len(v_videos)} total → {v_train} train, {v_val} val")
-        print(f"Non-Violence: {len(nv_videos)} total → {nv_train} train, {nv_val} val")
+        print(f"Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
+        print(f"Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
         print(f"Total: {len(v_videos) + len(nv_videos)} videos")
 
         total_train = v_train + nv_train
@@ -359,18 +365,21 @@ def main():
                         choices=['train', 'evaluate', 'test_smart_crop', 'train_smart_crop', 'info', 'all'],
                         help='Mode: train, evaluate, test_smart_crop, train_smart_crop, info, or all')
     parser.add_argument('--dataset', type=str, default='Crowd',
-                        choices=['Crowd', 'Hockey', 'Movies', 'RLVS', 'Mix'],
-                        help='Dataset name: Crowd, Hockey, Movies, RLVS, or Mix (default: Crowd)')
+                        choices=['Crowd', 'Hockey', 'Movies', 'Mix'],
+                        help='Dataset name: Crowd, Hockey, Movies, or Mix (default: Crowd)')
     parser.add_argument('--batch_size', type=int, default=None,
                         help='Batch size (overrides config default)')
     parser.add_argument('--epochs', type=int, default=None,
                         help='Number of epochs (overrides config default)')
     parser.add_argument('--lr', type=float, default=None,
                         help='Learning rate for head (overrides config default)')
+    parser.add_argument('--max_sequences', type=int, default=3,
+                        help='Maximum number of sequences to process per video (default: 3)')
 
     args = parser.parse_args()
 
-    config = R3DTransferConfig(dataset_name=args.dataset)
+    use_smart_crop = args.mode == 'train_smart_crop'
+    config = R3DTransferConfig(dataset_name=args.dataset, use_smart_crop=use_smart_crop)
 
     if args.batch_size is not None:
         config.BATCH_SIZE = args.batch_size
@@ -398,12 +407,15 @@ def main():
     print(f"Label Smoothing: {config.LABEL_SMOOTHING}")
     if config.USE_SCHEDULER:
         print(f"Scheduler: {config.SCHEDULER_TYPE}")
+    print(f"Max sequences per video: {args.max_sequences}")
+    print(f"Model save directory: {config.SAVE_DIR}")
     print(f"{'=' * 60}\n")
 
     if args.mode == 'train':
         train_model(config)
     elif args.mode == 'evaluate':
-        evaluate_trained_model(config)
+        config_eval = R3DTransferConfig(dataset_name=args.dataset, use_smart_crop=False)
+        evaluate_trained_model(config_eval, max_sequences=args.max_sequences)
     elif args.mode == 'test_smart_crop':
         test_smart_crop_dataset(config)
     elif args.mode == 'train_smart_crop':
@@ -412,7 +424,7 @@ def main():
         show_dataset_info(config)
     elif args.mode == 'all':
         train_model(config)
-        evaluate_trained_model(config)
+        evaluate_trained_model(config, max_sequences=args.max_sequences)
         train_with_smart_crop(config)
 
 

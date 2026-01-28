@@ -265,12 +265,9 @@ class SmartCropDataset(Dataset):
 
 
 def test_smart_crop():
-    config = R3DTransferConfig(dataset_name='Mix')
+    config = R3DTransferConfig(dataset_name='Mix', use_smart_crop=False)
 
-    config.SAVE_DIR = Path("checkpoints_r3d18_mix")
-    config.MODEL_NAME = "r3d18_violence_mix"
-
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    model_path = config.get_heatmap_model_path(config.DATASET_NAME)
 
     if not model_path.exists():
         print(f"Model not found at {model_path}")

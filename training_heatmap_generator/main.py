@@ -4,7 +4,7 @@ import argparse
 
 from config import R3DTransferConfig
 from train import R3D18Trainer
-from evaluate import evaluate_model, HeatmapGenerator3D
+from evaluate import evaluate_model_multiview_with_json, HeatmapGenerator3D
 from smart_crop import SmartCropDataset
 from torch.utils.data import DataLoader
 
@@ -62,7 +62,7 @@ def evaluate_trained_model(config):
         print(f"Model not found at {model_path}")
         return
 
-    accuracy, preds, labels, probs = evaluate_model(model_path, config)
+    accuracy, preds, labels, probs = evaluate_model_multiview_with_json(model_path, config)
 
     print("\n" + "=" * 60)
     print("GENERATING GRAD-CAM VISUALIZATIONS")
@@ -354,7 +354,7 @@ def show_dataset_info(config):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='R3D-18 Violence Detection Pipeline with AdamW')
+    parser = argparse.ArgumentParser(description='R3D-18 Violence Detection Pipeline')
     parser.add_argument('--mode', type=str, required=True,
                         choices=['train', 'evaluate', 'test_smart_crop', 'train_smart_crop', 'info', 'all'],
                         help='Mode: train, evaluate, test_smart_crop, train_smart_crop, info, or all')

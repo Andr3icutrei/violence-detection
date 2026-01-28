@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 from torch.utils.data import DataLoader
+import json
 
 from model import R3D18Violence
 from dataset import VideoSequenceDataset
@@ -73,7 +74,6 @@ class HeatmapGenerator3D:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # FIX: Gestionare corecta a cailor pentru dataset-ul Mix
         if self.config.DATASET_NAME == 'Mix':
             violence_paths, non_violence_paths = self.config.get_mix_paths()
         else:
@@ -91,10 +91,8 @@ class HeatmapGenerator3D:
             std=self.config.KINETICS_STD
         )
 
-        # Ne asiguram ca nu cerem mai multe sample-uri decat exista in dataset
         num_samples = min(num_samples, len(dataset))
 
-        # Selectam indici aleatori sau primii N
         indices = range(num_samples)
 
         count = 0
@@ -131,9 +129,7 @@ class HeatmapGenerator3D:
                 plt.savefig(output_path, dpi=100, bbox_inches='tight')
                 plt.close()
                 count += 1
-                print(f"Saved visualization {count}/{num_samples}")
             except Exception as e:
-                print(f"Error processing sample {idx}: {e}")
                 continue
 
 
@@ -146,19 +142,15 @@ def evaluate_model(model_path, config):
         checkpoint = torch.load(model_path, map_location=device)
         model.load_state_dict(checkpoint['model_state_dict'])
     except Exception as e:
-        print(f"Error loading model: {e}")
         return 0, [], [], []
 
     model.eval()
 
-    # FIX: Gestionare corecta a cailor pentru dataset-ul Mix
     if config.DATASET_NAME == 'Mix':
         violence_paths, non_violence_paths = config.get_mix_paths()
     else:
         violence_paths = config.VIOLENCE_PATH
         non_violence_paths = config.NON_VIOLENCE_PATH
-
-    print(f"Loading validation dataset for {config.DATASET_NAME}...")
 
     val_dataset = VideoSequenceDataset(
         violence_path=violence_paths,
@@ -172,7 +164,6 @@ def evaluate_model(model_path, config):
     )
 
     if len(val_dataset) == 0:
-        print("Validation dataset is empty! Check paths.")
         return 0, [], [], []
 
     val_loader = DataLoader(
@@ -192,7 +183,6 @@ def evaluate_model(model_path, config):
     criterion = torch.nn.CrossEntropyLoss()
     running_loss = 0.0
 
-    print("Starting evaluation loop...")
     with torch.no_grad():
         for inputs, labels in tqdm(val_loader, desc="Evaluating"):
             inputs = inputs.to(device)
@@ -213,7 +203,6 @@ def evaluate_model(model_path, config):
             all_probs.extend(probs[:, 1].cpu().numpy())
 
     if total == 0:
-        print("No samples processed.")
         return 0, [], [], []
 
     accuracy = 100 * correct / total
@@ -223,17 +212,230 @@ def evaluate_model(model_path, config):
         auc = roc_auc_score(all_labels, all_probs)
     except ValueError:
         auc = 0.0
-        print("Could not calculate AUC (single class present?)")
 
     cm = confusion_matrix(all_labels, all_preds)
 
-    # Handle confusing matrix shape safely
     if cm.shape == (2, 2):
         tn, fp, fn, tp = cm.ravel()
     else:
-        # Fallback if only one class exists in val set
         tn, fp, fn, tp = 0, 0, 0, 0
-        print(f"Confusion Matrix shape unexpected: {cm.shape}")
+
+    return accuracy, all_preds, all_labels, all_probs
+
+
+def evaluate_model_multiview(model_path, config, num_clips=10):
+    device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
+
+    model = R3D18Violence(num_classes=2, pretrained=False).to(device)
+
+    try:
+        checkpoint = torch.load(model_path, map_location=device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+    except Exception as e:
+        return 0, [], [], [], []
+
+    model.eval()
+
+    if config.DATASET_NAME == 'Mix':
+        violence_paths, non_violence_paths = config.get_mix_paths()
+    else:
+        violence_paths = config.VIOLENCE_PATH
+        non_violence_paths = config.NON_VIOLENCE_PATH
+
+    val_dataset = VideoSequenceDataset(
+        violence_path=violence_paths,
+        non_violence_path=non_violence_paths,
+        n_frames=config.N_FRAMES,
+        split_ratio=config.SPLIT_RATIO,
+        training=False,
+        augment=False,
+        mean=config.KINETICS_MEAN,
+        std=config.KINETICS_STD
+    )
+
+    if len(val_dataset) == 0:
+        return 0, [], [], [], []
+
+    correct = 0
+    total = 0
+    all_preds = []
+    all_labels = []
+    all_probs = []
+    json_predictions = []
+
+    criterion = torch.nn.CrossEntropyLoss()
+    running_loss = 0.0
+
+    processed_videos = set()
+    mean_tensor = torch.tensor(config.KINETICS_MEAN).view(3, 1, 1, 1)
+    std_tensor = torch.tensor(config.KINETICS_STD).view(3, 1, 1, 1)
+
+    for idx in tqdm(range(len(val_dataset)), desc="Multi-view Evaluation"):
+        video_path = val_dataset.video_paths[idx]
+        video_name = video_path.stem
+        label = val_dataset.labels[idx]
+
+        if video_name in processed_videos:
+            continue
+
+        processed_videos.add(video_name)
+
+        cap = cv2.VideoCapture(str(video_path))
+        all_frames = []
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            all_frames.append(frame)
+        cap.release()
+
+        if len(all_frames) < config.N_FRAMES:
+            continue
+
+        total_frames = len(all_frames)
+
+        clip_scores = []
+        clip_bboxes = []
+
+        effective_clips = min(num_clips, max(1, (total_frames - config.N_FRAMES + 1)))
+
+        if effective_clips == 1:
+            start_indices = [0]
+        else:
+            step = (total_frames - config.N_FRAMES) / (effective_clips - 1)
+            start_indices = [int(i * step) for i in range(effective_clips)]
+
+        for clip_idx, start_frame in enumerate(start_indices):
+            end_frame = start_frame + config.N_FRAMES
+
+            if end_frame > total_frames:
+                break
+
+            sequence_frames = all_frames[start_frame:end_frame]
+
+            processed_frames = []
+            for frame in sequence_frames:
+                frame_normalized = frame.astype(np.float32) / 255.0
+                frame_resized = cv2.resize(frame_normalized, (112, 112))
+                processed_frames.append(frame_resized)
+
+            sequence = np.stack(processed_frames, axis=0)
+            sequence_tensor = torch.FloatTensor(sequence).permute(3, 0, 1, 2)
+            sequence_tensor = (sequence_tensor - mean_tensor) / std_tensor
+
+            input_tensor = sequence_tensor.unsqueeze(0).to(device)
+
+            with torch.no_grad():
+                outputs = model(input_tensor)
+                probs = torch.softmax(outputs, dim=1)
+
+                clip_scores.append(probs[0].cpu().numpy())
+
+            input_tensor.requires_grad = True
+            with torch.enable_grad():
+                outputs_cam = model(input_tensor, return_cam=True)
+                pred_class = outputs_cam.argmax(dim=1).item()
+
+                model.zero_grad()
+                outputs_cam[0, pred_class].backward()
+
+                cam_2d = model.get_spatial_cam(pred_class)
+
+                bbox = [0.0, 0.0, 0.0, 0.0]
+                if cam_2d is not None:
+                    heatmap = cam_2d[0].cpu().numpy()
+
+                    frame_height, frame_width = sequence_frames[0].shape[:2]
+                    heatmap_resized = cv2.resize(heatmap, (frame_width, frame_height))
+
+                    threshold = 0.6
+                    binary_mask = (heatmap_resized > threshold).astype(np.uint8)
+
+                    if binary_mask.sum() > 0:
+                        rows = np.any(binary_mask, axis=1)
+                        cols = np.any(binary_mask, axis=0)
+
+                        if rows.any() and cols.any():
+                            top = int(np.argmax(rows))
+                            bottom = int(len(rows) - np.argmax(rows[::-1]))
+                            left = int(np.argmax(cols))
+                            right = int(len(cols) - np.argmax(cols[::-1]))
+
+                            bbox = [top, right, bottom, left]
+
+                clip_bboxes.append(bbox)
+
+        clip_scores = np.array(clip_scores)
+        avg_probs = np.mean(clip_scores, axis=0)
+        max_probs = np.max(clip_scores, axis=0)
+
+        predicted = int(np.argmax(max_probs))
+
+        with torch.no_grad():
+            max_probs_tensor = torch.from_numpy(max_probs).unsqueeze(0).to(device)
+            label_tensor = torch.tensor([label], dtype=torch.long).to(device)
+            loss = criterion(max_probs_tensor, label_tensor)
+            running_loss += loss.item()
+
+        total += 1
+        correct += (predicted == label)
+
+        all_preds.append(predicted)
+        all_labels.append(label)
+        all_probs.append(float(max_probs[1]))
+
+        for clip_idx in range(len(clip_scores)):
+            prediction_entry = {
+                "algorithmId": "r3d18_violence_detection",
+                "predictions": {
+                    "type": "identification",
+                    "metadata": {
+                        "video_name": video_name,
+                        "clip_number": clip_idx,
+                        "total_clips": len(clip_scores),
+                        "timestamp": float(start_indices[clip_idx] / 30.0),
+                        "bbox": clip_bboxes[clip_idx]
+                    },
+                    "class": ["Non-Violent", "Violent"],
+                    "score": [float(clip_scores[clip_idx][0]), float(clip_scores[clip_idx][1])]
+                }
+            }
+            json_predictions.append(prediction_entry)
+
+        aggregated_entry = {
+            "algorithmId": "r3d18_violence_detection",
+            "predictions": {
+                "type": "identification",
+                "metadata": {
+                    "video_name": video_name,
+                    "aggregation": "max",
+                    "num_clips": len(clip_scores),
+                    "bbox": [0.0, 0.0, 0.0, 0.0]
+                },
+                "class": ["Non-Violent", "Violent"],
+                "score": [float(max_probs[0]), float(max_probs[1])]
+            }
+        }
+        json_predictions.append(aggregated_entry)
+
+    if total == 0:
+        return 0, [], [], [], []
+
+    accuracy = 100 * correct / total
+    avg_loss = running_loss / total
+
+    try:
+        auc = roc_auc_score(all_labels, all_probs)
+    except ValueError:
+        auc = 0.0
+
+    cm = confusion_matrix(all_labels, all_preds)
+
+    if cm.shape == (2, 2):
+        tn, fp, fn, tp = cm.ravel()
+    else:
+        tn, fp, fn, tp = 0, 0, 0, 0
 
     print(f"\nValidation Accuracy: {accuracy:.2f}%")
     print(f"Validation Loss: {avg_loss:.4f}")
@@ -244,33 +446,35 @@ def evaluate_model(model_path, config):
     print("\nClassification Report:")
     print(classification_report(all_labels, all_preds, target_names=['Non-Violence', 'Violence']))
 
-    return accuracy, all_preds, all_labels, all_probs
+    results_dir = Path("./results")
+    results_dir.mkdir(exist_ok=True, parents=True)
+
+    json_path = results_dir / f"results_{config.DATASET_NAME.lower()}.json"
+
+    with open(json_path, 'w') as f:
+        json.dump(json_predictions, f, indent=2)
+
+    return accuracy, all_preds, all_labels, all_probs, json_predictions
 
 
 def main():
-    # Initialize config correctly
     config = R3DTransferConfig(dataset_name="Mix")
 
-    # Ensure save dir exists
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
 
     if not model_path.exists():
-        print(f"Model not found at {model_path}")
-        print(f"Current working directory: {Path.cwd()}")
         return
 
-    print("Evaluating R3D-18 Violence Detection Model...")
-    accuracy, preds, labels, probs = evaluate_model(model_path, config)
+    accuracy_mv, preds_mv, labels_mv, probs_mv, json_preds = evaluate_model_multiview(
+        model_path, config, num_clips=10
+    )
 
-    print("\nGenerating heatmap visualizations...")
     generator = HeatmapGenerator3D(model_path, config)
 
-    # Use a dynamic output folder name based on dataset
     output_dir = Path(f"heatmap_visualizations_{config.DATASET_NAME.lower()}")
     generator.save_visualization(output_dir, num_samples=5)
-    print(f"Visualizations saved to: {output_dir.absolute()}")
 
 
 if __name__ == "__main__":
