@@ -11,7 +11,7 @@ class R3DTransferConfig:
     SPLIT_RATIO = 0.75
     N_FRAMES = 16
 
-    BATCH_SIZE = 32
+    BATCH_SIZE = 20
     NUM_EPOCHS = 100
 
     OPTIMIZER = "adamw"
@@ -55,7 +55,7 @@ class R3DTransferConfig:
     USE_SMART_CROP = False
     PRETRAINED_MODEL_PATH = None
     SMART_CROP_PROB = 0.8
-    SMART_CROP_THRESHOLD = 0.6
+    SMART_CROP_THRESHOLD = 0.7
 
     AVAILABLE_DATASETS = {
         'Crowd': {
@@ -88,7 +88,7 @@ class R3DTransferConfig:
     def set_dataset(self, dataset_name):
         if self.use_smart_crop:
             base_dir = self.SMARTCROP_MODEL_BASE_DIR
-            suffix = "_smartcrop"
+            suffix = "_smart_crop"
         else:
             base_dir = self.HEATMAP_MODEL_BASE_DIR
             suffix = ""
@@ -125,10 +125,10 @@ class R3DTransferConfig:
     def get_heatmap_model_path(self, dataset_name):
         if dataset_name == 'Mix':
             model_dir = self.HEATMAP_MODEL_BASE_DIR / "checkpoints_r3d18_mix"
-            model_name = "r3d18_violence_mix_best.pth"
+            model_name = "r3d18_violence_best.pth"
         else:
             model_dir = self.HEATMAP_MODEL_BASE_DIR / f"checkpoints_r3d18_{dataset_name.lower()}"
-            model_name = f"r3d18_violence_{dataset_name.lower()}_best.pth"
+            model_name = f"r3d18_violence_best.pth"
 
         return model_dir / model_name
 
@@ -141,3 +141,5 @@ class R3DTransferConfig:
             model_name = f"r3d18_violence_{dataset_name.lower()}_smartcrop_best.pth"
 
         return model_dir / model_name
+    def get_student_model_path(self):
+        return self.SAVE_DIR / "student_r3d18_best.pth"
