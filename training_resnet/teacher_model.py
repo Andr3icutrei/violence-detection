@@ -99,3 +99,51 @@ class R3D18Violence(nn.Module):
             cams.append(single_cam)
 
         return torch.stack(cams)
+
+    def get_cam_plus_plus(self, target_class):
+        if self.gradients is None or self.activations is None:
+            return None
+
+        gradients = self.gradients.detach()
+        activations = self.activations.detach()
+
+        batch_size = gradients.shape[0]
+
+        alpha_num = gradients.pow(2)
+        alpha_denom = 2 * gradients.pow(2)
+        alpha_denom += (activations * gradients.pow(3)).sum(dim=(2, 3, 4), keepdim=True)
+        alpha_denom = torch.where(alpha_denom != 0.0, alpha_denom, torch.ones_like(alpha_denom))
+
+        alpha = alpha_num / alpha_denom
+
+        weights = (alpha * F.relu(gradients)).sum(dim=(2, 3, 4), keepdim=True)
+
+        cam = torch.sum(weights * activations, dim=1, keepdim=True)
+        cam = F.relu(cam)
+        cam = cam.squeeze(1)
+
+        cams = []
+        for i in range(batch_size):
+            single_cam = cam[i]
+            single_cam = single_cam - single_cam.min()
+            single_cam = single_cam / (single_cam.max() + 1e-8)
+            cams.append(single_cam)
+
+        return torch.stack(cams)
+
+    def get_spatial_cam_plus_plus(self, target_class):
+        cam_3d = self.get_cam_plus_plus(target_class)
+        if cam_3d is None:
+            return None
+
+        cam_2d = torch.sum(cam_3d, dim=1)
+
+        batch_size = cam_2d.size(0)
+        cams = []
+        for i in range(batch_size):
+            single_cam = cam_2d[i]
+            single_cam = single_cam - single_cam.min()
+            single_cam = single_cam / (single_cam.max() + 1e-8)
+            cams.append(single_cam)
+
+        return torch.stack(cams)

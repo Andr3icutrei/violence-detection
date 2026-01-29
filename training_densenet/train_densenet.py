@@ -6,9 +6,9 @@ from tqdm import tqdm
 import json
 from pathlib import Path
 
-from model import R3D18Violence
-from dataset import VideoSequenceDataset
-from config import R3DTransferConfig
+from model_densenet import DenseNet3D
+from dataset_densenet import VideoSequenceDataset
+from config_densenet import DenseNet3DConfig
 
 
 class EarlyStopping:
@@ -31,21 +31,20 @@ class EarlyStopping:
             self.counter = 0
 
 
-class R3D18Trainer:
+class DenseNet3DTrainer:
     def __init__(self, config):
         self.config = config
         self.device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
 
-        dropout_p = getattr(config, 'DROPOUT_P', 0.5)
-        self.model = R3D18Violence(
+        self.model = DenseNet3D(
             num_classes=2,
-            pretrained=config.USE_PRETRAINED,
-            freeze_layers=config.FREEZE_LAYERS,
-            dropout_p=dropout_p
+            growth_rate=config.GROWTH_RATE,
+            block_config=config.BLOCK_CONFIG,
+            num_init_features=config.NUM_INIT_FEATURES,
+            dropout_p=config.DROPOUT_P
         ).to(self.device)
 
-        label_smoothing = getattr(config, 'LABEL_SMOOTHING', 0.0)
-        self.criterion = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
+        self.criterion = nn.CrossEntropyLoss(label_smoothing=config.LABEL_SMOOTHING)
 
         self._setup_optimizer()
 
@@ -61,43 +60,33 @@ class R3D18Trainer:
         }
 
     def _setup_optimizer(self):
-        backbone_params = []
-        head_params = []
-
-        for name, param in self.model.named_parameters():
-            if param.requires_grad:
-                if 'fc' in name:
-                    head_params.append(param)
-                else:
-                    backbone_params.append(param)
-
-        optimizer_type = getattr(self.config, 'OPTIMIZER', 'adamw').lower()
+        optimizer_type = self.config.OPTIMIZER.lower()
 
         if optimizer_type == 'adamw':
-            self.optimizer = optim.AdamW([
-                {'params': backbone_params, 'lr': self.config.BACKBONE_LR},
-                {'params': head_params, 'lr': self.config.HEAD_LR}
-            ],
+            self.optimizer = optim.AdamW(
+                self.model.parameters(),
+                lr=self.config.LEARNING_RATE,
                 weight_decay=self.config.WEIGHT_DECAY,
-                betas=getattr(self.config, 'BETAS', (0.9, 0.999)),
-                eps=getattr(self.config, 'EPS', 1e-8))
+                betas=self.config.BETAS,
+                eps=self.config.EPS
+            )
         else:
-            self.optimizer = optim.SGD([
-                {'params': backbone_params, 'lr': self.config.BACKBONE_LR},
-                {'params': head_params, 'lr': self.config.HEAD_LR}
-            ],
-                momentum=getattr(self.config, 'MOMENTUM', 0.9),
-                weight_decay=self.config.WEIGHT_DECAY)
+            self.optimizer = optim.SGD(
+                self.model.parameters(),
+                lr=self.config.LEARNING_RATE,
+                momentum=self.config.MOMENTUM,
+                weight_decay=self.config.WEIGHT_DECAY
+            )
 
-        if getattr(self.config, 'USE_SCHEDULER', False):
-            scheduler_type = getattr(self.config, 'SCHEDULER_TYPE', 'cosine')
+        if self.config.USE_SCHEDULER:
+            scheduler_type = self.config.SCHEDULER_TYPE
 
             if scheduler_type == 'cosine':
                 self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
                     self.optimizer,
-                    T_0=getattr(self.config, 'T_0', 10),
-                    T_mult=getattr(self.config, 'T_MULT', 2),
-                    eta_min=getattr(self.config, 'ETA_MIN', 1e-7)
+                    T_0=self.config.T_0,
+                    T_mult=self.config.T_MULT,
+                    eta_min=self.config.ETA_MIN
                 )
             elif scheduler_type == 'step':
                 self.scheduler = optim.lr_scheduler.StepLR(
@@ -110,8 +99,7 @@ class R3D18Trainer:
                     self.optimizer,
                     mode='min',
                     factor=0.1,
-                    patience=5,
-                    verbose=True
+                    patience=5
                 )
             else:
                 self.scheduler = None
@@ -119,12 +107,15 @@ class R3D18Trainer:
             self.scheduler = None
 
     def _create_dataloader(self, training):
-        violence_path = self.config.VIOLENCE_PATH
-        non_violence_path = self.config.NON_VIOLENCE_PATH
+        if self.config.DATASET_NAME == 'Mix':
+            violence_paths, non_violence_paths = self.config.get_mix_paths()
+        else:
+            violence_paths = self.config.VIOLENCE_PATH
+            non_violence_paths = self.config.NON_VIOLENCE_PATH
 
         dataset = VideoSequenceDataset(
-            violence_path=violence_path,
-            non_violence_path=non_violence_path,
+            violence_path=violence_paths,
+            non_violence_path=non_violence_paths,
             n_frames=self.config.N_FRAMES,
             split_ratio=self.config.SPLIT_RATIO,
             training=training,
@@ -234,10 +225,6 @@ class R3D18Trainer:
             print(f"\nEpoch {epoch + 1}/{self.config.NUM_EPOCHS}")
             print("-" * 50)
 
-            if epoch == self.config.UNFREEZE_EPOCH:
-                self.model.unfreeze_all()
-                self._setup_optimizer()
-
             train_loss, train_acc = self.train_epoch()
             val_loss, val_acc = self.validate_epoch()
 
@@ -247,8 +234,8 @@ class R3D18Trainer:
                 else:
                     self.scheduler.step()
 
-            current_lrs = [group['lr'] for group in self.optimizer.param_groups]
-            self.history['learning_rates'].append(current_lrs)
+            current_lr = self.optimizer.param_groups[0]['lr']
+            self.history['learning_rates'].append(current_lr)
 
             self.history['train_loss'].append(train_loss)
             self.history['train_acc'].append(train_acc)
@@ -257,7 +244,7 @@ class R3D18Trainer:
 
             print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc * 100:.2f}%")
             print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc * 100:.2f}%")
-            print(f"Learning Rates: Backbone={current_lrs[0]:.2e}, Head={current_lrs[1]:.2e}")
+            print(f"Learning Rate: {current_lr:.2e}")
 
             is_best = val_loss < best_val_loss
             if is_best:
@@ -277,19 +264,20 @@ class R3D18Trainer:
 
 
 def main():
-    config = R3DTransferConfig(dataset_name='Hockey')
+    config = DenseNet3DConfig(dataset_name='Mix')
 
-    config.VIOLENCE_PATH = Path("../../Datasets/Hockey_SmartCropped/Violence")
-    config.NON_VIOLENCE_PATH = Path("../../Datasets/Hockey_SmartCropped/NonViolence")
+    print(f"Device: {config.DEVICE}")
+    print(f"Training DenseNet 3D with {config.OPTIMIZER.upper()} optimizer on {config.DATASET_NAME} dataset")
+    print(f"Growth Rate: {config.GROWTH_RATE}")
+    print(f"Block Config: {config.BLOCK_CONFIG}")
+    print(f"Dropout: {config.DROPOUT_P}")
+    print(f"Label Smoothing: {config.LABEL_SMOOTHING}")
+    print(f"Weight Decay: {config.WEIGHT_DECAY}")
+    print(f"Learning Rate: {config.LEARNING_RATE}")
+    if config.USE_SCHEDULER:
+        print(f"Scheduler: {config.SCHEDULER_TYPE}")
 
-    config.SAVE_DIR = Path("checkpoints_r3d18_Hockey_smart_crop")
-    config.MODEL_NAME = "r3d18_violence_hockey_smart_crop"
-    config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
-
-    config.NUM_EPOCHS = 50
-    config.BATCH_SIZE = 32
-
-    trainer = R3D18Trainer(config)
+    trainer = DenseNet3DTrainer(config)
     trainer.train()
 
 

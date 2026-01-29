@@ -5,8 +5,8 @@ from pathlib import Path
 from torch.utils.data import Dataset
 import random
 
-from model import R3D18Violence
-from config import R3DTransferConfig
+from model_densenet import R3D18Violence
+from config_densenet import R3DTransferConfig
 
 
 class SmartCropGenerator:
@@ -94,7 +94,9 @@ class SmartCropGenerator:
 class SmartCropDataset(Dataset):
     def __init__(self, violence_path, non_violence_path, model_path, config,
                  n_frames=16, split_ratio=0.75, training=True,
-                 use_smart_crop=True, smart_crop_prob=0.7, threshold=0.6):
+                 use_smart_crop=True, smart_crop_prob=0.7):
+        self.violence_path = Path(violence_path)
+        self.non_violence_path = Path(non_violence_path)
         self.n_frames = n_frames
         self.split_ratio = split_ratio
         self.training = training
@@ -104,50 +106,30 @@ class SmartCropDataset(Dataset):
         self.mean = torch.tensor(config.KINETICS_MEAN).view(3, 1, 1, 1)
         self.std = torch.tensor(config.KINETICS_STD).view(3, 1, 1, 1)
 
-        if isinstance(violence_path, (list, tuple)):
-            self.violence_paths = [Path(p) for p in violence_path]
-            self.non_violence_paths = [Path(p) for p in non_violence_path]
-            self.is_mix = True
-        else:
-            self.violence_paths = [Path(violence_path)]
-            self.non_violence_paths = [Path(non_violence_path)]
-            self.is_mix = False
-
         if self.use_smart_crop:
-            self.crop_generator = SmartCropGenerator(model_path, config, threshold=threshold)
+            self.crop_generator = SmartCropGenerator(model_path, config)
 
         self.video_paths, self.labels = self._load_video_paths()
 
     def _load_video_paths(self):
-        violent_videos = []
-        non_violent_videos = []
+        violent_videos = sorted([f for f in self.violence_path.rglob('*') if f.is_file()])
+        non_violent_videos = sorted([f for f in self.non_violence_path.rglob('*') if f.is_file()])
 
-        for violence_path in self.violence_paths:
-            dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
-            random.shuffle(dataset_videos)
-            split_idx = int(len(dataset_videos) * self.split_ratio)
+        violent_split_idx = int(len(violent_videos) * self.split_ratio)
+        non_violent_split_idx = int(len(non_violent_videos) * self.split_ratio)
 
-            if self.training:
-                violent_videos.extend(dataset_videos[:split_idx])
-            else:
-                violent_videos.extend(dataset_videos[split_idx:])
-
-        for non_violence_path in self.non_violence_paths:
-            dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
-            random.shuffle(dataset_videos)
-            split_idx = int(len(dataset_videos) * self.split_ratio)
-
-            if self.training:
-                non_violent_videos.extend(dataset_videos[:split_idx])
-            else:
-                non_violent_videos.extend(dataset_videos[split_idx:])
-
-        videos = violent_videos + non_violent_videos
-        labels = [1] * len(violent_videos) + [0] * len(non_violent_videos)
+        if self.training:
+            videos = violent_videos[:violent_split_idx] + non_violent_videos[:non_violent_split_idx]
+            labels = [1] * len(violent_videos[:violent_split_idx]) + [0] * len(
+                non_violent_videos[:non_violent_split_idx])
+        else:
+            videos = violent_videos[violent_split_idx:] + non_violent_videos[non_violent_split_idx:]
+            labels = [1] * len(violent_videos[violent_split_idx:]) + [0] * len(
+                non_violent_videos[non_violent_split_idx:])
 
         combined = list(zip(videos, labels))
         random.shuffle(combined)
-        videos, labels = zip(*combined) if combined else ([], [])
+        videos, labels = zip(*combined)
 
         return list(videos), list(labels)
 
@@ -265,31 +247,23 @@ class SmartCropDataset(Dataset):
 
 
 def test_smart_crop():
-    config = R3DTransferConfig(dataset_name='Mix', use_smart_crop=False)
-
-    model_path = config.get_heatmap_model_path(config.DATASET_NAME)
+    config = R3DTransferConfig()
+    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
 
     if not model_path.exists():
         print(f"Model not found at {model_path}")
         return
 
-    if config.DATASET_NAME == 'Mix':
-        violence_paths, non_violence_paths = config.get_mix_paths()
-    else:
-        violence_paths = config.VIOLENCE_PATH
-        non_violence_paths = config.NON_VIOLENCE_PATH
-
     dataset = SmartCropDataset(
-        violence_path=violence_paths,
-        non_violence_path=non_violence_paths,
+        violence_path=config.VIOLENCE_PATH,
+        non_violence_path=config.NON_VIOLENCE_PATH,
         model_path=model_path,
         config=config,
         n_frames=config.N_FRAMES,
         split_ratio=config.SPLIT_RATIO,
         training=True,
         use_smart_crop=True,
-        smart_crop_prob=0.8,
-        threshold=0.6
+        smart_crop_prob=0.7
     )
 
     sequence, label = dataset[0]
