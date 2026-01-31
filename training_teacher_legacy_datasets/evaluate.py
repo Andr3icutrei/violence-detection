@@ -26,10 +26,19 @@ class MultiViewVideoDataset:
         self.mean = torch.tensor(mean).view(3, 1, 1, 1)
         self.std = torch.tensor(std).view(3, 1, 1, 1)
 
-        if isinstance(violence_path, (list, tuple)):
+        if isinstance(violence_path, dict) and violence_path.get('type') == 'multiclass':
+            self.dataset_type = 'multiclass'
+            self.base_path = violence_path['path']
+            self.violence_dirs = violence_path['violence_dirs']
+            self.non_violence_dirs = violence_path['non_violence_dirs']
+            self.violence_paths = None
+            self.non_violence_paths = None
+        elif isinstance(violence_path, (list, tuple)):
+            self.dataset_type = 'standard'
             self.violence_paths = [Path(p) for p in violence_path]
             self.non_violence_paths = [Path(p) for p in non_violence_path]
         else:
+            self.dataset_type = 'standard'
             self.violence_paths = [Path(violence_path)]
             self.non_violence_paths = [Path(non_violence_path)]
 
@@ -39,23 +48,48 @@ class MultiViewVideoDataset:
         violent_videos = []
         non_violent_videos = []
 
-        for violence_path in self.violence_paths:
-            dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
-            split_idx = int(len(dataset_videos) * self.split_ratio)
+        if self.dataset_type == 'multiclass':
+            base_path = Path(self.base_path)
 
-            if self.training:
-                violent_videos.extend(dataset_videos[:split_idx])
-            else:
-                violent_videos.extend(dataset_videos[split_idx:])
+            for dir_name in self.violence_dirs:
+                dir_path = base_path / dir_name
+                if dir_path.exists():
+                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
+                    split_idx = int(len(dataset_videos) * self.split_ratio)
 
-        for non_violence_path in self.non_violence_paths:
-            dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
-            split_idx = int(len(dataset_videos) * self.split_ratio)
+                    if self.training:
+                        violent_videos.extend(dataset_videos[:split_idx])
+                    else:
+                        violent_videos.extend(dataset_videos[split_idx:])
 
-            if self.training:
-                non_violent_videos.extend(dataset_videos[:split_idx])
-            else:
-                non_violent_videos.extend(dataset_videos[split_idx:])
+            for dir_name in self.non_violence_dirs:
+                dir_path = base_path / dir_name
+                if dir_path.exists():
+                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
+                    split_idx = int(len(dataset_videos) * self.split_ratio)
+
+                    if self.training:
+                        non_violent_videos.extend(dataset_videos[:split_idx])
+                    else:
+                        non_violent_videos.extend(dataset_videos[split_idx:])
+        else:
+            for violence_path in self.violence_paths:
+                dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
+                split_idx = int(len(dataset_videos) * self.split_ratio)
+
+                if self.training:
+                    violent_videos.extend(dataset_videos[:split_idx])
+                else:
+                    violent_videos.extend(dataset_videos[split_idx:])
+
+            for non_violence_path in self.non_violence_paths:
+                dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
+                split_idx = int(len(dataset_videos) * self.split_ratio)
+
+                if self.training:
+                    non_violent_videos.extend(dataset_videos[:split_idx])
+                else:
+                    non_violent_videos.extend(dataset_videos[split_idx:])
 
         videos = violent_videos + non_violent_videos
         labels = [1] * len(violent_videos) + [0] * len(non_violent_videos)
@@ -494,7 +528,7 @@ def evaluate_model_multiview_with_json(model_path, config, num_clips=10):
 
 
 def main():
-    config = R3DTransferConfig(dataset_name="Mix")
+    config = R3DTransferConfig(dataset_name="Crowd")
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"

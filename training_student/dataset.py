@@ -4,6 +4,10 @@ import cv2
 import numpy as np
 from pathlib import Path
 import random
+import os
+
+# Suppress FFmpeg warnings (some videos have invalid AMR-WB audio tracks)
+os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'loglevel;quiet'
 
 
 class VideoSequenceDataset(Dataset):

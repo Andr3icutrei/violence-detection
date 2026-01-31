@@ -8,10 +8,10 @@ class R3DTransferConfig:
     VIOLENCE_PATH = DATASET_PATH / DATASET_NAME / "Violence"
     NON_VIOLENCE_PATH = DATASET_PATH / DATASET_NAME / "NonViolence"
 
-    SPLIT_RATIO = 0.75
+    SPLIT_RATIO = 0.8
     N_FRAMES = 16
 
-    BATCH_SIZE = 32
+    BATCH_SIZE = 16
     NUM_EPOCHS = 100
 
     OPTIMIZER = "adamw"
@@ -53,17 +53,26 @@ class R3DTransferConfig:
         'Crowd': {
             'path': DATASET_PATH / 'Crowd',
             'violence': DATASET_PATH / 'Crowd' / 'Violence',
-            'non_violence': DATASET_PATH / 'Crowd' / 'NonViolence'
+            'non_violence': DATASET_PATH / 'Crowd' / 'NonViolence',
+            'type': 'standard'
         },
         'Hockey': {
             'path': DATASET_PATH / 'Hockey',
             'violence': DATASET_PATH / 'Hockey' / 'Violence',
-            'non_violence': DATASET_PATH / 'Hockey' / 'NonViolence'
+            'non_violence': DATASET_PATH / 'Hockey' / 'NonViolence',
+            'type': 'standard'
         },
         'Movies': {
             'path': DATASET_PATH / 'Movies',
             'violence': DATASET_PATH / 'Movies' / 'Violence',
-            'non_violence': DATASET_PATH / 'Movies' / 'NonViolence'
+            'non_violence': DATASET_PATH / 'Movies' / 'NonViolence',
+            'type': 'standard'
+        },
+        'AI4RiSK': {
+            'path': DATASET_PATH / 'AI4Risk',
+            'non_violence_dirs': ['0'],
+            'violence_dirs': ['1', '2', '3', '4'],
+            'type': 'multiclass'
         },
     }
 
@@ -81,22 +90,36 @@ class R3DTransferConfig:
         elif dataset_name in self.AVAILABLE_DATASETS:
             self.DATASET_NAME = dataset_name
             dataset_info = self.AVAILABLE_DATASETS[dataset_name]
-            self.VIOLENCE_PATH = dataset_info['violence']
-            self.NON_VIOLENCE_PATH = dataset_info['non_violence']
+
+            if dataset_info.get('type') == 'multiclass':
+                self.VIOLENCE_PATH = dataset_info
+                self.NON_VIOLENCE_PATH = dataset_info
+            else:
+                self.VIOLENCE_PATH = dataset_info['violence']
+                self.NON_VIOLENCE_PATH = dataset_info['non_violence']
+
             self.SAVE_DIR = Path(f"checkpoints_r3d18_{dataset_name.lower()}")
             self.MODEL_NAME = f"r3d18_violence_{dataset_name.lower()}"
         else:
             raise ValueError(
                 f"Dataset {dataset_name} not found. Available: {list(self.AVAILABLE_DATASETS.keys()) + ['Mix']}")
 
-    def get_mix_paths(self):
+    def get_mix_paths(self, datasets=None):
         violence_paths = []
         non_violence_paths = []
 
-        for dataset_name in ['Crowd', 'Hockey', 'Movies']:
+        if datasets is None:
+            datasets = ['Crowd', 'Hockey', 'Movies']
+
+        for dataset_name in datasets:
             if dataset_name in self.AVAILABLE_DATASETS:
                 dataset_info = self.AVAILABLE_DATASETS[dataset_name]
-                violence_paths.append(dataset_info['violence'])
-                non_violence_paths.append(dataset_info['non_violence'])
+
+                if dataset_info.get('type') == 'multiclass':
+                    violence_paths.append(dataset_info)
+                    non_violence_paths.append(dataset_info)
+                else:
+                    violence_paths.append(dataset_info['violence'])
+                    non_violence_paths.append(dataset_info['non_violence'])
 
         return violence_paths, non_violence_paths
