@@ -7,25 +7,21 @@ from tqdm import tqdm
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 import json
 
-from model import SlowFastViolence
-from dataset import SlowFastVideoDataset
-from config import SlowFastConfig
+from model import X3DViolence
+from dataset import X3DVideoDataset
+from config import X3DConfig
 
 
-class MultiViewSlowFastDataset:
+class MultiViewX3DDataset:
     def __init__(self, violence_path, non_violence_path,
-                 num_frames_slow=8, num_frames_fast=32,
-                 alpha=4, tau_slow=16, tau_fast=2,
-                 split_ratio=0.75, training=False, num_clips=10,
+                 num_frames=16, temporal_stride=3,
+                 split_ratio=0.8, training=False, num_clips=10,
                  mean=[0.45, 0.45, 0.45],
                  std=[0.225, 0.225, 0.225],
-                 crop_size=224, seed=42, use_crop=True):
+                 crop_size=224, seed=42, use_crop=False):
 
-        self.num_frames_slow = num_frames_slow
-        self.num_frames_fast = num_frames_fast
-        self.alpha = alpha
-        self.tau_slow = tau_slow
-        self.tau_fast = tau_fast
+        self.num_frames = num_frames
+        self.temporal_stride = temporal_stride
         self.split_ratio = split_ratio
         self.training = training
         self.num_clips = num_clips
@@ -41,16 +37,8 @@ class MultiViewSlowFastDataset:
             self.base_path = violence_path['path']
             self.violence_dirs = violence_path['violence_dirs']
             self.non_violence_dirs = violence_path['non_violence_dirs']
-            self.violence_paths = None
-            self.non_violence_paths = None
-        elif isinstance(violence_path, (list, tuple)):
-            self.dataset_type = 'standard'
-            self.violence_paths = [Path(p) for p in violence_path]
-            self.non_violence_paths = [Path(p) for p in non_violence_path]
         else:
-            self.dataset_type = 'standard'
-            self.violence_paths = [Path(violence_path)]
-            self.non_violence_paths = [Path(non_violence_path)]
+            raise ValueError("Only AI4RiSK multiclass dataset is supported")
 
         self.video_paths, self.labels = self._load_video_paths()
 
@@ -58,33 +46,12 @@ class MultiViewSlowFastDataset:
         violent_videos = []
         non_violent_videos = []
 
-        if self.dataset_type == 'multiclass':
-            base_path = Path(self.base_path)
+        base_path = Path(self.base_path)
 
-            for dir_name in self.violence_dirs:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
-                    split_idx = int(len(dataset_videos) * self.split_ratio)
-
-                    if self.training:
-                        violent_videos.extend(dataset_videos[:split_idx])
-                    else:
-                        violent_videos.extend(dataset_videos[split_idx:])
-
-            for dir_name in self.non_violence_dirs:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
-                    split_idx = int(len(dataset_videos) * self.split_ratio)
-
-                    if self.training:
-                        non_violent_videos.extend(dataset_videos[:split_idx])
-                    else:
-                        non_violent_videos.extend(dataset_videos[split_idx:])
-        else:
-            for violence_path in self.violence_paths:
-                dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
+        for dir_name in self.violence_dirs:
+            dir_path = base_path / dir_name
+            if dir_path.exists():
+                dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
                 if self.training:
@@ -92,8 +59,10 @@ class MultiViewSlowFastDataset:
                 else:
                     violent_videos.extend(dataset_videos[split_idx:])
 
-            for non_violence_path in self.non_violence_paths:
-                dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
+        for dir_name in self.non_violence_dirs:
+            dir_path = base_path / dir_name
+            if dir_path.exists():
+                dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
                 if self.training:
@@ -122,7 +91,7 @@ class MultiViewSlowFastDataset:
 
     def _extract_consecutive_clips(self, frames):
         total_frames = len(frames)
-        temporal_window = self.num_frames_fast * self.tau_fast
+        temporal_window = self.num_frames * self.temporal_stride
 
         if total_frames < temporal_window:
             indices = [i % total_frames for i in range(temporal_window)]
@@ -178,97 +147,77 @@ class MultiViewSlowFastDataset:
         processed_clips = []
 
         for clip_indices in clip_indices_list:
-            fast_indices = clip_indices[::self.tau_fast][:self.num_frames_fast]
-            slow_indices = fast_indices[::self.alpha][:self.num_frames_slow]
+            frame_indices = clip_indices[::self.temporal_stride][:self.num_frames]
 
-            if len(fast_indices) < self.num_frames_fast:
-                padding_needed = self.num_frames_fast - len(fast_indices)
+            if len(frame_indices) < self.num_frames:
+                padding_needed = self.num_frames - len(frame_indices)
                 for i in range(padding_needed):
-                    fast_indices.append(fast_indices[i % len(fast_indices)])
+                    frame_indices.append(frame_indices[i % len(frame_indices)])
 
-            if len(slow_indices) < self.num_frames_slow:
-                padding_needed = self.num_frames_slow - len(slow_indices)
-                for i in range(padding_needed):
-                    slow_indices.append(slow_indices[i % len(slow_indices)])
+            selected_frames = [frames[i] for i in frame_indices]
 
-            slow_frames = [frames[i] for i in slow_indices]
-            fast_frames = [frames[i] for i in fast_indices]
+            processed_frames = [self._preprocess_frame(frame) for frame in selected_frames]
 
-            processed_slow = [self._preprocess_frame(frame) for frame in slow_frames]
-            processed_fast = [self._preprocess_frame(frame) for frame in fast_frames]
+            sequence = np.stack(processed_frames, axis=0)
 
-            slow_sequence = np.stack(processed_slow, axis=0)
-            fast_sequence = np.stack(processed_fast, axis=0)
+            tensor = torch.FloatTensor(sequence).permute(3, 0, 1, 2)
 
-            slow_tensor = torch.FloatTensor(slow_sequence).permute(3, 0, 1, 2)
-            fast_tensor = torch.FloatTensor(fast_sequence).permute(3, 0, 1, 2)
+            tensor = (tensor - self.mean) / self.std
 
-            slow_tensor = (slow_tensor - self.mean) / self.std
-            fast_tensor = (fast_tensor - self.mean) / self.std
-
-            processed_clips.append([slow_tensor, fast_tensor])
+            processed_clips.append(tensor)
 
         if len(processed_clips) == 0:
-            processed_clips = [[
-                torch.zeros(3, self.num_frames_slow, self.crop_size, self.crop_size),
-                torch.zeros(3, self.num_frames_fast, self.crop_size, self.crop_size)
-            ]]
+            processed_clips = [torch.zeros(3, self.num_frames, self.crop_size, self.crop_size)]
 
-        return processed_clips, torch.LongTensor([label])[0]
+        label = torch.LongTensor([label])[0]
+
+        return processed_clips, label
 
 
-class HeatmapGenerator3DSlowFast:
+class HeatmapGenerator3DX3D:
     def __init__(self, model_path, config):
         self.config = config
         self.device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
 
-        self.model = SlowFastViolence(
+        self.model = X3DViolence(
             num_classes=2,
             pretrained=False,
-            alpha=config.SLOWFAST_ALPHA
+            x3d_version=config.X3D_VERSION
         ).to(self.device)
 
         checkpoint = torch.load(model_path, map_location=self.device)
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.model.eval()
 
-    def generate_heatmap_for_sequence(self, sequence, target_class=None):
-        if not isinstance(sequence, list):
-            raise ValueError("Sequence must be [slow_pathway, fast_pathway]")
+    def generate_heatmap_for_sequence(self, frames):
+        frames = frames.unsqueeze(0).to(self.device)
+        frames.requires_grad = True
 
-        slow_pathway = sequence[0].unsqueeze(0).to(self.device)
-        fast_pathway = sequence[1].unsqueeze(0).to(self.device)
+        outputs = self.model(frames, return_cam=True)
 
-        slow_pathway.requires_grad = True
-        fast_pathway.requires_grad = True
+        probs = torch.softmax(outputs, dim=1)
+        pred_class = torch.argmax(probs, dim=1).item()
 
-        output = self.model([slow_pathway, fast_pathway], return_cam=True)
+        target_output = outputs[0, pred_class]
+        target_output.backward()
 
-        if target_class is None:
-            target_class = output.argmax(dim=1).item()
+        cam = self.model.get_spatial_cam(pred_class)
 
-        self.model.zero_grad()
-        output[0, target_class].backward()
+        if cam is not None:
+            cam = cam[0].cpu().numpy()
+        else:
+            cam = None
 
-        cam_2d = self.model.get_spatial_cam(target_class, pathway='slow')
+        return cam, pred_class, probs[0].detach().cpu().numpy()
 
-        if cam_2d is None:
-            return None, target_class, output.softmax(dim=1)[0].cpu().detach().numpy()
-
-        heatmap_2d = cam_2d[0].cpu().numpy()
-
-        return heatmap_2d, target_class, output.softmax(dim=1)[0].cpu().detach().numpy()
-
-    def visualize_heatmap_on_sequence(self, frames, heatmap, alpha=0.4):
+    def visualize_heatmap_on_sequence(self, frames, heatmap, alpha=0.5):
         overlays = []
 
         mean = torch.tensor(self.config.KINETICS_MEAN).view(3, 1, 1)
         std = torch.tensor(self.config.KINETICS_STD).view(3, 1, 1)
 
-        slow_frames = frames[0]
-
-        for i in range(slow_frames.size(1)):
-            frame = slow_frames[:, i, :, :]
+        for i in range(frames.size(1)):
+            frame = frames[:, i, :, :]
 
             frame = frame * std + mean
             frame = frame.permute(1, 2, 0).cpu().numpy()
@@ -287,20 +236,14 @@ class HeatmapGenerator3DSlowFast:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        if self.config.DATASET_NAME == 'Mix':
-            violence_paths, non_violence_paths = self.config.get_mix_paths()
-        else:
-            violence_paths = self.config.VIOLENCE_PATH
-            non_violence_paths = self.config.NON_VIOLENCE_PATH
+        violence_path = self.config.VIOLENCE_PATH
+        non_violence_path = self.config.NON_VIOLENCE_PATH
 
-        dataset = SlowFastVideoDataset(
-            violence_path=violence_paths,
-            non_violence_path=non_violence_paths,
-            num_frames_slow=self.config.NUM_FRAMES_SLOW,
-            num_frames_fast=self.config.NUM_FRAMES_FAST,
-            alpha=self.config.SLOWFAST_ALPHA,
-            tau_slow=self.config.SLOWFAST_TAU_SLOW,
-            tau_fast=self.config.SLOWFAST_TAU_FAST,
+        dataset = X3DVideoDataset(
+            violence_path=violence_path,
+            non_violence_path=non_violence_path,
+            num_frames=self.config.NUM_FRAMES,
+            temporal_stride=self.config.TEMPORAL_STRIDE,
             split_ratio=self.config.SPLIT_RATIO,
             training=False,
             augment=False,
@@ -319,21 +262,18 @@ class HeatmapGenerator3DSlowFast:
                 sequence, label = dataset[idx]
                 heatmap, pred_class, probs = self.generate_heatmap_for_sequence(sequence)
 
-                if heatmap is None:
-                    continue
-
                 overlays = self.visualize_heatmap_on_sequence(sequence, heatmap)
 
+                num_frames_to_show = min(8, len(overlays))
                 fig, axes = plt.subplots(2, 4, figsize=(16, 8))
                 axes = axes.flatten()
 
-                for i, overlay in enumerate(overlays):
-                    if i < len(axes):
-                        axes[i].imshow(overlay)
-                        axes[i].axis('off')
-                        axes[i].set_title(f"Slow Frame {i + 1}")
+                for i in range(num_frames_to_show):
+                    axes[i].imshow(overlays[i])
+                    axes[i].axis('off')
+                    axes[i].set_title(f"Frame {i + 1}")
 
-                for i in range(len(overlays), len(axes)):
+                for i in range(num_frames_to_show, len(axes)):
                     axes[i].axis('off')
 
                 label_text = "Violence" if pred_class == 1 else "Non-Violence"
@@ -354,10 +294,10 @@ class HeatmapGenerator3DSlowFast:
 def evaluate_model_multiview(model_path, config, num_clips=10):
     device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
 
-    model = SlowFastViolence(
+    model = X3DViolence(
         num_classes=2,
         pretrained=False,
-        alpha=config.SLOWFAST_ALPHA
+        x3d_version=config.X3D_VERSION
     ).to(device)
 
     try:
@@ -368,23 +308,17 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
 
     model.eval()
 
-    if config.DATASET_NAME == 'Mix':
-        violence_paths, non_violence_paths = config.get_mix_paths()
-    else:
-        violence_paths = config.VIOLENCE_PATH
-        non_violence_paths = config.NON_VIOLENCE_PATH
+    violence_path = config.VIOLENCE_PATH
+    non_violence_path = config.NON_VIOLENCE_PATH
 
-    if violence_paths is None or non_violence_paths is None:
+    if violence_path is None or non_violence_path is None:
         return 0, [], [], []
 
-    val_dataset = MultiViewSlowFastDataset(
-        violence_path=violence_paths,
-        non_violence_path=non_violence_paths,
-        num_frames_slow=config.NUM_FRAMES_SLOW,
-        num_frames_fast=config.NUM_FRAMES_FAST,
-        alpha=config.SLOWFAST_ALPHA,
-        tau_slow=config.SLOWFAST_TAU_SLOW,
-        tau_fast=config.SLOWFAST_TAU_FAST,
+    val_dataset = MultiViewX3DDataset(
+        violence_path=violence_path,
+        non_violence_path=non_violence_path,
+        num_frames=config.NUM_FRAMES,
+        temporal_stride=config.TEMPORAL_STRIDE,
         split_ratio=config.SPLIT_RATIO,
         training=False,
         num_clips=num_clips,
@@ -409,10 +343,8 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
 
             clip_outputs = []
             for clip in clips:
-                slow_pathway = clip[0].unsqueeze(0).to(device)
-                fast_pathway = clip[1].unsqueeze(0).to(device)
-
-                output = model([slow_pathway, fast_pathway])
+                clip_input = clip.unsqueeze(0).to(device)
+                output = model(clip_input)
                 clip_outputs.append(output)
 
             if len(clip_outputs) == 0:
@@ -459,7 +391,7 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
 
 
 def main():
-    config = SlowFastConfig(dataset_name="Crowd")
+    config = X3DConfig()
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
@@ -467,11 +399,11 @@ def main():
     if not model_path.exists():
         return
 
-    accuracy, preds, labels, probs = evaluate_model_multiview(model_path, config, num_clips=10)
+    # accuracy, preds, labels, probs = evaluate_model_multiview(model_path, config, num_clips=10)
 
-    generator = HeatmapGenerator3DSlowFast(model_path, config)
-    output_dir = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
-    generator.save_visualization(output_dir, num_samples=5)
+    generator = HeatmapGenerator3DX3D(model_path, config)
+    output_dir = Path(f"heatmap_visualizations_x3d_{config.DATASET_NAME.lower()}")
+    generator.save_visualization(output_dir, num_samples=20)
 
 
 if __name__ == "__main__":

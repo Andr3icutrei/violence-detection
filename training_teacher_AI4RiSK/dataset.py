@@ -6,30 +6,27 @@ from pathlib import Path
 import random
 import os
 
-# Suppress FFmpeg warnings (some videos have invalid AMR-WB audio tracks)
 os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'loglevel;quiet'
 
 
-class SlowFastVideoDataset(Dataset):
+class X3DVideoDataset(Dataset):
     def __init__(self, violence_path, non_violence_path,
-                 num_frames_slow=8, num_frames_fast=32,
-                 alpha=4, tau_slow=16, tau_fast=2,
-                 split_ratio=0.75, training=True, augment=True,
+                 num_frames=16, temporal_stride=3,
+                 split_ratio=0.8, training=True, augment=True,
                  mean=[0.45, 0.45, 0.45],
                  std=[0.225, 0.225, 0.225],
-                 crop_size=224, seed=42, use_crop=True):
+                 crop_size=224, seed=42, use_crop=False,
+                 use_optical_flow=False):
 
-        self.num_frames_slow = num_frames_slow
-        self.num_frames_fast = num_frames_fast
-        self.alpha = alpha
-        self.tau_slow = tau_slow
-        self.tau_fast = tau_fast
+        self.num_frames = num_frames
+        self.temporal_stride = temporal_stride
         self.split_ratio = split_ratio
         self.training = training
         self.augment = augment and training
         self.crop_size = crop_size
         self.seed = seed
         self.use_crop = use_crop
+        self.use_optical_flow = use_optical_flow
 
         self.mean = torch.tensor(mean).view(3, 1, 1, 1)
         self.std = torch.tensor(std).view(3, 1, 1, 1)
@@ -39,19 +36,8 @@ class SlowFastVideoDataset(Dataset):
             self.base_path = violence_path['path']
             self.violence_dirs = violence_path['violence_dirs']
             self.non_violence_dirs = violence_path['non_violence_dirs']
-            self.violence_paths = None
-            self.non_violence_paths = None
-            self.is_mix = False
-        elif isinstance(violence_path, (list, tuple)):
-            self.dataset_type = 'standard'
-            self.violence_paths = [Path(p) for p in violence_path]
-            self.non_violence_paths = [Path(p) for p in non_violence_path]
-            self.is_mix = True
         else:
-            self.dataset_type = 'standard'
-            self.violence_paths = [Path(violence_path)]
-            self.non_violence_paths = [Path(non_violence_path)]
-            self.is_mix = False
+            raise ValueError("Only AI4RiSK multiclass dataset is supported")
 
         self.video_paths, self.labels = self._load_video_paths()
 
@@ -61,35 +47,12 @@ class SlowFastVideoDataset(Dataset):
 
         random.seed(self.seed)
 
-        if self.dataset_type == 'multiclass':
-            base_path = Path(self.base_path)
+        base_path = Path(self.base_path)
 
-            for dir_name in self.violence_dirs:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
-                    random.shuffle(dataset_videos)
-                    split_idx = int(len(dataset_videos) * self.split_ratio)
-
-                    if self.training:
-                        violent_videos.extend(dataset_videos[:split_idx])
-                    else:
-                        violent_videos.extend(dataset_videos[split_idx:])
-
-            for dir_name in self.non_violence_dirs:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
-                    random.shuffle(dataset_videos)
-                    split_idx = int(len(dataset_videos) * self.split_ratio)
-
-                    if self.training:
-                        non_violent_videos.extend(dataset_videos[:split_idx])
-                    else:
-                        non_violent_videos.extend(dataset_videos[split_idx:])
-        else:
-            for violence_path in self.violence_paths:
-                dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
+        for dir_name in self.violence_dirs:
+            dir_path = base_path / dir_name
+            if dir_path.exists():
+                dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
                 random.shuffle(dataset_videos)
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
@@ -98,8 +61,10 @@ class SlowFastVideoDataset(Dataset):
                 else:
                     violent_videos.extend(dataset_videos[split_idx:])
 
-            for non_violence_path in self.non_violence_paths:
-                dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
+        for dir_name in self.non_violence_dirs:
+            dir_path = base_path / dir_name
+            if dir_path.exists():
+                dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
                 random.shuffle(dataset_videos)
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
@@ -133,13 +98,13 @@ class SlowFastVideoDataset(Dataset):
         cap.release()
         return frames
 
-    def _sample_frames_slowfast(self, frames):
+    def _sample_frames_x3d(self, frames):
         total_frames = len(frames)
 
         if total_frames == 0:
-            return None, None
+            return None
 
-        temporal_window = self.num_frames_fast * self.tau_fast
+        temporal_window = self.num_frames * self.temporal_stride
 
         if total_frames < temporal_window:
             indices = [i % total_frames for i in range(temporal_window)]
@@ -151,24 +116,16 @@ class SlowFastVideoDataset(Dataset):
 
             indices = list(range(start_idx, start_idx + temporal_window))
 
-        fast_indices = indices[::self.tau_fast][:self.num_frames_fast]
+        frame_indices = indices[::self.temporal_stride][:self.num_frames]
 
-        slow_indices = fast_indices[::self.alpha][:self.num_frames_slow]
-
-        if len(fast_indices) < self.num_frames_fast:
-            padding_needed = self.num_frames_fast - len(fast_indices)
+        if len(frame_indices) < self.num_frames:
+            padding_needed = self.num_frames - len(frame_indices)
             for i in range(padding_needed):
-                fast_indices.append(fast_indices[i % len(fast_indices)])
+                frame_indices.append(frame_indices[i % len(frame_indices)])
 
-        if len(slow_indices) < self.num_frames_slow:
-            padding_needed = self.num_frames_slow - len(slow_indices)
-            for i in range(padding_needed):
-                slow_indices.append(slow_indices[i % len(slow_indices)])
+        selected_frames = [frames[i] for i in frame_indices]
 
-        slow_frames = [frames[i] for i in slow_indices]
-        fast_frames = [frames[i] for i in fast_indices]
-
-        return slow_frames, fast_frames
+        return selected_frames
 
     def _preprocess_frame(self, frame, target_size=256):
         frame = frame.astype(np.float32) / 255.0
@@ -249,26 +206,22 @@ class SlowFastVideoDataset(Dataset):
         label = self.labels[idx]
 
         frames = self._extract_frames(video_path)
-        slow_frames, fast_frames = self._sample_frames_slowfast(frames)
+        selected_frames = self._sample_frames_x3d(frames)
 
-        if slow_frames is None or fast_frames is None:
+        if selected_frames is None:
             return self.__getitem__((idx + 1) % len(self))
 
-        if len(slow_frames) != self.num_frames_slow or len(fast_frames) != self.num_frames_fast:
+        if len(selected_frames) != self.num_frames:
             return self.__getitem__((idx + 1) % len(self))
 
-        processed_slow = [self._preprocess_frame(frame) for frame in slow_frames]
-        processed_fast = [self._preprocess_frame(frame) for frame in fast_frames]
+        processed_frames = [self._preprocess_frame(frame) for frame in selected_frames]
 
-        slow_sequence = np.stack(processed_slow, axis=0)
-        fast_sequence = np.stack(processed_fast, axis=0)
+        sequence = np.stack(processed_frames, axis=0)
 
-        slow_tensor = torch.FloatTensor(slow_sequence).permute(3, 0, 1, 2)
-        fast_tensor = torch.FloatTensor(fast_sequence).permute(3, 0, 1, 2)
+        tensor = torch.FloatTensor(sequence).permute(3, 0, 1, 2)
 
-        slow_tensor = (slow_tensor - self.mean) / self.std
-        fast_tensor = (fast_tensor - self.mean) / self.std
+        tensor = (tensor - self.mean) / self.std
 
         label = torch.LongTensor([label])[0]
 
-        return [slow_tensor, fast_tensor], label
+        return tensor, label

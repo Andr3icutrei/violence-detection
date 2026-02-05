@@ -2,65 +2,42 @@ import torch
 from pathlib import Path
 import argparse
 
-from config import SlowFastConfig
-from train import SlowFastTrainer
-from evaluate import evaluate_model_multiview, HeatmapGenerator3DSlowFast
+from config import X3DConfig
+from train import X3DTrainer
+from evaluate import evaluate_model_multiview, HeatmapGenerator3DX3D
 
 
 def train_model(config):
     print("=" * 60)
-    print(f"TRAINING SLOWFAST RESNET50 ON {config.DATASET_NAME.upper()} DATASET")
+    print(f"TRAINING X3D-{config.X3D_VERSION.upper()} ON {config.DATASET_NAME.upper()} DATASET")
     print("=" * 60)
 
-    if config.DATASET_NAME == 'Mix':
-        violence_paths, non_violence_paths = config.get_mix_paths()
-        dataset_names = ['Crowd', 'Hockey', 'Movies']
-        print(f"\nMix dataset includes: {', '.join(dataset_names)}")
-        print(f"Each dataset contributes {config.SPLIT_RATIO:.0%} to train and {1 - config.SPLIT_RATIO:.0%} to validation")
-        print()
+    base_path = Path(config.VIOLENCE_PATH['path'])
 
-        total_violence = 0
-        total_non_violence = 0
+    v_videos = []
+    for dir_name in config.VIOLENCE_PATH['violence_dirs']:
+        dir_path = base_path / dir_name
+        if dir_path.exists():
+            v_videos.extend(list(dir_path.rglob('*')))
 
-        for i, (v_path, nv_path) in enumerate(zip(violence_paths, non_violence_paths)):
-            if isinstance(v_path, dict) and v_path.get('type') == 'multiclass':
-                base_path = Path(v_path['path'])
-                v_videos = []
-                for dir_name in v_path['violence_dirs']:
-                    dir_path = base_path / dir_name
-                    if dir_path.exists():
-                        v_videos.extend(list(dir_path.rglob('*')))
+    nv_videos = []
+    for dir_name in config.NON_VIOLENCE_PATH['non_violence_dirs']:
+        dir_path = base_path / dir_name
+        if dir_path.exists():
+            nv_videos.extend(list(dir_path.rglob('*')))
 
-                nv_videos = []
-                for dir_name in v_path['non_violence_dirs']:
-                    dir_path = base_path / dir_name
-                    if dir_path.exists():
-                        nv_videos.extend(list(dir_path.rglob('*')))
-            else:
-                v_videos = list(v_path.rglob('*')) if v_path.exists() else []
-                nv_videos = list(nv_path.rglob('*')) if nv_path.exists() else []
+    v_train = int(len(v_videos) * config.SPLIT_RATIO)
+    v_val = len(v_videos) - v_train
+    nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
+    nv_val = len(nv_videos) - nv_train
 
-            v_train = int(len(v_videos) * config.SPLIT_RATIO)
-            v_val = len(v_videos) - v_train
-            nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
-            nv_val = len(nv_videos) - nv_train
+    print(f"\nDataset Statistics:")
+    print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
+    print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
+    print(f"  Total: {len(v_videos) + len(nv_videos)} videos")
+    print()
 
-            print(f"{dataset_names[i]}:")
-            print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
-            print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
-
-            total_violence += len(v_videos)
-            total_non_violence += len(nv_videos)
-
-        total_train = int((total_violence + total_non_violence) * config.SPLIT_RATIO)
-        total_val = (total_violence + total_non_violence) - total_train
-
-        print(f"\nTotal across all datasets:")
-        print(f"  Train: ~{total_train} videos")
-        print(f"  Validation: ~{total_val} videos")
-        print()
-
-    trainer = SlowFastTrainer(config)
+    trainer = X3DTrainer(config)
     trainer.train()
 
     print("\nTraining completed!")
@@ -83,8 +60,8 @@ def evaluate_trained_model(config):
     print("GENERATING GRAD-CAM VISUALIZATIONS")
     print("=" * 60)
 
-    generator = HeatmapGenerator3DSlowFast(model_path, config)
-    output_dir = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
+    generator = HeatmapGenerator3DX3D(model_path, config)
+    output_dir = Path(f"heatmap_visualizations_x3d_{config.DATASET_NAME.lower()}")
     generator.save_visualization(output_dir, num_samples=10)
 
     print(f"\nVisualizations saved to {output_dir}")
@@ -95,112 +72,44 @@ def show_dataset_info(config):
     print("DATASET INFORMATION")
     print("=" * 60)
 
-    if config.DATASET_NAME == 'Mix':
-        violence_paths, non_violence_paths = config.get_mix_paths()
-        print(f"\nMix Dataset (Crowd + Hockey + Movies)")
-        print("=" * 60)
-        print(f"\nSplit Strategy: Each dataset contributes {config.SPLIT_RATIO:.0%} to train and {1 - config.SPLIT_RATIO:.0%} to validation")
-        print("This ensures all datasets are represented in both train and val sets!")
-        print("-" * 60)
+    print(f"\n{config.DATASET_NAME} Dataset")
+    print("-" * 60)
 
-        total_violence = 0
-        total_non_violence = 0
-        total_train = 0
-        total_val = 0
+    base_path = Path(config.VIOLENCE_PATH['path'])
 
-        for i, (v_path, nv_path) in enumerate(zip(violence_paths, non_violence_paths)):
-            dataset_names = ['Crowd', 'Hockey', 'Movies']
-            print(f"\n{dataset_names[i]}:")
+    v_videos = []
+    for dir_name in config.VIOLENCE_PATH['violence_dirs']:
+        dir_path = base_path / dir_name
+        if dir_path.exists():
+            v_videos.extend(list(dir_path.rglob('*')))
 
-            if isinstance(v_path, dict) and v_path.get('type') == 'multiclass':
-                base_path = Path(v_path['path'])
-                v_videos = []
-                for dir_name in v_path['violence_dirs']:
-                    dir_path = base_path / dir_name
-                    if dir_path.exists():
-                        v_videos.extend(list(dir_path.rglob('*')))
+    nv_videos = []
+    for dir_name in config.NON_VIOLENCE_PATH['non_violence_dirs']:
+        dir_path = base_path / dir_name
+        if dir_path.exists():
+            nv_videos.extend(list(dir_path.rglob('*')))
 
-                nv_videos = []
-                for dir_name in v_path['non_violence_dirs']:
-                    dir_path = base_path / dir_name
-                    if dir_path.exists():
-                        nv_videos.extend(list(dir_path.rglob('*')))
-            else:
-                v_videos = list(v_path.rglob('*')) if v_path.exists() else []
-                nv_videos = list(nv_path.rglob('*')) if nv_path.exists() else []
+    v_train = int(len(v_videos) * config.SPLIT_RATIO)
+    v_val = len(v_videos) - v_train
+    nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
+    nv_val = len(nv_videos) - nv_train
 
-            v_train = int(len(v_videos) * config.SPLIT_RATIO)
-            v_val = len(v_videos) - v_train
-            nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
-            nv_val = len(nv_videos) - nv_train
+    print(f"Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
+    print(f"Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
+    print(f"Total: {len(v_videos) + len(nv_videos)} videos")
 
-            dataset_train = v_train + nv_train
-            dataset_val = v_val + nv_val
+    total_train = v_train + nv_train
+    total_val = v_val + nv_val
 
-            print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
-            print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
-            print(f"  Dataset total: {len(v_videos) + len(nv_videos)} -> {dataset_train} train, {dataset_val} val")
-
-            total_violence += len(v_videos)
-            total_non_violence += len(nv_videos)
-            total_train += dataset_train
-            total_val += dataset_val
-
-        print(f"\n{'=' * 60}")
-        print(f"TOTAL COMBINED:")
-        print(f"{'=' * 60}")
-        print(f"Violence: {total_violence} videos")
-        print(f"Non-Violence: {total_non_violence} videos")
-        print(f"Total: {total_violence + total_non_violence} videos")
-        print()
-        print(f"Training set: {total_train} videos ({total_train / (total_violence + total_non_violence) * 100:.1f}%)")
-        print(f"Validation set: {total_val} videos ({total_val / (total_violence + total_non_violence) * 100:.1f}%)")
-
-    else:
-        print(f"\n{config.DATASET_NAME} Dataset")
-        print("-" * 60)
-
-        if isinstance(config.VIOLENCE_PATH, dict) and config.VIOLENCE_PATH.get('type') == 'multiclass':
-            base_path = Path(config.VIOLENCE_PATH['path'])
-            v_videos = []
-            for dir_name in config.VIOLENCE_PATH['violence_dirs']:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    v_videos.extend(list(dir_path.rglob('*')))
-
-            nv_videos = []
-            for dir_name in config.NON_VIOLENCE_PATH['non_violence_dirs']:
-                dir_path = base_path / dir_name
-                if dir_path.exists():
-                    nv_videos.extend(list(dir_path.rglob('*')))
-        else:
-            v_videos = list(config.VIOLENCE_PATH.rglob('*')) if config.VIOLENCE_PATH.exists() else []
-            nv_videos = list(config.NON_VIOLENCE_PATH.rglob('*')) if config.NON_VIOLENCE_PATH.exists() else []
-
-        v_train = int(len(v_videos) * config.SPLIT_RATIO)
-        v_val = len(v_videos) - v_train
-        nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
-        nv_val = len(nv_videos) - nv_train
-
-        print(f"Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
-        print(f"Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
-        print(f"Total: {len(v_videos) + len(nv_videos)} videos")
-
-        total_train = v_train + nv_train
-        total_val = v_val + nv_val
-
-        print(f"\nTraining set: {total_train} videos ({config.SPLIT_RATIO:.0%})")
-        print(f"Validation set: {total_val} videos ({1 - config.SPLIT_RATIO:.0%})")
+    print(f"\nTraining set: {total_train} videos ({config.SPLIT_RATIO:.0%})")
+    print(f"Validation set: {total_val} videos ({1 - config.SPLIT_RATIO:.0%})")
 
 
 def main():
-    parser = argparse.ArgumentParser(description='SlowFast Violence Detection Pipeline')
+    parser = argparse.ArgumentParser(description='X3D Violence Detection Pipeline')
     parser.add_argument('--mode', type=str, required=True,
                         choices=['train', 'evaluate', 'info'],
                         help='Mode: train, evaluate, or info')
-    parser.add_argument('--dataset', type=str, default='Crowd',
-                        choices=['Crowd', 'Hockey', 'Movies', 'RLVS', 'Mix', 'AI4RiSK'],
-                        help='Dataset name')
     parser.add_argument('--batch_size', type=int, default=None,
                         help='Batch size')
     parser.add_argument('--epochs', type=int, default=None,
@@ -210,7 +119,7 @@ def main():
 
     args = parser.parse_args()
 
-    config = SlowFastConfig(dataset_name=args.dataset)
+    config = X3DConfig()
 
     if args.batch_size is not None:
         config.BATCH_SIZE = args.batch_size
@@ -223,7 +132,7 @@ def main():
     print(f"\n{'=' * 60}")
     print(f"CONFIGURATION")
     print(f"{'=' * 60}")
-    print(f"Model: SlowFast ResNet50")
+    print(f"Model: X3D-{config.X3D_VERSION.upper()}")
     print(f"Dataset: {config.DATASET_NAME}")
     print(f"Device: {config.DEVICE}")
     print(f"CUDA available: {torch.cuda.is_available()}")
@@ -233,8 +142,7 @@ def main():
     print(f"Accumulation steps: {config.ACCUMULATION_STEPS}")
     print(f"Effective batch size: {config.EFFECTIVE_BATCH_SIZE}")
     print(f"Epochs: {config.NUM_EPOCHS}")
-    print(f"Slow frames: {config.NUM_FRAMES_SLOW}, Fast frames: {config.NUM_FRAMES_FAST}")
-    print(f"Alpha: {config.SLOWFAST_ALPHA}")
+    print(f"Frames: {config.NUM_FRAMES}, Temporal stride: {config.TEMPORAL_STRIDE}")
     print(f"Backbone LR: {config.BACKBONE_LR}")
     print(f"Head LR: {config.HEAD_LR}")
     print(f"Weight Decay: {config.WEIGHT_DECAY}")

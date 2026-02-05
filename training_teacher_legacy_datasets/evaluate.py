@@ -528,7 +528,7 @@ def evaluate_model_multiview_with_json(model_path, config, num_clips=10):
 
 
 def main():
-    config = R3DTransferConfig(dataset_name="Crowd")
+    config = R3DTransferConfig(dataset_name="Mix")
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"

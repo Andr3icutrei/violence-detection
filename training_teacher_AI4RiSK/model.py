@@ -3,19 +3,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SlowFastViolence(nn.Module):
-    def __init__(self, num_classes=2, pretrained=True, dropout_p=0.5, alpha=4):
-        super(SlowFastViolence, self).__init__()
+class X3DViolence(nn.Module):
+    def __init__(self, num_classes=2, pretrained=True, dropout_p=0.5, x3d_version='m'):
+        super(X3DViolence, self).__init__()
 
-        self.alpha = alpha
+        self.x3d_version = x3d_version.lower()
 
         try:
-            from pytorchvideo.models.hub import slowfast_r50
-
-            if pretrained:
-                self.backbone = slowfast_r50(pretrained=True)
+            if self.x3d_version == 'xs':
+                from pytorchvideo.models.hub import x3d_xs
+                self.backbone = x3d_xs(pretrained=pretrained)
+            elif self.x3d_version == 's':
+                from pytorchvideo.models.hub import x3d_s
+                self.backbone = x3d_s(pretrained=pretrained)
+            elif self.x3d_version == 'm':
+                from pytorchvideo.models.hub import x3d_m
+                self.backbone = x3d_m(pretrained=pretrained)
+            elif self.x3d_version == 'l':
+                from pytorchvideo.models.hub import x3d_l
+                self.backbone = x3d_l(pretrained=pretrained)
             else:
-                self.backbone = slowfast_r50(pretrained=False)
+                raise ValueError(f"Unknown X3D version: {x3d_version}. Use 'xs', 's', 'm', or 'l'")
 
             proj_module = self.backbone.blocks[-1].proj
             in_features = None
@@ -29,7 +37,7 @@ class SlowFastViolence(nn.Module):
                         break
 
             if in_features is None:
-                in_features = 2304
+                in_features = 2048
 
             self.backbone.blocks[-1].proj = nn.Sequential(
                 nn.Dropout(p=dropout_p),
@@ -41,63 +49,35 @@ class SlowFastViolence(nn.Module):
                 "pytorchvideo not installed. Install with: pip install pytorchvideo"
             )
 
-        self.gradients_slow = None
-        self.gradients_fast = None
-        self.activations_slow = None
-        self.activations_fast = None
+        self.gradients = None
+        self.activations = None
 
-    def save_gradient_slow(self, grad):
-        self.gradients_slow = grad
-
-    def save_gradient_fast(self, grad):
-        self.gradients_fast = grad
+    def save_gradient(self, grad):
+        self.gradients = grad
 
     def forward(self, x, return_cam=False):
-        if not isinstance(x, list):
-            raise ValueError("Input must be a list [slow_pathway, fast_pathway]")
-
-        slow_pathway, fast_pathway = x
-
         if return_cam:
             for name, module in self.backbone.named_modules():
-                if 'blocks.5.res_blocks.2.branch1_conv' in name:
-                    def hook_slow(module, input, output):
-                        self.activations_slow = output
+                if 'blocks.4' in name and 'branch1_conv' in name:
+                    def hook(module, input, output):
+                        self.activations = output
                         if output.requires_grad:
-                            output.register_hook(self.save_gradient_slow)
+                            output.register_hook(self.save_gradient)
+                    module.register_forward_hook(hook)
 
-                    module.register_forward_hook(hook_slow)
-
-                if 'blocks.4.res_blocks.2.branch1_conv' in name:
-                    def hook_fast(module, input, output):
-                        self.activations_fast = output
-                        if output.requires_grad:
-                            output.register_hook(self.save_gradient_fast)
-
-                    module.register_forward_hook(hook_fast)
-
-        output = self.backbone([slow_pathway, fast_pathway])
-
+        output = self.backbone(x)
         return output
 
-    def get_cam(self, target_class, pathway='slow'):
-        if pathway == 'slow':
-            gradients = self.gradients_slow
-            activations = self.activations_slow
-        else:
-            gradients = self.gradients_fast
-            activations = self.activations_fast
-
-        if gradients is None or activations is None:
+    def get_cam(self, target_class):
+        if self.gradients is None or self.activations is None:
             return None
 
-        gradients = gradients.detach()
-        activations = activations.detach()
+        gradients = self.gradients.detach()
+        activations = self.activations.detach()
 
         weights = torch.mean(gradients, dim=(2, 3, 4), keepdim=True)
         cam = torch.sum(weights * activations, dim=1, keepdim=True)
         cam = F.relu(cam)
-
         cam = cam.squeeze(1)
 
         batch_size = cam.size(0)
@@ -110,8 +90,8 @@ class SlowFastViolence(nn.Module):
 
         return torch.stack(cams)
 
-    def get_spatial_cam(self, target_class, pathway='slow'):
-        cam_3d = self.get_cam(target_class, pathway)
+    def get_spatial_cam(self, target_class):
+        cam_3d = self.get_cam(target_class)
         if cam_3d is None:
             return None
 

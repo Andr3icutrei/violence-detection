@@ -6,9 +6,9 @@ from tqdm import tqdm
 import json
 from pathlib import Path
 
-from model import SlowFastViolence
-from dataset import SlowFastVideoDataset
-from config import SlowFastConfig
+from model import X3DViolence
+from dataset import X3DVideoDataset
+from config import X3DConfig
 
 
 class EarlyStopping:
@@ -31,20 +31,23 @@ class EarlyStopping:
             self.counter = 0
 
 
-class SlowFastTrainer:
+class X3DTrainer:
     def __init__(self, config):
         self.config = config
         self.device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
 
-        self.model = SlowFastViolence(
+        self.model = X3DViolence(
             num_classes=2,
             pretrained=config.USE_PRETRAINED,
             dropout_p=config.DROPOUT_P,
-            alpha=config.SLOWFAST_ALPHA
+            x3d_version=config.X3D_VERSION
         ).to(self.device)
 
-        self.criterion = nn.CrossEntropyLoss(label_smoothing=config.LABEL_SMOOTHING)
-
+        class_weights = torch.tensor([0.78, 1.36]).to(self.device)
+        self.criterion = nn.CrossEntropyLoss(
+            weight=class_weights,
+            label_smoothing=config.LABEL_SMOOTHING
+        )
         self._setup_optimizer()
 
         self.train_loader = self._create_dataloader(training=True)
@@ -61,7 +64,7 @@ class SlowFastTrainer:
     def _setup_optimizer(self):
         if self.config.FREEZE_BACKBONE:
             for name, param in self.model.named_parameters():
-                if 'blocks.6' not in name:
+                if 'blocks.5' not in name:
                     param.requires_grad = False
 
         backbone_params = []
@@ -69,7 +72,7 @@ class SlowFastTrainer:
 
         for name, param in self.model.named_parameters():
             if param.requires_grad:
-                if 'blocks.6' in name or 'proj' in name:
+                if 'blocks.5' in name or 'proj' in name:
                     head_params.append(param)
                 else:
                     backbone_params.append(param)
@@ -121,20 +124,14 @@ class SlowFastTrainer:
             self.scheduler = None
 
     def _create_dataloader(self, training):
-        if self.config.DATASET_NAME == 'Mix':
-            violence_paths, non_violence_paths = self.config.get_mix_paths()
-        else:
-            violence_paths = self.config.VIOLENCE_PATH
-            non_violence_paths = self.config.NON_VIOLENCE_PATH
+        violence_path = self.config.VIOLENCE_PATH
+        non_violence_path = self.config.NON_VIOLENCE_PATH
 
-        dataset = SlowFastVideoDataset(
-            violence_path=violence_paths,
-            non_violence_path=non_violence_paths,
-            num_frames_slow=self.config.NUM_FRAMES_SLOW,
-            num_frames_fast=self.config.NUM_FRAMES_FAST,
-            alpha=self.config.SLOWFAST_ALPHA,
-            tau_slow=self.config.SLOWFAST_TAU_SLOW,
-            tau_fast=self.config.SLOWFAST_TAU_FAST,
+        dataset = X3DVideoDataset(
+            violence_path=violence_path,
+            non_violence_path=non_violence_path,
+            num_frames=self.config.NUM_FRAMES,
+            temporal_stride=self.config.TEMPORAL_STRIDE,
             split_ratio=self.config.SPLIT_RATIO,
             training=training,
             augment=True,
@@ -163,11 +160,10 @@ class SlowFastTrainer:
         self.optimizer.zero_grad()
 
         for batch_idx, (inputs, labels) in enumerate(pbar):
-            slow_pathway = inputs[0].to(self.device)
-            fast_pathway = inputs[1].to(self.device)
+            inputs = inputs.to(self.device)
             labels = labels.to(self.device)
 
-            outputs = self.model([slow_pathway, fast_pathway])
+            outputs = self.model(inputs)
             loss = self.criterion(outputs, labels)
 
             loss = loss / self.config.ACCUMULATION_STEPS
@@ -212,11 +208,10 @@ class SlowFastTrainer:
         with torch.no_grad():
             pbar = tqdm(self.val_loader, desc="Validation")
             for inputs, labels in pbar:
-                slow_pathway = inputs[0].to(self.device)
-                fast_pathway = inputs[1].to(self.device)
+                inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
 
-                outputs = self.model([slow_pathway, fast_pathway])
+                outputs = self.model(inputs)
                 loss = self.criterion(outputs, labels)
 
                 running_loss += loss.item() * labels.size(0)
@@ -311,20 +306,19 @@ class SlowFastTrainer:
 
 
 def main():
-    config = SlowFastConfig()
+    config = X3DConfig()
 
     print(f"Device: {config.DEVICE}")
-    print(f"Training SlowFast ResNet50 on {config.DATASET_NAME} dataset")
+    print(f"Training X3D-{config.X3D_VERSION.upper()} on {config.DATASET_NAME} dataset")
     print(f"Pretrained: {config.USE_PRETRAINED}")
-    print(f"Slow frames: {config.NUM_FRAMES_SLOW}, Fast frames: {config.NUM_FRAMES_FAST}")
-    print(f"Alpha: {config.SLOWFAST_ALPHA}")
+    print(f"Frames: {config.NUM_FRAMES}, Temporal stride: {config.TEMPORAL_STRIDE}")
     print(f"Dropout: {config.DROPOUT_P}")
     print(f"Label Smoothing: {config.LABEL_SMOOTHING}")
     print(f"Backbone LR: {config.BACKBONE_LR}, Head LR: {config.HEAD_LR}")
     if config.USE_SCHEDULER:
         print(f"Scheduler: {config.SCHEDULER_TYPE}")
 
-    trainer = SlowFastTrainer(config)
+    trainer = X3DTrainer(config)
     trainer.train()
 
 
