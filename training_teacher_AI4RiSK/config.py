@@ -43,7 +43,7 @@ class X3DConfig:
 
     DROPOUT_P = 0.5
     LABEL_SMOOTHING = 0.1
-    GRAD_CLIP = 1.0
+    GRAD_CLIP = 2.0
 
     USE_SCHEDULER = True
     SCHEDULER_TYPE = "cosine"
