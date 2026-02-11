@@ -46,7 +46,6 @@ class X3DVideoDataset(Dataset):
         non_violent_videos = []
 
         random.seed(self.seed)
-
         base_path = Path(self.base_path)
 
         for dir_name in self.violence_dirs:
@@ -81,28 +80,23 @@ class X3DVideoDataset(Dataset):
         videos, labels = zip(*combined) if combined else ([], [])
 
         random.seed()
-
         return list(videos), list(labels)
 
     def _extract_frames(self, video_path):
         cap = cv2.VideoCapture(str(video_path))
         frames = []
-
         while True:
             ret, frame = cap.read()
             if not ret:
                 break
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frames.append(frame)
-
         cap.release()
         return frames
 
     def _sample_frames_x3d(self, frames):
         total_frames = len(frames)
-
-        if total_frames == 0:
-            return None
+        if total_frames == 0: return None
 
         temporal_window = self.num_frames * self.temporal_stride
 
@@ -113,7 +107,6 @@ class X3DVideoDataset(Dataset):
                 start_idx = random.randint(0, total_frames - temporal_window)
             else:
                 start_idx = (total_frames - temporal_window) // 2
-
             indices = list(range(start_idx, start_idx + temporal_window))
 
         frame_indices = indices[::self.temporal_stride][:self.num_frames]
@@ -124,7 +117,6 @@ class X3DVideoDataset(Dataset):
                 frame_indices.append(frame_indices[i % len(frame_indices)])
 
         selected_frames = [frames[i] for i in frame_indices]
-
         return selected_frames
 
     def _preprocess_frame(self, frame, target_size=256):
@@ -137,28 +129,10 @@ class X3DVideoDataset(Dataset):
             frame = cv2.resize(frame, (new_w, new_h))
 
             if self.augment:
+                if random.random() > 0.5: frame = np.fliplr(frame).copy()
                 if random.random() > 0.5:
-                    frame = np.fliplr(frame).copy()
-
-                if random.random() > 0.5:
-                    brightness_factor = random.uniform(0.8, 1.2)
-                    frame = np.clip(frame * brightness_factor, 0, 1)
-
-                if random.random() > 0.5:
-                    contrast_factor = random.uniform(0.8, 1.2)
-                    mean_val = frame.mean()
-                    frame = np.clip((frame - mean_val) * contrast_factor + mean_val, 0, 1)
-
-                if random.random() > 0.5:
-                    hue_factor = random.uniform(-0.1, 0.1)
-                    frame_uint8 = (frame * 255).astype(np.uint8)
-                    hsv = cv2.cvtColor(frame_uint8, cv2.COLOR_RGB2HSV).astype(np.float32)
-                    hsv[:, :, 0] = (hsv[:, :, 0] + hue_factor * 180) % 180
-                    frame = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB).astype(np.float32) / 255.0
-
-                if random.random() > 0.7:
-                    noise = np.random.normal(0, 0.02, frame.shape)
-                    frame = np.clip(frame + noise, 0, 1)
+                    brightness = random.uniform(0.8, 1.2)
+                    frame = np.clip(frame * brightness, 0, 1)
 
             h, w = frame.shape[:2]
             if self.training and self.augment:
@@ -167,34 +141,31 @@ class X3DVideoDataset(Dataset):
             else:
                 top = (h - self.crop_size) // 2
                 left = (w - self.crop_size) // 2
-
             frame = frame[top:top + self.crop_size, left:left + self.crop_size]
+
         else:
+            frame = cv2.resize(frame, (self.crop_size, self.crop_size))
+
             if self.augment:
                 if random.random() > 0.5:
                     frame = np.fliplr(frame).copy()
 
                 if random.random() > 0.5:
-                    brightness_factor = random.uniform(0.8, 1.2)
-                    frame = np.clip(frame * brightness_factor, 0, 1)
+                    factor = random.uniform(0.7, 1.3)
+                    frame = np.clip(frame * factor, 0, 1)
 
                 if random.random() > 0.5:
-                    contrast_factor = random.uniform(0.8, 1.2)
+                    factor = random.uniform(0.7, 1.3)
                     mean_val = frame.mean()
-                    frame = np.clip((frame - mean_val) * contrast_factor + mean_val, 0, 1)
+                    frame = np.clip((frame - mean_val) * factor + mean_val, 0, 1)
 
-                if random.random() > 0.5:
-                    hue_factor = random.uniform(-0.1, 0.1)
-                    frame_uint8 = (frame * 255).astype(np.uint8)
-                    hsv = cv2.cvtColor(frame_uint8, cv2.COLOR_RGB2HSV).astype(np.float32)
-                    hsv[:, :, 0] = (hsv[:, :, 0] + hue_factor * 180) % 180
-                    frame = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB).astype(np.float32) / 255.0
-
-                if random.random() > 0.7:
+                if random.random() > 0.3:
                     noise = np.random.normal(0, 0.02, frame.shape)
                     frame = np.clip(frame + noise, 0, 1)
 
-            frame = cv2.resize(frame, (self.crop_size, self.crop_size))
+                if random.random() > 0.5:
+                    k = random.choice([3, 5])
+                    frame = cv2.GaussianBlur(frame, (k, k), 0)
 
         return frame
 
@@ -202,26 +173,28 @@ class X3DVideoDataset(Dataset):
         return len(self.video_paths)
 
     def __getitem__(self, idx):
-        video_path = self.video_paths[idx]
-        label = self.labels[idx]
+        try:
+            video_path = self.video_paths[idx]
+            label = self.labels[idx]
 
-        frames = self._extract_frames(video_path)
-        selected_frames = self._sample_frames_x3d(frames)
+            frames = self._extract_frames(video_path)
+            selected_frames = self._sample_frames_x3d(frames)
 
-        if selected_frames is None:
+            if selected_frames is None:
+                return self.__getitem__((idx + 1) % len(self))
+
+            if len(selected_frames) != self.num_frames:
+                return self.__getitem__((idx + 1) % len(self))
+
+            processed_frames = [self._preprocess_frame(frame) for frame in selected_frames]
+
+            sequence = np.stack(processed_frames, axis=0)
+            tensor = torch.FloatTensor(sequence).permute(3, 0, 1, 2)
+
+            tensor = (tensor - self.mean) / self.std
+            label = torch.LongTensor([label])[0]
+
+            return tensor, label
+
+        except Exception:
             return self.__getitem__((idx + 1) % len(self))
-
-        if len(selected_frames) != self.num_frames:
-            return self.__getitem__((idx + 1) % len(self))
-
-        processed_frames = [self._preprocess_frame(frame) for frame in selected_frames]
-
-        sequence = np.stack(processed_frames, axis=0)
-
-        tensor = torch.FloatTensor(sequence).permute(3, 0, 1, 2)
-
-        tensor = (tensor - self.mean) / self.std
-
-        label = torch.LongTensor([label])[0]
-
-        return tensor, label

@@ -3,7 +3,7 @@ from pathlib import Path
 
 class X3DConfig:
     DATASET_PATH = Path("../../Datasets")
-    DATASET_NAME = "AI4RiSK"
+    DATASET_NAME = "AI4RiSK_CROPPED_SR"
 
     VIOLENCE_PATH = None
     NON_VIOLENCE_PATH = None
@@ -18,12 +18,12 @@ class X3DConfig:
     INPUT_SIZE = 224
     CROP_SIZE = 224
 
-    USE_CROP = True
+    USE_CROP = False
 
-    BATCH_SIZE = 8
+    BATCH_SIZE = 12
     NUM_EPOCHS = 100
 
-    ACCUMULATION_STEPS = 4
+    ACCUMULATION_STEPS = 3
     EFFECTIVE_BATCH_SIZE = BATCH_SIZE * ACCUMULATION_STEPS
 
     OPTIMIZER = "adamw"
@@ -65,7 +65,7 @@ class X3DConfig:
 
     AVAILABLE_DATASETS = {
         'AI4RiSK': {
-            'path': DATASET_PATH / 'AI4Risk',
+            'path': DATASET_PATH / 'AI4RiSK_CROPPED_SR',
             'non_violence_dirs': ['0'],
             'violence_dirs': ['1', '2', '3', '4'],
             'type': 'multiclass'
@@ -84,6 +84,6 @@ class X3DConfig:
             self.NON_VIOLENCE_PATH = dataset_info
             self.SAVE_DIR = Path("checkpoints_x3d_ai4risk")
             self.MODEL_NAME = "x3d_violence_ai4risk"
-            self.USE_CROP = True
+            self.USE_CROP = False
         else:
             raise ValueError(f"Dataset {dataset_name} not supported. Only AI4RiSK is available.")
