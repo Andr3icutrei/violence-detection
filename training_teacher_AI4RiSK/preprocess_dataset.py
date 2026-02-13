@@ -5,38 +5,72 @@ from pathlib import Path
 from ultralytics import YOLO
 from cv2 import dnn_superres
 
-# ================= CONFIGURARE =================
 INPUT_ROOT = Path(r"../../Datasets/AI4RiSK")
-OUTPUT_ROOT = Path(r"../../Datasets/AI4RiSK_CROPPED_SR")
+OUTPUT_ROOT = Path(r"../../Datasets/AI4RiSK_CROPPED_SR_V2")
 TARGET_SIZE = (224, 224)
-CONFIDENCE_THRESHOLD = 0.3
-PADDING_PIXELS = 10
-# Calea catre modelul descarcat (FSRCNN_x3.pb)
+MIN_CROP_SIZE = (140, 140)
+CONFIDENCE_THRESHOLD = 0.25
+PADDING_PIXELS = 20
 SR_MODEL_PATH = "fsrcnn_x3.pb"
-USE_SUPER_RES = True  # Seteaza pe False daca vrei doar Lanczos (mai rapid, calitate mai slaba)
+USE_SUPER_RES = True
 
-
-# ===============================================
 
 def init_super_res():
-    """Initializare model Super Resolution"""
     if not os.path.exists(SR_MODEL_PATH):
-        print(f"ATENTIE: Nu am gasit {SR_MODEL_PATH}. Voi folosi doar resize standard.")
         return None
-
     try:
         sr = dnn_superres.DnnSuperResImpl_create()
         sr.readModel(SR_MODEL_PATH)
-        # Setam modelul si scara (x3 inseamna ca inmulteste rezolutia cu 3)
         sr.setModel("fsrcnn", 3)
-        # Daca vrei pe GPU (CUDA):
         sr.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         sr.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-        print("Model Super Resolution incarcat cu succes pe GPU.")
         return sr
-    except Exception as e:
-        print(f"Eroare la incarcarea SR: {e}")
+    except:
         return None
+
+
+def get_motion_bbox(frames, threshold=25):
+    if len(frames) < 2:
+        return None
+
+    first_gray = cv2.cvtColor(frames[0], cv2.COLOR_BGR2GRAY)
+    first_gray = cv2.GaussianBlur(first_gray, (21, 21), 0)
+
+    min_x, min_y = float('inf'), float('inf')
+    max_x, max_y = float('-inf'), float('-inf')
+    found_motion = False
+
+    for i in range(1, len(frames), 3):
+        frame = frames[i]
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+
+        frame_delta = cv2.absdiff(first_gray, gray)
+        thresh = cv2.threshold(frame_delta, threshold, 255, cv2.THRESH_BINARY)[1]
+        thresh = cv2.dilate(thresh, None, iterations=2)
+
+        cnts, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        for c in cnts:
+            if cv2.contourArea(c) < 150:
+                continue
+            found_motion = True
+            (x, y, w, h) = cv2.boundingRect(c)
+            min_x = min(min_x, x)
+            min_y = min(min_y, y)
+            max_x = max(max_x, x + w)
+            max_y = max(max_y, y + h)
+
+    if not found_motion:
+        return None
+
+    h_img, w_img = frames[0].shape[:2]
+    x1 = int(max(0, min_x - PADDING_PIXELS))
+    y1 = int(max(0, min_y - PADDING_PIXELS))
+    x2 = int(min(w_img, max_x + PADDING_PIXELS))
+    y2 = int(min(h_img, max_y + PADDING_PIXELS))
+
+    return (x1, y1, x2 - x1, y2 - y1)
 
 
 def get_person_bbox_yolo(frames, model):
@@ -46,10 +80,9 @@ def get_person_bbox_yolo(frames, model):
     max_x, max_y = float('-inf'), float('-inf')
     found_person = False
 
-    # Pentru viteza, putem verifica 1 din 2 frame-uri, dar pentru precizie lasam toate
-    for frame in frames:
-        results = model.predict(frame, classes=[0], conf=CONFIDENCE_THRESHOLD, verbose=False, device=0)
-
+    step = max(1, len(frames) // 10)
+    for i in range(0, len(frames), step):
+        results = model.predict(frames[i], classes=[0], conf=CONFIDENCE_THRESHOLD, verbose=False)
         for result in results:
             boxes = result.boxes
             if len(boxes) > 0:
@@ -57,14 +90,13 @@ def get_person_bbox_yolo(frames, model):
                 coords = boxes.xyxy.cpu().numpy()
                 for box in coords:
                     x1, y1, x2, y2 = box
-                    min_x = min(min_x, x1);
+                    min_x = min(min_x, x1)
                     min_y = min(min_y, y1)
-                    max_x = max(max_x, x2);
+                    max_x = max(max_x, x2)
                     max_y = max(max_y, y2)
 
     if not found_person:
-        h, w = frames[0].shape[:2]
-        return (0, 0, w, h)
+        return None
 
     h_img, w_img = frames[0].shape[:2]
     x1 = int(max(0, min_x - PADDING_PIXELS))
@@ -72,28 +104,52 @@ def get_person_bbox_yolo(frames, model):
     x2 = int(min(w_img, max_x + PADDING_PIXELS))
     y2 = int(min(h_img, max_y + PADDING_PIXELS))
 
-    # Asiguram dimensiuni valide
-    if (x2 - x1) <= 0 or (y2 - y1) <= 0: return (0, 0, w_img, h_img)
-
     return (x1, y1, x2 - x1, y2 - y1)
 
 
-def process_frame_smart(frame, bbox, target_size, sr_model=None):
+def get_smart_bbox(frames, model):
+    h_img, w_img = frames[0].shape[:2]
+
+    bbox_yolo = get_person_bbox_yolo(frames, model)
+    bbox_motion = get_motion_bbox(frames)
+
+    final_box = (0, 0, w_img, h_img)
+
+    if bbox_yolo is not None:
+        final_box = bbox_yolo
+    elif bbox_motion is not None:
+        final_box = bbox_motion
+
+    x, y, w, h = final_box
+    cx = x + w // 2
+    cy = y + h // 2
+
+    target_w = max(w, MIN_CROP_SIZE[0])
+    target_h = max(h, MIN_CROP_SIZE[1])
+
+    x1 = max(0, cx - target_w // 2)
+    y1 = max(0, cy - target_h // 2)
+    x2 = min(w_img, x1 + target_w)
+    y2 = min(h_img, y1 + target_h)
+
+    if x2 == w_img: x1 = max(0, x2 - target_w)
+    if y2 == h_img: y1 = max(0, y2 - target_h)
+
+    return (int(x1), int(y1), int(x2 - x1), int(y2 - y1))
+
+
+def process_frame(frame, bbox, target_size, sr_model=None):
     x, y, w, h = bbox
     crop = frame[y:y + h, x:x + w]
 
     if crop.size == 0: return cv2.resize(frame, target_size)
 
-    # 1. Aplicam Super Resolution daca crop-ul e mic
-    # Daca crop-ul e deja mai mare decat target-ul, nu are sens sa facem SR
     if sr_model and (w < target_size[0] or h < target_size[1]):
         try:
-            # Upscale (ex: de la 50x50 -> 150x150)
             crop = sr_model.upsample(crop)
         except:
-            pass  # Fallback la resize normal in caz de eroare
+            pass
 
-    # 2. Square Padding (Benzi negre)
     h_c, w_c = crop.shape[:2]
     max_dim = max(h_c, w_c)
 
@@ -103,24 +159,19 @@ def process_frame_smart(frame, bbox, target_size, sr_model=None):
     right = max_dim - w_c - left
 
     padded = cv2.copyMakeBorder(crop, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-
-    # 3. Final Resize cu LANCZOS4 (mult mai clar decat LINEAR)
     resized = cv2.resize(padded, target_size, interpolation=cv2.INTER_LANCZOS4)
 
     return resized
 
 
 def main():
-    print("Incarcare modele...")
-    yolo_model = YOLO("yolov8n.pt")
+    yolo_model = YOLO("yolov8m.pt")
     sr_model = init_super_res() if USE_SUPER_RES else None
 
     input_path_obj = Path(INPUT_ROOT)
     all_files = []
     for ext in ['*.mp4', '*.avi', '*.mov', '*.mpg']:
         all_files.extend(input_path_obj.rglob(ext))
-
-    print(f"Start procesare {len(all_files)} videouri...")
 
     count = 0
     for file_p in all_files:
@@ -129,7 +180,6 @@ def main():
             out_p = Path(OUTPUT_ROOT) / rel_path
             out_p.parent.mkdir(parents=True, exist_ok=True)
 
-            # Citire
             cap = cv2.VideoCapture(str(file_p))
             frames = []
             while True:
@@ -140,27 +190,22 @@ def main():
 
             if len(frames) < 5: continue
 
-            # Detectie BBox Globala
-            bbox = get_person_bbox_yolo(frames, yolo_model)
+            bbox = get_smart_bbox(frames, yolo_model)
 
-            # Scriere
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             out = cv2.VideoWriter(str(out_p), fourcc, 25.0, TARGET_SIZE)
 
             for frame in frames:
-                # Aici apelam functia noua de procesare
-                processed = process_frame_smart(frame, bbox, TARGET_SIZE, sr_model)
+                processed = process_frame(frame, bbox, TARGET_SIZE, sr_model)
                 out.write(processed)
             out.release()
 
             count += 1
-            if count % 10 == 0:  # Printam mai des
-                print(f"Procesat: {count}/{len(all_files)}")
+            if count % 50 == 0:
+                print(f"Processed: {count}/{len(all_files)}")
 
         except Exception as e:
-            print(f"Eroare {file_p}: {e}")
-
-    print("Finalizat.")
+            print(f"Error {file_p}: {e}")
 
 
 if __name__ == '__main__':
