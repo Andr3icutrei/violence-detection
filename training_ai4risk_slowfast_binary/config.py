@@ -1,5 +1,4 @@
 from pathlib import Path
-import platform
 
 
 class SlowFastConfig:
@@ -9,10 +8,12 @@ class SlowFastConfig:
     VIOLENCE_PATH = None
     NON_VIOLENCE_PATH = None
 
+    SEED = 42
+
     SPLIT_RATIO = 0.8
 
-    NUM_CLASSES = 5
-    CLASS_NAMES = ['Non-Violence', 'Shooting', 'Throwing', 'Punching', 'Running/Pushing']
+    NUM_CLASSES = 2
+    CLASS_NAMES = ['Non-Violence', 'Violence']
 
     SLOWFAST_ALPHA = 4
     SLOWFAST_BETA = 0.125
@@ -26,20 +27,21 @@ class SlowFastConfig:
 
     USE_CROP = False
 
-    BATCH_SIZE = 8
+    BATCH_SIZE_FROZEN = 16
+    BATCH_SIZE_UNFROZEN = 8
     NUM_EPOCHS = 100
 
-    ACCUMULATION_STEPS = 4
-    EFFECTIVE_BATCH_SIZE = BATCH_SIZE * ACCUMULATION_STEPS
+    ACCUMULATION_STEPS_FROZEN = 2
+    ACCUMULATION_STEPS_UNFROZEN = 4
 
     OPTIMIZER = "adamw"
     BACKBONE_LR = 1e-5
     HEAD_LR = 1e-4
-    WEIGHT_DECAY = 1e-4
+    WEIGHT_DECAY = 1e-2
     BETAS = (0.9, 0.999)
     EPS = 1e-8
 
-    FREEZE_BACKBONE = False
+    FREEZE_BACKBONE = True
     UNFREEZE_EPOCH = 20
 
     NUM_WORKERS = 4
@@ -48,12 +50,12 @@ class SlowFastConfig:
     EARLY_STOPPING_PATIENCE = 15
 
     DROPOUT_P = 0.5
-    LABEL_SMOOTHING = 0.1
-    GRAD_CLIP = 2.0
+    LABEL_SMOOTHING = 0.0
+    GRAD_CLIP = 5.0
 
-    USE_FOCAL_LOSS = True
+    USE_FOCAL_LOSS = False
     FOCAL_GAMMA = 2.0
-    USE_CLASS_WEIGHTS = False
+    USE_CLASS_WEIGHTS = True
     USE_BALANCED_SAMPLING = False
 
     USE_AMP = True
@@ -64,8 +66,8 @@ class SlowFastConfig:
     T_MULT = 2
     ETA_MIN = 1e-7
 
-    SAVE_DIR = Path("checkpoints_slowfast_ai4risk")
-    MODEL_NAME = "slowfast_violence_ai4risk"
+    SAVE_DIR = Path("checkpoints_slowfast_ai4risk_binary")
+    MODEL_NAME = "slowfast_violence_ai4risk_binary"
 
     DEVICE = "cuda"
 
@@ -93,8 +95,20 @@ class SlowFastConfig:
             dataset_info = self.AVAILABLE_DATASETS['AI4RiSK']
             self.VIOLENCE_PATH = dataset_info
             self.NON_VIOLENCE_PATH = dataset_info
-            self.SAVE_DIR = Path("checkpoints_slowfast_ai4risk")
-            self.MODEL_NAME = "slowfast_violence_ai4risk"
+            self.SAVE_DIR = Path("checkpoints_slowfast_ai4risk_binary")
+            self.MODEL_NAME = "slowfast_violence_ai4risk_binary"
             self.USE_CROP = False
         else:
             raise ValueError(f"Dataset {dataset_name} not supported. Only AI4RiSK is available.")
+
+    @property
+    def BATCH_SIZE(self):
+        return self.BATCH_SIZE_FROZEN if self.FREEZE_BACKBONE else self.BATCH_SIZE_UNFROZEN
+
+    @property
+    def ACCUMULATION_STEPS(self):
+        return self.ACCUMULATION_STEPS_FROZEN if self.FREEZE_BACKBONE else self.ACCUMULATION_STEPS_UNFROZEN
+
+    @property
+    def EFFECTIVE_BATCH_SIZE(self):
+        return self.BATCH_SIZE * self.ACCUMULATION_STEPS

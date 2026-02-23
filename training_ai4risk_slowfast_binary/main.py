@@ -1,10 +1,19 @@
 import torch
+import random
+import numpy as np
 from pathlib import Path
 import argparse
 
 from config import SlowFastConfig
 from train import SlowFastTrainer
 from evaluate import evaluate_model_multiview, HeatmapGeneratorSlowFast
+
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 
 def train_model(config):
@@ -73,12 +82,25 @@ def show_dataset_info(config):
 
     base_path = Path(config.VIOLENCE_PATH['path'])
 
-    class_videos = {}
-    for i, dir_name in enumerate(['0', '1', '2', '3', '4']):
+    violence_dirs = config.VIOLENCE_PATH['violence_dirs']
+    non_violence_dirs = config.VIOLENCE_PATH['non_violence_dirs']
+
+    non_violence_videos = []
+    for dir_name in non_violence_dirs:
         dir_path = base_path / dir_name
         if dir_path.exists():
-            videos = list(dir_path.rglob('*'))
-            class_videos[i] = videos
+            non_violence_videos.extend(list(dir_path.rglob('*')))
+
+    violence_videos = []
+    for dir_name in violence_dirs:
+        dir_path = base_path / dir_name
+        if dir_path.exists():
+            violence_videos.extend(list(dir_path.rglob('*')))
+
+    class_videos = {
+        0: non_violence_videos,
+        1: violence_videos
+    }
 
     total_videos = 0
     total_train = 0
@@ -119,6 +141,7 @@ def main():
     args = parser.parse_args()
 
     config = SlowFastConfig()
+    set_seed(config.SEED)
 
     if args.batch_size is not None:
         config.BATCH_SIZE = args.batch_size

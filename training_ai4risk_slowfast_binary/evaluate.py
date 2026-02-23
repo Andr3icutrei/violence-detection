@@ -1,15 +1,22 @@
 import torch
+import random
 import cv2
 import numpy as np
 from pathlib import Path
-import matplotlib.pyplot as plt
+import imageio
 from tqdm import tqdm
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
-import json
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
 
 from model import SlowFastViolence
 from dataset import SlowFastVideoDataset
 from config import SlowFastConfig
+
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 
 class MultiViewSlowFastDataset:
@@ -32,6 +39,7 @@ class MultiViewSlowFastDataset:
         self.crop_size = crop_size
         self.seed = seed
         self.use_crop = use_crop
+        self._split_rng = random.Random(seed)
 
         self.mean = torch.tensor(mean).view(3, 1, 1, 1)
         self.std = torch.tensor(std).view(3, 1, 1, 1)
@@ -51,13 +59,13 @@ class MultiViewSlowFastDataset:
         all_labels = []
 
         base_path = Path(self.base_path)
-
         all_dirs = self.non_violence_dirs + self.violence_dirs
 
         for dir_name in all_dirs:
             dir_path = base_path / dir_name
             if dir_path.exists():
                 dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
+                self._split_rng.shuffle(dataset_videos)
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
                 if self.training:
@@ -66,7 +74,6 @@ class MultiViewSlowFastDataset:
                     selected_videos = dataset_videos[split_idx:]
 
                 label = int(dir_name)
-
                 all_videos.extend(selected_videos)
                 all_labels.extend([label] * len(selected_videos))
 
@@ -258,8 +265,6 @@ class HeatmapGeneratorSlowFast:
         return overlays
 
     def save_visualization(self, output_dir, num_samples=5):
-        import sys
-
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         print(f"\n{'=' * 60}")
@@ -305,15 +310,13 @@ class HeatmapGeneratorSlowFast:
 
         num_samples = min(num_samples, len(dataset))
         print(f"Processing {num_samples} samples...")
-        indices = range(num_samples)
 
         count_success = 0
         count_fail = 0
 
-        for idx in indices:
+        for idx in range(num_samples):
             print(f"\n--- Processing sample {idx + 1}/{num_samples} ---")
             try:
-                # INCERCAM SA EXTRAGEM NUMELE FISIERULUI ORIGINAL
                 video_name = f"video_{idx}"
                 if hasattr(dataset, 'video_paths'):
                     original_path = dataset.video_paths[idx]
@@ -341,34 +344,10 @@ class HeatmapGeneratorSlowFast:
                 overlays = self.visualize_heatmap_on_sequence(slow_seq, heatmap)
                 print(f"Created {len(overlays)} overlay frames")
 
-                num_frames_to_show = min(8, len(overlays))
-                fig, axes = plt.subplots(2, 4, figsize=(16, 8))
-                axes = axes.flatten()
+                gif_path = output_dir / f"{video_name}_class{label}_pred{pred_class}.gif"
+                imageio.mimsave(str(gif_path), overlays, fps=8, loop=0)
 
-                for i in range(num_frames_to_show):
-                    axes[i].imshow(overlays[i])
-                    axes[i].axis('off')
-                    axes[i].set_title(f"Frame {i + 1}")
-
-                for i in range(num_frames_to_show, len(axes)):
-                    axes[i].axis('off')
-
-                class_names = self.config.CLASS_NAMES
-                label_text = class_names[pred_class]
-                true_label = class_names[label]
-                confidence = probs[pred_class] * 100
-
-                plt.suptitle(f"File: {video_name}\nPred: {label_text} ({confidence:.1f}%) | True: {true_label}",
-                             fontsize=14)
-                plt.tight_layout()
-
-                # MODIFICARE AICI: Numele fisierului include acum numele original al video-ului
-                output_path = output_dir / f"{video_name}_class{label}_pred{pred_class}.png"
-
-                plt.savefig(output_path, dpi=100, bbox_inches='tight')
-                plt.close()
-
-                print(f"Saved visualization to: {output_path}")
+                print(f"Saved GIF to: {gif_path}")
                 count_success += 1
 
             except Exception as e:
@@ -387,12 +366,12 @@ class HeatmapGeneratorSlowFast:
         print(f"{'=' * 60}\n")
 
 
+import json
+
 def evaluate_model_multiview(model_path, config, num_clips=10):
     print(f"\n{'=' * 60}")
-    print(f"EVALUATING MODEL WITH MULTI-VIEW")
+    print(f"EVALUATING MODEL WITH MULTI-VIEW (BINARY)")
     print(f"{'=' * 60}")
-    print(f"Model path: {model_path}")
-    print(f"Num clips: {num_clips}")
 
     device = torch.device(config.DEVICE if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
@@ -404,11 +383,9 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
         slowfast_beta=config.SLOWFAST_BETA
     ).to(device)
 
-    print(f"Loading model checkpoint...")
     try:
         checkpoint = torch.load(model_path, map_location=device)
         model.load_state_dict(checkpoint['model_state_dict'])
-        print(f"Model loaded successfully")
         if 'epoch' in checkpoint:
             print(f"Checkpoint epoch: {checkpoint['epoch']}")
     except Exception as e:
@@ -423,12 +400,8 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
     non_violence_path = config.NON_VIOLENCE_PATH
 
     if violence_path is None or non_violence_path is None:
-        print(f"ERROR: Violence or non-violence path is None")
-        print(f"Violence path: {violence_path}")
-        print(f"Non-violence path: {non_violence_path}")
         return 0, [], [], []
 
-    print(f"\nCreating validation dataset...")
     try:
         val_dataset = MultiViewSlowFastDataset(
             violence_path=violence_path,
@@ -444,6 +417,7 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
             mean=config.KINETICS_MEAN,
             std=config.KINETICS_STD,
             crop_size=config.CROP_SIZE,
+            seed=config.SEED,
             use_crop=config.USE_CROP
         )
     except Exception as e:
@@ -452,77 +426,102 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
         traceback.print_exc()
         return 0, [], [], []
 
-    print(f"Dataset created successfully")
     print(f"Total validation videos: {len(val_dataset)}")
 
     if len(val_dataset) == 0:
-        print(f"ERROR: No videos in validation set!")
         return 0, [], [], []
 
-    correct = 0
-    total = 0
     all_preds = []
     all_labels = []
-    all_probs = []
+    all_violence_probs = []
 
-    print(f"\nStarting evaluation loop...")
     with torch.no_grad():
         for video_idx, (clips, label) in enumerate(tqdm(val_dataset, desc="Evaluating")):
-            label = label.to(device)
+            raw_label = label.item()
+            binary_label = 0 if raw_label == 0 else 1
 
             clip_outputs = []
-            for clip_idx, clip in enumerate(clips):
+            for clip in clips:
                 slow_input = clip[0].unsqueeze(0).to(device)
                 fast_input = clip[1].unsqueeze(0).to(device)
                 output = model([slow_input, fast_input])
                 clip_outputs.append(output)
 
             if len(clip_outputs) == 0:
-                print(f"WARNING: No clips for video {video_idx}")
                 continue
 
             max_output, _ = torch.max(torch.stack(clip_outputs), dim=0)
-
             probs = torch.softmax(max_output, dim=1)
-            _, predicted = torch.max(max_output, 1)
+            predicted = torch.argmax(max_output, dim=1).item()
 
-            total += 1
-            correct += (predicted == label).sum().item()
+            all_preds.append(predicted)
+            all_labels.append(binary_label)
+            all_violence_probs.append(probs[0, 1].cpu().item())
 
-            all_preds.append(predicted.cpu().numpy()[0])
-            all_labels.append(label.cpu().numpy())
-            all_probs.append(probs[0].cpu().numpy())
-
-    if total == 0:
-        print(f"ERROR: No videos processed!")
+    if len(all_labels) == 0:
+        print("ERROR: No videos processed!")
         return 0, [], [], []
 
-    accuracy = 100 * correct / total
-
+    accuracy = accuracy_score(all_labels, all_preds) * 100
+    precision = precision_score(all_labels, all_preds, zero_division=0) * 100
+    recall = recall_score(all_labels, all_preds, zero_division=0) * 100
+    f1 = f1_score(all_labels, all_preds, zero_division=0) * 100
     cm = confusion_matrix(all_labels, all_preds)
+    tn, fp, fn, tp = cm.ravel()
+    specificity = tn / (tn + fp) * 100 if (tn + fp) > 0 else 0
+    npv = tn / (tn + fn) * 100 if (tn + fn) > 0 else 0
+
+    try:
+        roc_auc = roc_auc_score(all_labels, all_violence_probs) * 100
+    except Exception as e:
+        roc_auc = None
+        print(f"ROC-AUC error: {e}")
 
     print(f"\n{'=' * 60}")
-    print(f"EVALUATION RESULTS")
+    print(f"BINARY EVALUATION RESULTS")
     print(f"{'=' * 60}")
-    print(f"\nValidation Accuracy: {accuracy:.2f}%")
-    print(f"Total videos evaluated: {total}")
-    print(f"Correct predictions: {correct}")
+    print(f"Total videos: {len(all_labels)}")
+    print(f"Accuracy:     {accuracy:.2f}%")
+    print(f"Precision:    {precision:.2f}%")
+    print(f"Recall:       {recall:.2f}%")
+    print(f"F1-Score:     {f1:.2f}%")
+    print(f"Specificity:  {specificity:.2f}%")
+    print(f"NPV:          {npv:.2f}%")
+    if roc_auc is not None:
+        print(f"ROC-AUC:      {roc_auc:.2f}%")
     print(f"\nConfusion Matrix:")
-    print(cm)
-    print("\nClassification Report:")
-    print(classification_report(all_labels, all_preds, target_names=config.CLASS_NAMES, zero_division=0))
+    print(f"                 Predicted")
+    print(f"                 Non-V  Violence")
+    print(f"Actual Non-V     {cm[0, 0]:5d}  {cm[0, 1]:5d}")
+    print(f"       Violence  {cm[1, 0]:5d}  {cm[1, 1]:5d}")
+    print(f"\nTP: {tp}  TN: {tn}  FP: {fp}  FN: {fn}")
+    print(classification_report(all_labels, all_preds, target_names=['Non-Violence', 'Violence'], zero_division=0))
 
-    print("\nPer-Class Accuracy:")
-    for i, class_name in enumerate(config.CLASS_NAMES):
-        class_mask = [l == i for l in all_labels]
-        if sum(class_mask) > 0:
-            class_correct = sum([p == l for p, l, m in zip(all_preds, all_labels, class_mask) if m])
-            class_acc = 100 * class_correct / sum(class_mask)
-            print(f"  {class_name}: {class_acc:.2f}% ({class_correct}/{sum(class_mask)})")
+    results = {
+        "total_videos": len(all_labels),
+        "accuracy": round(accuracy, 4),
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1_score": round(f1, 4),
+        "specificity": round(specificity, 4),
+        "negative_predictive_value": round(npv, 4),
+        "roc_auc": round(roc_auc, 4) if roc_auc is not None else None,
+        "confusion_matrix": {
+            "tn": int(tn),
+            "fp": int(fp),
+            "fn": int(fn),
+            "tp": int(tp)
+        },
+        "num_clips_per_video": num_clips,
+        "checkpoint_epoch": checkpoint.get('epoch', None)
+    }
 
-    print(f"{'=' * 60}\n")
+    results_path = Path(config.SAVE_DIR) / "evaluation_results.json"
+    with open(results_path, "w") as f:
+        json.dump(results, f, indent=4)
+    print(f"\nResults saved to: {results_path}")
 
-    return accuracy, all_preds, all_labels, all_probs
+    return accuracy, all_preds, all_labels, all_violence_probs
 
 
 def main():
@@ -531,6 +530,7 @@ def main():
     print("=" * 80)
 
     config = SlowFastConfig()
+    set_seed(config.SEED)
     config.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
     print(f"\nConfiguration:")
@@ -562,26 +562,15 @@ def main():
     print("STEP 1: MULTI-VIEW EVALUATION")
     print("=" * 80)
 
-    # accuracy, preds, labels, probs = evaluate_model_multiview(model_path, config, num_clips=3)
+    accuracy, all_preds, all_labels, all_probs = evaluate_model_multiview(
+        model_path=model_path,
+        config=config,
+        num_clips=4
+    )
 
-    # if accuracy > 0:
-    print(f"\n" + "=" * 80)
-    print("STEP 2: GRADCAM VISUALIZATIONS")
-    print("=" * 80)
-
-    try:
-        generator = HeatmapGeneratorSlowFast(model_path, config)
-        for name, module in generator.model.backbone.named_modules():
-            if 'blocks.5' in name or 'res_blocks' in name:
-                print(name)
-        output_dir = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
-        generator.save_visualization(output_dir, num_samples=20)
-    except Exception as e:
-        print(f"ERROR in visualization: {e}")
-        import traceback
-        traceback.print_exc()
-    # else:
-    #     print(f"\nSkipping visualization due to evaluation errors")
+    generator = HeatmapGeneratorSlowFast(model_path, config)
+    output_dir = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
+    generator.save_visualization(output_dir, num_samples=20)
 
     print(f"\n" + "=" * 80)
     print("EVALUATION COMPLETE")

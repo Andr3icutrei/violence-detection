@@ -1,0 +1,18 @@
+{
+    "total_videos": 1422,
+    "accuracy": 87.6934,
+    "precision": 83.0645,
+    "recall": 81.9085,
+    "f1_score": 82.4825,
+    "specificity": 90.8596,
+    "negative_predictive_value": 90.1728,
+    "roc_auc": 94.3198,
+    "confusion_matrix": {
+        "tn": 835,
+        "fp": 84,
+        "fn": 91,
+        "tp": 412
+    },
+    "num_clips_per_video": 4,
+    "checkpoint_epoch": 6
+}

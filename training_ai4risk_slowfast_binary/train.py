@@ -2,17 +2,21 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from torch.cuda.amp import GradScaler, autocast
+from torch.cuda.amp import GradScaler
+from torch.amp import autocast
 from tqdm import tqdm
 import json
-from pathlib import Path
 from collections import Counter
+from sklearn.metrics import f1_score, recall_score, confusion_matrix, accuracy_score
 
 from model import SlowFastViolence
 from dataset import SlowFastVideoDataset
 from config import SlowFastConfig
 from focal_loss import FocalLoss
 from balanced_sampler import create_balanced_sampler
+
+FROZEN_BLOCKS = [0, 1, 2]
+UNFREEZE_EPOCH = 20
 
 
 class EarlyStopping:
@@ -35,6 +39,53 @@ class EarlyStopping:
             self.counter = 0
 
 
+def _compute_grad_norm(model):
+    total_norm = 0.0
+    for p in model.parameters():
+        if p.grad is not None:
+            total_norm += p.grad.data.norm(2).item() ** 2
+    return total_norm ** 0.5
+
+
+def _print_epoch_metrics(split_name, loss, all_labels, all_preds, class_names):
+    acc = accuracy_score(all_labels, all_preds)
+    f1_macro = f1_score(all_labels, all_preds, average='macro', zero_division=0)
+    f1_per_class = f1_score(all_labels, all_preds, average=None, zero_division=0)
+    recall_macro = recall_score(all_labels, all_preds, average='macro', zero_division=0)
+    recall_per_class = recall_score(all_labels, all_preds, average=None, zero_division=0)
+    cm = confusion_matrix(all_labels, all_preds, labels=list(range(len(class_names))))
+
+    print(f"\n{split_name} | Loss: {loss:.4f} | Acc: {acc * 100:.2f}% | F1 macro: {f1_macro:.4f} | Recall macro: {recall_macro:.4f}")
+
+    header = f"{'Class':<22} {'F1':>8} {'Recall':>8}"
+    print(header)
+    print("-" * len(header))
+    for i, name in enumerate(class_names):
+        f1_val = f1_per_class[i] if i < len(f1_per_class) else 0.0
+        rec_val = recall_per_class[i] if i < len(recall_per_class) else 0.0
+        print(f"{name:<22} {f1_val:>8.4f} {rec_val:>8.4f}")
+
+    print("\nConfusion Matrix:")
+    col_width = 6
+    header_row = " " * 22 + "".join(f"{n[:col_width]:>{col_width}}" for n in class_names)
+    print(header_row)
+    for i, name in enumerate(class_names):
+        row = f"{name:<22}" + "".join(f"{cm[i, j]:>{col_width}}" for j in range(len(class_names)))
+        print(row)
+    print()
+
+
+def _freeze_early_blocks(model):
+    for name, param in model.named_parameters():
+        if any(f'backbone.blocks.{i}.' in name for i in FROZEN_BLOCKS):
+            param.requires_grad = False
+
+
+def _unfreeze_all(model):
+    for param in model.parameters():
+        param.requires_grad = True
+
+
 class SlowFastTrainer:
     def __init__(self, config):
         self.config = config
@@ -47,6 +98,14 @@ class SlowFastTrainer:
             slowfast_alpha=config.SLOWFAST_ALPHA,
             slowfast_beta=config.SLOWFAST_BETA
         ).to(self.device)
+
+        if config.FREEZE_BACKBONE:
+            _freeze_early_blocks(self.model)
+            frozen_names = [
+                n for n, p in self.model.named_parameters() if not p.requires_grad
+            ]
+            print(f"Frozen {len(frozen_names)} parameter tensors (backbone blocks 0, 1, 2)")
+            print(f"Training blocks 3, 4, 5 until epoch {UNFREEZE_EPOCH}")
 
         self.train_loader = self._create_dataloader(training=True)
         self.val_loader = self._create_dataloader(training=False)
@@ -83,6 +142,7 @@ class SlowFastTrainer:
         self.history = {
             'train_loss': [], 'train_acc': [],
             'val_loss': [], 'val_acc': [],
+            'train_f1': [], 'val_f1': [],
             'learning_rates': []
         }
 
@@ -106,20 +166,16 @@ class SlowFastTrainer:
         return weights
 
     def _setup_optimizer(self):
-        if self.config.FREEZE_BACKBONE:
-            for name, param in self.model.named_parameters():
-                if 'blocks.5' not in name:
-                    param.requires_grad = False
-
         backbone_params = []
         head_params = []
 
         for name, param in self.model.named_parameters():
-            if param.requires_grad:
-                if 'blocks.5' in name or 'proj' in name:
-                    head_params.append(param)
-                else:
-                    backbone_params.append(param)
+            if not param.requires_grad:
+                continue
+            if 'blocks.5' in name or 'proj' in name:
+                head_params.append(param)
+            else:
+                backbone_params.append(param)
 
         optimizer_type = self.config.OPTIMIZER.lower()
 
@@ -167,7 +223,10 @@ class SlowFastTrainer:
         else:
             self.scheduler = None
 
-    def _create_dataloader(self, training):
+    def _create_dataloader(self, training, batch_size=None):
+        if batch_size is None:
+            batch_size = self.config.BATCH_SIZE
+
         violence_path = self.config.VIOLENCE_PATH
         non_violence_path = self.config.NON_VIOLENCE_PATH
 
@@ -185,6 +244,7 @@ class SlowFastTrainer:
             mean=self.config.KINETICS_MEAN,
             std=self.config.KINETICS_STD,
             crop_size=self.config.CROP_SIZE,
+            seed=self.config.SEED,
             use_crop=self.config.USE_CROP
         )
 
@@ -198,30 +258,32 @@ class SlowFastTrainer:
 
         return DataLoader(
             dataset,
-            batch_size=self.config.BATCH_SIZE,
+            batch_size=batch_size,
             shuffle=shuffle,
             sampler=sampler,
             num_workers=self.config.NUM_WORKERS,
             pin_memory=self.config.PIN_MEMORY
         )
 
-    def train_epoch(self):
+    def train_epoch(self, pbar):
         self.model.train()
         running_loss = 0.0
         correct = 0
         total = 0
+        last_grad_norm = 0.0
 
-        pbar = tqdm(self.train_loader, desc="Training")
+        all_preds = []
+        all_labels = []
 
         self.optimizer.zero_grad()
 
-        for batch_idx, (inputs, labels) in enumerate(pbar):
+        for batch_idx, (inputs, labels) in enumerate(self.train_loader):
             slow_inputs = inputs[0].to(self.device)
             fast_inputs = inputs[1].to(self.device)
             labels = labels.to(self.device)
 
             if self.config.USE_AMP:
-                with autocast():
+                with autocast(device_type='cuda'):
                     outputs = self.model([slow_inputs, fast_inputs])
                     loss = self.criterion(outputs, labels)
                     loss = loss / self.config.ACCUMULATION_STEPS
@@ -236,6 +298,10 @@ class SlowFastTrainer:
             if (batch_idx + 1) % self.config.ACCUMULATION_STEPS == 0:
                 if self.config.USE_AMP:
                     self.scaler.unscale_(self.optimizer)
+
+                last_grad_norm = _compute_grad_norm(self.model)
+
+                if self.config.USE_AMP:
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.GRAD_CLIP)
                     self.scaler.step(self.optimizer)
                     self.scaler.update()
@@ -250,15 +316,29 @@ class SlowFastTrainer:
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
+            all_preds.extend(predicted.cpu().numpy().tolist())
+            all_labels.extend(labels.cpu().numpy().tolist())
+
+            running_f1 = f1_score(all_labels, all_preds, average='macro', zero_division=0)
+            running_recall = recall_score(all_labels, all_preds, average='macro', zero_division=0)
+
             pbar.set_postfix({
+                'phase': 'train',
                 'loss': f'{loss.item() * self.config.ACCUMULATION_STEPS:.4f}',
                 'acc': f'{100 * correct / total:.2f}%',
-                'eff_bs': self.config.EFFECTIVE_BATCH_SIZE
+                'f1': f'{running_f1:.4f}',
+                'recall': f'{running_recall:.4f}',
+                'grad_norm': f'{last_grad_norm:.2f}'
             })
+            pbar.update(1)
 
         if (batch_idx + 1) % self.config.ACCUMULATION_STEPS != 0:
             if self.config.USE_AMP:
                 self.scaler.unscale_(self.optimizer)
+
+            last_grad_norm = _compute_grad_norm(self.model)
+
+            if self.config.USE_AMP:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.GRAD_CLIP)
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
@@ -271,23 +351,27 @@ class SlowFastTrainer:
         epoch_loss = running_loss / total
         epoch_acc = correct / total
 
-        return epoch_loss, epoch_acc
+        _print_epoch_metrics("TRAIN", epoch_loss, all_labels, all_preds, self.config.CLASS_NAMES)
 
-    def validate_epoch(self):
+        return epoch_loss, epoch_acc, all_labels, all_preds
+
+    def validate_epoch(self, pbar):
         self.model.eval()
         running_loss = 0.0
         correct = 0
         total = 0
 
+        all_preds = []
+        all_labels = []
+
         with torch.no_grad():
-            pbar = tqdm(self.val_loader, desc="Validation")
-            for inputs, labels in pbar:
+            for inputs, labels in self.val_loader:
                 slow_inputs = inputs[0].to(self.device)
                 fast_inputs = inputs[1].to(self.device)
                 labels = labels.to(self.device)
 
                 if self.config.USE_AMP:
-                    with autocast():
+                    with autocast(device_type='cuda'):
                         outputs = self.model([slow_inputs, fast_inputs])
                         loss = self.criterion(outputs, labels)
                 else:
@@ -299,15 +383,27 @@ class SlowFastTrainer:
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
+                all_preds.extend(predicted.cpu().numpy().tolist())
+                all_labels.extend(labels.cpu().numpy().tolist())
+
+                running_f1 = f1_score(all_labels, all_preds, average='macro', zero_division=0)
+                running_recall = recall_score(all_labels, all_preds, average='macro', zero_division=0)
+
                 pbar.set_postfix({
+                    'phase': 'val',
                     'loss': f'{loss.item():.4f}',
-                    'acc': f'{100 * correct / total:.2f}%'
+                    'acc': f'{100 * correct / total:.2f}%',
+                    'f1': f'{running_f1:.4f}',
+                    'recall': f'{running_recall:.4f}'
                 })
+                pbar.update(1)
 
         epoch_loss = running_loss / total
         epoch_acc = correct / total
 
-        return epoch_loss, epoch_acc
+        _print_epoch_metrics("VAL", epoch_loss, all_labels, all_preds, self.config.CLASS_NAMES)
+
+        return epoch_loss, epoch_acc, all_labels, all_preds
 
     def save_checkpoint(self, epoch, is_best=False):
         checkpoint = {
@@ -337,14 +433,25 @@ class SlowFastTrainer:
             print(f"\nEpoch {epoch + 1}/{self.config.NUM_EPOCHS}")
             print("-" * 50)
 
-            if self.config.FREEZE_BACKBONE and epoch == self.config.UNFREEZE_EPOCH:
-                print("Unfreezing backbone")
-                for param in self.model.parameters():
-                    param.requires_grad = True
+            if self.config.FREEZE_BACKBONE and epoch == UNFREEZE_EPOCH:
+                print(f"Epoch {epoch + 1}: unfreezing stem, layer1, layer2 (blocks 0, 1, 2)")
+                self.config.FREEZE_BACKBONE = False
+                _unfreeze_all(self.model)
                 self._setup_optimizer()
+                trainable = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+                print(f"Trainable parameters after unfreeze: {trainable:,}")
 
-            train_loss, train_acc = self.train_epoch()
-            val_loss, val_acc = self.validate_epoch()
+                self.train_loader = self._create_dataloader(training=True, batch_size=self.config.BATCH_SIZE_UNFROZEN)
+                self.val_loader = self._create_dataloader(training=False, batch_size=self.config.BATCH_SIZE_UNFROZEN)
+                print(f"Batch size reduced to {self.config.BATCH_SIZE_UNFROZEN}, accumulation steps increased to {self.config.ACCUMULATION_STEPS_UNFROZEN}")
+
+            total_batches = len(self.train_loader) + len(self.val_loader)
+            pbar = tqdm(total=total_batches, desc=f"Epoch {epoch + 1}")
+
+            train_loss, train_acc, train_labels, train_preds = self.train_epoch(pbar)
+            val_loss, val_acc, val_labels, val_preds = self.validate_epoch(pbar)
+
+            pbar.close()
 
             if self.scheduler is not None:
                 if isinstance(self.scheduler, optim.lr_scheduler.ReduceLROnPlateau):
@@ -355,13 +462,16 @@ class SlowFastTrainer:
             current_lrs = [group['lr'] for group in self.optimizer.param_groups]
             self.history['learning_rates'].append(current_lrs)
 
+            train_f1 = f1_score(train_labels, train_preds, average='macro', zero_division=0)
+            val_f1 = f1_score(val_labels, val_preds, average='macro', zero_division=0)
+
             self.history['train_loss'].append(train_loss)
             self.history['train_acc'].append(train_acc)
             self.history['val_loss'].append(val_loss)
             self.history['val_acc'].append(val_acc)
+            self.history['train_f1'].append(train_f1)
+            self.history['val_f1'].append(val_f1)
 
-            print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc * 100:.2f}%")
-            print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc * 100:.2f}%")
             if len(current_lrs) > 1:
                 print(f"Learning Rates: Backbone={current_lrs[0]:.2e}, Head={current_lrs[1]:.2e}")
             else:
