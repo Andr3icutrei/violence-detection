@@ -11,7 +11,7 @@ class R3DTransferConfig:
     SPLIT_RATIO = 0.8
     N_FRAMES = 16
 
-    BATCH_SIZE = 16
+    BATCH_SIZE = 32
     NUM_EPOCHS = 100
 
     OPTIMIZER = "adamw"
@@ -24,8 +24,8 @@ class R3DTransferConfig:
     FREEZE_LAYERS = ['stem', 'layer1', 'layer2']
     UNFREEZE_EPOCH = 20
 
-    NUM_WORKERS = 0
-    PIN_MEMORY = False
+    NUM_WORKERS = 4
+    PIN_MEMORY = True
 
     EARLY_STOPPING_PATIENCE = 15
 
@@ -69,7 +69,7 @@ class R3DTransferConfig:
             'type': 'standard'
         },
         'AI4RiSK': {
-            'path': DATASET_PATH / 'AI4Risk',
+            'path': DATASET_PATH / 'AI4RISK_CROPPED_SR_V2',
             'non_violence_dirs': ['0'],
             'violence_dirs': ['1', '2', '3', '4'],
             'type': 'multiclass'
