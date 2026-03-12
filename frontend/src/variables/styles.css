@@ -1,0 +1,26 @@
+/* You can add global variables to this file, and also import other style files */
+@import './variables.css';
+
+.btn-primary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  margin: 0.3rem;
+  padding: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  box-sizing: border-box;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-primary-faded);
+  color: var(--color-background-faded);
+}
