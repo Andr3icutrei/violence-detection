@@ -1,9 +1,77 @@
 <div class="login-form-container">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <input
-      class=""
-      type="email"
-    />
+    <div class="input-fields-container">
+      <div class="input-group">
+        <label
+          for="email"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('email')">
+          {{'login-page.email-label' | translate}}
+        </label>
+        <input
+          id="email"
+          name="email"
+          class="input-text-primary"
+          type="email"
+          [placeholder]="'login-page.email-placeholder' | translate"
+          formControlName="email"/>
+          <app-control-error
+            [control]="form.get('email')!">
+          ></app-control-error>
+      </div>
+
+      <div class="input-group">
+        <label
+          for="password"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('password')">
+          {{'login-page.password-label' | translate}}
+        </label>
+        <input
+          id="password"
+          name="password"
+          class="input-text-primary"
+          type="password"
+          [placeholder]="'login-page.password-placeholder' | translate"
+          formControlName="password"/>
+        <app-control-error
+          [control]="form.get('password')!">
+          ></app-control-error>
+      </div>
+    </div>
+
+    <div class="input-group checkbox-group">
+      <input
+        id="rememeberMe"
+        name="rememberMe"
+        class="input-checkbox-primary"
+        type="checkbox"
+        formControlName="rememberMe"/>
+      <label for="rememeberMe" class="label-primary">{{'login-page.remember-me-label' | translate}}</label>
+    </div>
+
+    <div class="login-btns-container">
+      <button
+        type="submit"
+        class="btn-primary btn-login"
+        [disabled]="!isFormValid()">
+        {{'login-page.login' | translate}}
+      </button>
+
+      <p class="divider">{{'login-page.or-login-with' | translate}}</p>
+
+      <asl-google-signin-button
+        type="standard"
+        size="large">
+      </asl-google-signin-button>
+    </div>
+
+    <div class="redirect-link-container">
+      <p>
+        {{'login-page.dont-have-account' | translate}} <a class="redirect-link" routerLink="/register">{{'login-page.register-here' | translate}}</a>
+      </p>
+      <a class="redirect-link" routerLink="/reset-password">{{'login-page.reset-password' | translate}}</a>
+    </div>
   </form>
 </div>
 

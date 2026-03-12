@@ -1,0 +1,129 @@
+/* You can add global styles to this file, and also import other style files */
+@import './variables.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.btn-primary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  box-sizing: border-box;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-primary-faded);
+  color: var(--color-background-faded);
+}
+
+.btn-login {
+  width: 100%;
+  height: 5vh;
+  font-size: 1.1rem;
+  display: flex;
+  border-radius: 0.5rem;
+}
+
+.btn-login:disabled {
+  background-color: var(--color-primary-faded);
+  color: var(--color-background-faded);
+}
+
+.input-text-primary {
+  padding: 1.1rem 1rem;
+  border: 0.14rem solid lightgray;
+  box-shadow: 0.1rem solid var(--color-placeholder);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.input-text-primary::placeholder {
+  color: var(--color-placeholder);
+  font-weight: 500;
+}
+
+.input-text-primary:focus {
+  border: 0.15rem solid lightgray;
+  outline: none;
+}
+
+.input-checkbox-primary {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: var(--color-background);
+  color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.input-checkbox-primary:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.input-checkbox-primary:checked::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.75rem;
+  border: solid white;
+  border-width: 0 0.2rem 0.2rem 0;
+  transform: rotate(45deg);
+  margin-bottom: 0.1rem;
+}
+
+.label-primary {
+  font-weight: 600;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.redirect-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.required-asterisk::after {
+  color: var(--color-error);
+  margin-left: 0.15rem;
+  content: "*";
+}
+
+.error-message {
+  color: var(--color-error);
+  font-size: 0.9rem;
+  margin-left: 0.25rem;
+}

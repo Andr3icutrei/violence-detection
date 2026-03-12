@@ -1,0 +1,16 @@
+:root {
+  --color-primary: #6d08f1;
+  --color-primary-dark: #4c01ae;
+  --color-primary-faded: #6f1be8;
+  --color-background: #ffffff;
+  --color-background-faded: #bcbab0;
+  --color-success: #4bef4b;
+  --color-error: #f44336;
+  --color-gray: #777272;
+  --color-text: #1b1919;
+  --color-disabled: #cccccc;
+  --color-white-text: #ffffff;
+  --color-black-text: #000000;
+  --color-placeholder: #aaaaaa;
+  font-family: 'Inter', sans-serif;
+}

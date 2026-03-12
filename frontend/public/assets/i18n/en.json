@@ -1,4 +1,24 @@
 {
-  "login-page": "Login page"
+  "login-page": {
+    "email-placeholder": "Enter you email address",
+    "password-placeholder": "Enter your password",
+    "email-label": "Email",
+    "password-label": "Password",
+    "title": "Welcome!",
+    "subtitle": "Enter your credentials to get access to Violence Detection Datasets and AI-Powered Violence Detectors.",
+    "remember-me-label": "Remember me",
+    "login": "Log In",
+    "or-login-with": "Or login with",
+    "reset-password": "Forgot your password?",
+    "dont-have-account": "Don't have an account?",
+    "register-here": "Register here"
+  },
+  "error-messages": {
+    "required": "This field is required",
+    "invalid-email": "Please enter a valid email address",
+    "max-length": "This field cannot exceed {max} characters",
+    "min-length": "This field must be at least {min} characters",
+    "password-mismatch": "Passwords do not match"
+  }
 }
 
