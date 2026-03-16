@@ -1,5 +1,5 @@
 {
-  "login-page": {
+  "login-form": {
     "email-placeholder": "Enter you email address",
     "password-placeholder": "Enter your password",
     "email-label": "Email",
@@ -12,6 +12,19 @@
     "reset-password": "Forgot your password?",
     "dont-have-account": "Don't have an account?",
     "register-here": "Register here"
+  },
+  "register-form": {
+    "email-placeholder": "Enter you email address",
+    "password-placeholder": "Enter your password",
+    "confirm-password-placeholder": "Confirm your password",
+    "email-label": "Email",
+    "password-label": "Password",
+    "confirm-password-label": "Confirm Password",
+    "title": "Create an Account",
+    "subtitle": "Join us to access Violence Detection Datasets and AI-Powered Violence Detectors.",
+    "register": "Register",
+    "already-have-account": "Already have an account?",
+    "sign-in": "Sign in."
   },
   "error-messages": {
     "required": "This field is required",

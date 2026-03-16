@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 
 class UserBase(BaseModel):
@@ -7,6 +7,8 @@ class UserBase(BaseModel):
     is_active: bool = True
     is_admin: bool = False
     auth_provider: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 class CreateUserDto(UserBase):
     password: str

@@ -1,0 +1,85 @@
+<div class="form-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="input-fields-container">
+      <div class="input-group">
+        <label
+          for="email"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('email')">
+          {{'login-form.email-label' | translate}}
+        </label>
+        <input
+          id="email"
+          name="email"
+          class="input-text-primary"
+          type="email"
+          [placeholder]="'login-form.email-placeholder' | translate"
+          formControlName="email"/>
+          <app-control-error
+            [control]="form.get('email')!">
+          ></app-control-error>
+      </div>
+
+      <div class="input-group">
+        <label
+          for="password"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('password')">
+          {{'login-form.password-label' | translate}}
+        </label>
+        <div class="password-input-container">
+          <input
+            id="password"
+            name="password"
+            class="input-text-primary input-password-primary"
+            [type]="isPasswordVisible ? 'text' : 'password'"
+            [placeholder]="'login-form.password-placeholder' | translate"
+            formControlName="password"/>
+          <i
+            class="toggle-password-visibility fas"
+            [class.fa-eye-slash]="!isPasswordVisible"
+            [class.fa-eye]="isPasswordVisible"
+            (click)="togglePasswordVisibility()">
+          </i>
+        </div>
+        <app-control-error
+          [control]="form.get('password')!">
+          ></app-control-error>
+      </div>
+    </div>
+
+    <div class="input-group checkbox-group">
+      <input
+        id="rememeberMe"
+        name="rememberMe"
+        class="input-checkbox-primary"
+        type="checkbox"
+        formControlName="rememberMe"/>
+      <label for="rememeberMe" class="label-primary">{{'login-form.remember-me-label' | translate}}</label>
+    </div>
+
+    <div class="form-actions-btns-container">
+      <button
+        type="submit"
+        class="btn-primary btn-submit"
+        [disabled]="!isFormValid()">
+        {{'login-form.login' | translate}}
+      </button>
+
+      <p class="divider">{{'login-form.or-login-with' | translate}}</p>
+
+      <asl-google-signin-button
+        type="standard"
+        size="large">
+      </asl-google-signin-button>
+    </div>
+
+    <div class="redirect-link-container">
+      <p>
+        {{'login-form.dont-have-account' | translate}} <a class="redirect-link" href="" (click)="$event.preventDefault(); switchForm('register')">{{'login-form.register-here' | translate}}</a>
+      </p>
+      <a class="redirect-link" href="" (click)="$event.preventDefault(); switchForm('forgot-password')">{{'login-form.reset-password' | translate}}</a>
+    </div>
+  </form>
+</div>
+

@@ -1,7 +1,10 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './components/login-page/login-page';
+import { PortalPage } from './components/portal-page/portal-page';
+import { DashboardPage } from './components/dashboard-page/dashboard-page';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginPage },
+  { path: '', redirectTo: 'portal', pathMatch: 'full' },
+  { path: 'portal', component: PortalPage },
+  { path: 'dashboard', component: DashboardPage, canActivate: [authGuard] }, // data: { role: 'admin' } for admins
 ];

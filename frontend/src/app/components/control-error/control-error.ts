@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-control-error',
@@ -29,6 +29,9 @@ export class ControlError {
       if (this.control.hasError('minlength')) {
         const { requiredLength } = this.control.getError('minlength');
         return this.translationService.instant('error-messages.min-length', { requiredLength });
+      }
+      if(this.control.hasError('passwordMismatch')) {
+        return this.translationService.instant('error-messages.passwordMismatch');
       }
     }
     return null;

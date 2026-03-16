@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
 from schemas.users_schema import CreateUserDto
@@ -10,8 +10,8 @@ class UsersService:
     def __init__(self):
         self.users_repository = UsersRepository()
 
-    def create_user(self, db: Session, user_create_data: CreateUserDto) -> User:
-        db_user:User = self.users_repository.get_by_email(db, email=user_create_data.email)
+    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto) -> User:
+        db_user: User | None = await self.users_repository.get_by_email(db, email=user_create_data.email)
 
         if db_user:
             raise HTTPException(
@@ -20,10 +20,14 @@ class UsersService:
             )
 
         hashed_password = get_password_hash(user_create_data.password)
-        return self.users_repository.create_user(db, email=user_create_data.email, hashed_password=hashed_password)
+        return await self.users_repository.create_user(
+            db,
+            user_create_data=user_create_data,
+            hashed_password=hashed_password,
+        )
 
-    def get_user_by_id(self, db: Session, user_id: int) -> User:
-        user_to_fetch:User = self.users_repository.get_by_id(db, user_id=user_id)
+    async def get_user_by_id(self, db: AsyncSession, user_id: int) -> User:
+        user_to_fetch: User | None = await self.users_repository.get_by_id(db, user_id=user_id)
 
         if user_to_fetch is None:
             raise HTTPException(

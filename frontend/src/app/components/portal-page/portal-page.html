@@ -1,0 +1,27 @@
+<div class="login-page-container">
+  <div class="login-form">
+    <div class="login-page-logo">
+      <img class="logo-img" src="/assets/images/logo-removebg.png" alt="VioLens">
+    </div>
+    <app-form-description
+      [type]="form">
+    ></app-form-description>
+    @switch (form) {
+      @case ('login') {
+        <app-login-form
+          (formChange)="switchForm($event)">
+        ></app-login-form>
+      }
+      @case ('register') {
+        <app-register-form></app-register-form>
+      }
+      @case ('forgot-password') {
+        <app-forgot-password-form></app-forgot-password-form>
+      }
+    }
+  </div>
+
+  <div class="login-video-roll">
+
+  </div>
+</div>

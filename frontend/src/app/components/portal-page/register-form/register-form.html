@@ -1,0 +1,91 @@
+<div class="form-container">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="input-fields-container">
+      <div class="input-group">
+        <label
+          for="email"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('email')">
+          {{'register-form.email-label' | translate}}
+        </label>
+        <input
+          id="email"
+          name="email"
+          class="input-text-primary"
+          type="email"
+          [placeholder]="'register-form.email-placeholder' | translate"
+          formControlName="email"/>
+        <app-control-error
+          [control]="form.get('email')!">
+          ></app-control-error>
+      </div>
+
+      <div class="input-group">
+        <label
+          for="password"
+          class="label-primary"
+          [class.required-asterisk]="isControlRequired('password')">
+          {{'register-form.password-label' | translate}}
+        </label>
+        <div class="password-input-container">
+          <input
+            id="password"
+            name="password"
+            class="input-text-primary input-password-primary"
+            [type]="isPasswordVisible ? 'text' : 'password'"
+            [placeholder]="'register-form.password-placeholder' | translate"
+            formControlName="password"/>
+          <i
+            class="toggle-password-visibility fas"
+            [class.fa-eye-slash]="!isPasswordVisible"
+            [class.fa-eye]="isPasswordVisible"
+            (click)="togglePasswordVisibilty()">
+          </i>
+        </div>
+        <app-control-error
+          [control]="form.get('password')!">
+          ></app-control-error>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label
+        for="confirm-password"
+        class="label-primary"
+        [class.required-asterisk]="isControlRequired('confirmPassword')">
+        {{'register-form.confirm-password-label' | translate}}
+      </label>
+      <div class="password-input-container">
+        <input
+          id="password"
+          name="password"
+          class="input-text-primary input-password-primary"
+          [type]="isPasswordVisible ? 'text' : 'password'"
+          [placeholder]="'register-form.confirm-password-placeholder' | translate"
+          formControlName="confirmPassword"/>
+        <i
+          class="toggle-password-visibility fas"
+          [class.fa-eye-slash]="!isConfirmPasswordVisible"
+          [class.fa-eye]="isConfirmPasswordVisible"
+          (click)="toggleConfirmPasswordVisibility()">
+        </i>
+      </div>
+      <app-control-error
+        [control]="form.get('confirmPassword')!">
+        ></app-control-error>
+    </div>
+
+    <div class="form-actions-btns-container">
+      <button
+        type="submit"
+        class="btn-primary btn-submit"
+        [disabled]="isFormValid()">
+        {{ 'register-form.register' | translate }}
+      </button>
+    </div>
+
+    <div class="redirect-link-container">
+      <p>{{ 'register-form.already-have-account' | translate }} <a class="redirect-link" ref="" (click)="$event.preventDefault(); switchForm('login')"> {{ 'register-form.sign-in' | translate }}</a></p>
+    </div>
+  </form>
+</div>

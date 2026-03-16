@@ -1,0 +1,32 @@
+.divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-gray);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  font-weight: 550;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 0.12rem;
+  background-color: var(--color-placeholder);
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 2rem;
+}
+
+.description {
+  margin-bottom: 3vh;
+  color: var(--color-gray);
+}

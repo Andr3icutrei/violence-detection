@@ -1,15 +1,19 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
 from schemas.users_schema import CreateUserDto
 
 class UsersRepository:
-    def get_by_id(self, db: Session, user_id: int) -> User | None:
-        return db.query(User).filter(User.id == user_id).first()
+    async def get_by_id(self, db: AsyncSession, user_id: int) -> User | None:
+        result = await db.execute(select(User).filter(User.id == user_id))
+        return result.scalars().first()
 
-    def get_by_email(self, db: Session, email: str) -> User | None:
-        return db.query(User).filter(User.email == email).first()
+    async def get_by_email(self, db: AsyncSession, email: str) -> User | None:
+        result = await db.execute(select(User).filter(User.email == email))
+        return result.scalars().first()
 
-    def create_user(self, db: Session, user_create_data: CreateUserDto, hashed_password: str) -> User:
+    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto, hashed_password: str) -> User:
         try:
             user = User(
                 email=user_create_data.email,
@@ -20,12 +24,13 @@ class UsersRepository:
                 auth_provider=user_create_data.auth_provider
             )
             db.add(user)
-            db.commit()
-            db.refresh(user)
+            await db.commit()
+            await db.refresh(user)
             return user
-        except Exception as e:
-            db.rollback()
+        except SQLAlchemyError as e:
+            await db.rollback()
             raise e
 
-    def get_all(self, db: Session) -> list[User]:
-        return db.query(User).all()
+    async def get_all(self, db: AsyncSession) -> list[User]:
+        result = await db.execute(select(User))
+        return list(result.scalars().all())
