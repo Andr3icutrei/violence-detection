@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { Observable } from 'rxjs';
+import { UserResponseDto } from '../../core/api/models/user-response-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class UsersService {
 
   }
 
-  public register(email: string, password: string): Observable<string> {
+  public register(email: string, password: string): Observable<UserResponseDto> {
     if(!email || !password){
       throw new Error('Email and password are required for registration.');
     }
@@ -22,6 +23,6 @@ export class UsersService {
       "password": password
     };
 
-    return this.httpClient.post<string>(environment.apiUrl + 'create', body);
+    return this.httpClient.post<UserResponseDto>(environment.apiUrl + 'create', body);
   }
 }

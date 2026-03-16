@@ -1,6 +1,5 @@
 from fastapi import HTTPException, Request, status
 
-
 def get_token_from_cookie(request: Request) -> str:
 	token = request.cookies.get("access_token")
 	if not token:

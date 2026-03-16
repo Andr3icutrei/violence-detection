@@ -74,6 +74,22 @@
       </asl-google-signin-button>
     </div>
 
+    <div class="submit-errors">
+      @if(form.hasError('accessForbidden')) {
+        <app-form-error
+          [errorMessage]="'error-messages.access-forbidden'"
+        ></app-form-error>
+      } @else if (form.hasError('server-error')) {
+        <app-form-error
+          [errorMessage]="'error-messages.server-error'">
+        ></app-form-error>
+      } @else if (form.hasError('invalidCredentials')) {
+        <app-form-error
+          [errorMessage]="'error-messages.invalid-credentials'"
+        ></app-form-error>
+      }
+    </div>
+
     <div class="redirect-link-container">
       <p>
         {{'login-form.dont-have-account' | translate}} <a class="redirect-link" href="" (click)="$event.preventDefault(); switchForm('register')">{{'login-form.register-here' | translate}}</a>

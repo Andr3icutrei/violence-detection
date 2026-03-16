@@ -13,6 +13,9 @@ import { PortalForm } from '../portal-form.type';
 import { AuthService } from '../../../services/auth/auth-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoginRequestDto } from '../../../core/api/models/login-request-dto';
+import { Router } from '@angular/router';
+import { UserResponseDto } from '../../../core/api/models/user-response-dto';
+import { FormError } from '../../form-error/form-error';
 
 @Component({
   selector: 'app-login-form',
@@ -21,6 +24,7 @@ import { LoginRequestDto } from '../../../core/api/models/login-request-dto';
     TranslatePipe,
     GoogleSigninButtonModule,
     ControlError,
+    FormError
   ],
   standalone: true,
   templateUrl: './login-form.html',
@@ -41,6 +45,7 @@ export class LoginForm implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private socialAuthService: SocialAuthService,
     private authService: AuthService,
+    private router: Router
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -50,6 +55,17 @@ export class LoginForm implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.form.valueChanges.subscribe(() => {
+      if(
+        this.form.hasError('invalidCredentials') ||
+        this.form.hasError('accessForbidden') ||
+        this.form.hasError('serverError')
+      ) {
+        this.form.setErrors(null);
+        this.form.updateValueAndValidity({ emitEvent: false });
+      }
+    })
+
     this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
       this.user = user;
       this.loggedIn = user != null;
@@ -83,11 +99,18 @@ export class LoginForm implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.authService.login(this.form.value.email, this.form.value.password).subscribe({
-      next: (data: LoginRequestDto) => {
-        this.router.
+      next: (data: UserResponseDto) => {
+        this.router.navigate(['dashboard']);
       },
-      error: (error: HttpErrorResponse) => {
-
+      error: (err: HttpErrorResponse) => {
+        if(err.status === 401) {
+          this.form.setErrors({ invalidCredentials: true });
+        }
+        if(err.status === 403) {
+          this.form.setErrors({ accessForbidden: true });
+        } else {
+          this.form.setErrors({ serverError: true });
+        }
       }
     });
   }

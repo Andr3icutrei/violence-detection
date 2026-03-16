@@ -3,8 +3,8 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import os
-
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Literal
 
 from api.dependencies import get_token_from_cookie
 from core.database import get_db
@@ -34,24 +34,24 @@ class AuthService:
             )
 
     @staticmethod
-    def create_jwt_token(data: dict) -> str:
+    def create_jwt_token(data: dict, jwt_key: Literal["SECRET_JWT_KEY", "SECRET_JWT_EMAIL"]) -> str:
         to_encode = data.copy()
 
         expire = datetime.now(timezone.utc) + timedelta(minutes=60)
         to_encode.update({"exp": expire})
 
         load_dotenv()
-        SECRET_JWT_KEY:str = os.getenv("SECRET_JWT_KEY")
+        SECRET_JWT_KEY:str = os.getenv(jwt_key)
         ALGORITHM:str = os.getenv("JWT_ALGORITHM")
 
         encoded_jwt:str = jwt.encode(to_encode, SECRET_JWT_KEY, ALGORITHM)
         return encoded_jwt
 
     @staticmethod
-    def _decode_jwt_token(token: str) -> dict:
+    def _decode_jwt_token(token: str, jwt_key: Literal["SECRET_JWT_KEY", "SECRET_JWT_EMAIL"]) -> dict:
         load_dotenv()
 
-        SECRET_JWT_KEY:str = os.getenv("SECRET_JWT_KEY")
+        SECRET_JWT_KEY:str = os.getenv(jwt_key)
         ALGORITHM:str = os.getenv("JWT_ALGORITHM")
 
         try:
@@ -65,7 +65,7 @@ class AuthService:
         token: str = Depends(get_token_from_cookie),
         db: AsyncSession = Depends(get_db),
     ) -> User:
-        decoded_token = AuthService._decode_jwt_token(token)
+        decoded_token = AuthService._decode_jwt_token(token, "SECRET_JWT_KEY")
 
         if decoded_token is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
@@ -92,7 +92,7 @@ class AuthService:
         token: str = Depends(get_token_from_cookie),
         db: AsyncSession = Depends(get_db),
     ) -> User:
-        decoded_token = AuthService._decode_jwt_token(token)
+        decoded_token = AuthService._decode_jwt_token(token, "SECRET_JWT_KEY")
 
         if decoded_token is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")

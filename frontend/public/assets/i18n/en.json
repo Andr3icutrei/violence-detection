@@ -31,7 +31,10 @@
     "invalid-email": "Please enter a valid email address",
     "max-length": "This field cannot exceed {max} characters",
     "min-length": "This field must be at least {min} characters",
-    "password-mismatch": "Passwords do not match"
+    "password-mismatch": "Passwords do not match",
+    "access-forbidden": "Access forbidden",
+    "server-error": "Server error",
+    "invalid-credentials": "Invalid credentials"
   }
 }
 

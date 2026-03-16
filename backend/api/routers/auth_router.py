@@ -29,7 +29,7 @@ async def login(
         "email": user.email,
         "is_admin": user.is_admin,
     }
-    jwt_token: str = authService.create_jwt_token(token_payload)
+    jwt_token: str = authService.create_jwt_token(token_payload, "SECRET_JWT_KEY")
     response.set_cookie(
         key=ACCESS_TOKEN_COOKIE,
         value=jwt_token,

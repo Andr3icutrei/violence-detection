@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,6 +10,11 @@ import {
 import { ControlError } from '../../control-error/control-error';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalPage } from '../portal-page';
+import { AuthService } from '../../../services/auth/auth-service';
+import { UsersService } from '../../../services/users/users-service';
+import { UserResponseDto } from '../../../core/api/models/user-response-dto';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register-form',
@@ -17,15 +22,19 @@ import { PortalPage } from '../portal-page';
   templateUrl: './register-form.html',
   styleUrl: './register-form.css',
 })
-export class RegisterForm {
+export class RegisterForm implements OnInit {
   form: FormGroup;
   isPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
-  isSubmitted: boolean = false;
+  isSubmitting: boolean = false;
 
   @Output() switch = new EventEmitter<PortalPage>();
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private usersService: UsersService,
+    private router: Router
+  ) {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -34,6 +43,18 @@ export class RegisterForm {
         [Validators.required, Validators.minLength(6), this.confirmPasswordValidator()],
       ],
     });
+  }
+
+  public ngOnInit(): void {
+    this.form.valueChanges.subscribe(() => {
+      if(
+        this.form.hasError('serverError') ||
+        this.form.hasError('accountAlreadyExists')
+      ) {
+        this.form.setErrors(null);
+        this.form.updateValueAndValidity({ emitEvent: false });
+      }
+    })
   }
 
   private confirmPasswordValidator(): ValidatorFn {
@@ -61,7 +82,7 @@ export class RegisterForm {
     return false;
   }
 
-  public togglePasswordVisibilty(): void {
+  public togglePasswordVisibility(): void {
     this.isPasswordVisible = !this.isPasswordVisible;
   }
 
@@ -70,12 +91,33 @@ export class RegisterForm {
   }
 
   public isFormValid(): boolean {
-    return this.form.valid && !this.isSubmitted;
+    return this.form.valid && !this.isSubmitting;
   }
 
   public switchForm(form: PortalPage): void {
     this.switch.emit(form);
   }
 
-  public submit(): void {}
+  public submit(): void {
+    const email:string = this.form.get('email')?.value!;
+    const password:string = this.form.get('password')?.value!;
+
+    this.isSubmitting = true;
+
+    this.usersService.register(email, password).subscribe({
+      next: (data: UserResponseDto): void => {
+        this.switch.emit('login');
+      },
+      error: (err: HttpErrorResponse): void => {
+        if(err.status === 409) {
+          this.form.setErrors({ accountAlreadyExists: true });
+        } else if (err.status === 500) {
+          this.form.setErrors({ serverError: true });
+        }
+      },
+      complete: (): void => {
+        this.isSubmitting = false;
+      }
+    })
+  }
 }

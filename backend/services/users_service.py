@@ -1,16 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from fastapi_mail import ConnectionConfig
 
 from schemas.users_schema import CreateUserDto
 from core.security import get_password_hash
 from repositories.users_repository import UsersRepository
 from models.user import User
+from helpers.email_helper import send_registration_email
 
 class UsersService:
     def __init__(self):
         self.users_repository = UsersRepository()
 
-    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto) -> User:
+    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto, conf: ConnectionConfig) -> User:
         db_user: User | None = await self.users_repository.get_by_email(db, email=user_create_data.email)
 
         if db_user:
@@ -20,11 +22,15 @@ class UsersService:
             )
 
         hashed_password = get_password_hash(user_create_data.password)
-        return await self.users_repository.create_user(
+        created_user: User = await self.users_repository.create_user(
             db,
             user_create_data=user_create_data,
             hashed_password=hashed_password,
         )
+
+        await send_registration_email(user_create_data.email)
+
+        return created_user
 
     async def get_user_by_id(self, db: AsyncSession, user_id: int) -> User:
         user_to_fetch: User | None = await self.users_repository.get_by_id(db, user_id=user_id)
@@ -36,3 +42,4 @@ class UsersService:
             )
 
         return user_to_fetch
+
