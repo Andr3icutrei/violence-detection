@@ -1,9 +1,10 @@
+import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+import models
 from api.routers import users_router, auth_router
 from exception_handling.exception_handler import global_exception_handler
-
 
 app = FastAPI(title="Violence Detection API")
 
@@ -28,3 +29,6 @@ app.add_exception_handler(Exception, global_exception_handler)
 @app.get("/")
 def root():
     return {"message": "Violence Detection API is running"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)

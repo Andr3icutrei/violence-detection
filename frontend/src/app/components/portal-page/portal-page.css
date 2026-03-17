@@ -1,4 +1,4 @@
-.login-page-container {
+.portal-container {
   width: 100%;
   height: 100%;
 }
@@ -10,14 +10,14 @@
   box-sizing: border-box;
 }
 
-.login-page-logo {
+.portal-logo {
   margin-bottom: 1rem;
 }
 
-.logo-img {
+.portal-logo-img-container {
   margin-bottom: 3vh;
-  width: 45%;
   height: 20%;
+  width: 45%;
 }
 
 .title {

@@ -1,13 +1,9 @@
 from fastapi import Depends, HTTPException, status
-import jwt
-from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
-import os
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Literal
 
 from api.dependencies import get_token_from_cookie
 from core.database import get_db
+from helpers.jwt_helper import decode_jwt_token
 from models.user import User
 from repositories.users_repository import UsersRepository
 from core.security import verify_password
@@ -25,6 +21,12 @@ class AuthService:
                 detail = f"User with email {email} not found."
             )
 
+        if user.is_account_verified is False:
+            raise HTTPException(
+                status_code = status.HTTP_403_FORBIDDEN,
+                detail = "Account not verified. Please check your email for the verification link."
+            )
+
         if verify_password(password, user.hashed_password):
             return user
         else:
@@ -34,38 +36,11 @@ class AuthService:
             )
 
     @staticmethod
-    def create_jwt_token(data: dict, jwt_key: Literal["SECRET_JWT_KEY", "SECRET_JWT_EMAIL"]) -> str:
-        to_encode = data.copy()
-
-        expire = datetime.now(timezone.utc) + timedelta(minutes=60)
-        to_encode.update({"exp": expire})
-
-        load_dotenv()
-        SECRET_JWT_KEY:str = os.getenv(jwt_key)
-        ALGORITHM:str = os.getenv("JWT_ALGORITHM")
-
-        encoded_jwt:str = jwt.encode(to_encode, SECRET_JWT_KEY, ALGORITHM)
-        return encoded_jwt
-
-    @staticmethod
-    def _decode_jwt_token(token: str, jwt_key: Literal["SECRET_JWT_KEY", "SECRET_JWT_EMAIL"]) -> dict:
-        load_dotenv()
-
-        SECRET_JWT_KEY:str = os.getenv(jwt_key)
-        ALGORITHM:str = os.getenv("JWT_ALGORITHM")
-
-        try:
-            decoded_token = jwt.decode(token, SECRET_JWT_KEY, algorithms=[ALGORITHM])
-            return decoded_token if decoded_token["exp"] >= datetime.now(timezone.utc).timestamp() else None
-        except jwt.PyJWTError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-
-    @staticmethod
     async def get_current_user(
         token: str = Depends(get_token_from_cookie),
         db: AsyncSession = Depends(get_db),
     ) -> User:
-        decoded_token = AuthService._decode_jwt_token(token, "SECRET_JWT_KEY")
+        decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
 
         if decoded_token is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
@@ -92,7 +67,7 @@ class AuthService:
         token: str = Depends(get_token_from_cookie),
         db: AsyncSession = Depends(get_db),
     ) -> User:
-        decoded_token = AuthService._decode_jwt_token(token, "SECRET_JWT_KEY")
+        decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
 
         if decoded_token is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")

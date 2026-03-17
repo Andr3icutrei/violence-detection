@@ -19,6 +19,7 @@ class User(Base):
     credits: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_account_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     auth_provider: Mapped[str] = mapped_column(String(50), nullable=True)
 
     inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="user")

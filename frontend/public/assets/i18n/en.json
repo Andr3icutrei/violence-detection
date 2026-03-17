@@ -24,7 +24,10 @@
     "subtitle": "Join us to access Violence Detection Datasets and AI-Powered Violence Detectors.",
     "register": "Register",
     "already-have-account": "Already have an account?",
-    "sign-in": "Sign in."
+    "sign-in": "Sign in.",
+    "submit-successful-message": "Registration successful! Please check your email to verify your account.",
+    "submit-account-already-exists": "An account with this email already exists.",
+    "submit-server-error": "An error occurred while processing your registration. Please try again later."
   },
   "error-messages": {
     "required": "This field is required",
@@ -34,7 +37,21 @@
     "password-mismatch": "Passwords do not match",
     "access-forbidden": "Access forbidden",
     "server-error": "Server error",
-    "invalid-credentials": "Invalid credentials"
+    "invalid-credentials": "Invalid credentials",
+    "account-not-verified": "Account not verified. Please check your email for verification instructions."
+  },
+  "verify-account": {
+    "success-title": "Account Verified!",
+    "success-details": "Your account has been successfully verified. You can now log in to access our services.",
+    "already-verified-title": "Account Already Verified.",
+    "already-verified-details": "Your account has already been verified. Go to the login page to access your account!",
+    "invalid-token-title": "Invalid Verification Link.",
+    "invalid-token-details": "The verification link is invalid or has expired. Please request a new verification email.",
+    "unexistent-user-title": "User Not Found.",
+    "unexistent-user-details": "The user associated with this verification link does not exist. Please register for an account first.",
+    "server-error-title": "Verification Failed.",
+    "server-error-details": "An error occurred while verifying your account. Please try again later.",
+    "redirect-to-login": "Return to login"
   }
 }
 

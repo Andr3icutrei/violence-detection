@@ -1,7 +1,7 @@
 from fastapi_mail import MessageSchema, MessageType, ConnectionConfig, FastMail
 from fastapi import status, HTTPException
 
-async def send_registration_email(to_email: str, verification_link: str, conf: ConnectionConfig):
+async def send_registration_email(to_email: str, verification_link: str, conf: ConnectionConfig) -> MessageSchema:
 
     mail_body = f"""
     <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; background-color: #f4f7f6; padding: 40px 20px;">

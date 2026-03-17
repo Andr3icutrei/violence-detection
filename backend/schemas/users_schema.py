@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from typing import Optional
 
 class UserBase(BaseModel):
@@ -11,11 +11,11 @@ class UserBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class CreateUserDto(UserBase):
-    password: str
+    password: str = Field(min_length=1, max_length=72)
 
 class UpdateUserDto(UserBase):
     email: Optional[EmailStr] = None
-    password: Optional[str] = None
+    password: Optional[str] = Field(default=None, min_length=1, max_length=72)
     is_active: Optional[bool] = None
     is_admin: Optional[bool] = None
     credits: Optional[int] = None

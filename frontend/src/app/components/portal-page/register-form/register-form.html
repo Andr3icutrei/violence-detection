@@ -79,10 +79,19 @@
       <button
         type="submit"
         class="btn-primary btn-submit"
-        [disabled]="isFormValid()">
+        [disabled]="!isFormValid()">
         {{ 'register-form.register' | translate }}
       </button>
     </div>
+
+    @if(submitMessage) {
+      <div class="submit-errors-container">
+        <app-form-submit-detail
+          [message]="submitMessage"
+          [success]="success!">
+        </app-form-submit-detail>
+      </div>
+    }
 
     <div class="redirect-link-container">
       <p>{{ 'register-form.already-have-account' | translate }} <a class="redirect-link" ref="" (click)="$event.preventDefault(); switchForm('login')"> {{ 'register-form.sign-in' | translate }}</a></p>

@@ -1,6 +1,10 @@
+import os
+from dotenv import load_dotenv
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from models.user import User
 from schemas.users_schema import CreateUserDto
 
@@ -15,11 +19,20 @@ class UsersRepository:
 
     async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto, hashed_password: str) -> User:
         try:
+            try:
+                load_dotenv()
+                DEFAULT_CREDITS:int = int(os.getenv("DEFAULT_CREDITS"))
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error loading environment variables: {str(e)}"
+                )
             user = User(
                 email=user_create_data.email,
                 hashed_password=hashed_password,
-                credits=user_create_data.credits,
-                is_active=user_create_data.is_active,
+                credits=DEFAULT_CREDITS,
+                is_active=True,
+                is_account_verified=False,
                 is_admin=user_create_data.is_admin,
                 auth_provider=user_create_data.auth_provider
             )
@@ -34,3 +47,10 @@ class UsersRepository:
     async def get_all(self, db: AsyncSession) -> list[User]:
         result = await db.execute(select(User))
         return list(result.scalars().all())
+
+    async def save_changes(self, db: AsyncSession) -> None:
+        try:
+            await db.commit()
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e

@@ -10,10 +10,7 @@ from alembic import context
 from dotenv import load_dotenv
 
 from core.database import Base
-from models.user import User
-from models.video import Video
-from models.inference_history import InferenceHistory
-
+import models
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

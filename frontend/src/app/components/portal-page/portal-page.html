@@ -1,7 +1,7 @@
-<div class="login-page-container">
+<div class="portal-container">
   <div class="login-form">
-    <div class="login-page-logo">
-      <img class="logo-img" src="/assets/images/logo-removebg.png" alt="VioLens">
+    <div class="portal-logo">
+      <img class="portal-logo-img-container" src="/assets/images/logo-removebg.png" alt="VioLens">
     </div>
     <app-form-description
       [type]="form">
@@ -13,7 +13,9 @@
         ></app-login-form>
       }
       @case ('register') {
-        <app-register-form></app-register-form>
+        <app-register-form
+          (switch)="switchForm($event)">
+        ></app-register-form>
       }
       @case ('forgot-password') {
         <app-forgot-password-form></app-forgot-password-form>
@@ -21,7 +23,7 @@
     }
   </div>
 
-  <div class="login-video-roll">
+  <div class="portal-video-roll">
 
   </div>
 </div>

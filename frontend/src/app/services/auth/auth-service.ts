@@ -14,20 +14,18 @@ export class AuthService {
     if (!email || !password) {
       throw new Error('Email and password are required for registration.');
     }
-
     const body = {
       email: email,
       password: password,
     };
-
-    return this.http.post<UserResponseDto>(environment.apiUrl + 'login', body);
+    return this.http.post<UserResponseDto>(environment.apiUrl + 'auth/login', body, {withCredentials: true});
   }
 
   public logout(): Observable<void> {
-    return this.http.post<void>(environment.apiUrl + 'logout', null, { withCredentials: true });
+    return this.http.post<void>(environment.apiUrl + 'auth/logout', null, { withCredentials: true });
   }
 
   public me(): Observable<UserResponseDto> {
-    return this.http.get<UserResponseDto>(environment.apiUrl + 'me',  { withCredentials: true });
+    return this.http.get<UserResponseDto>(environment.apiUrl + 'auth/me',  { withCredentials: true });
   }
 }

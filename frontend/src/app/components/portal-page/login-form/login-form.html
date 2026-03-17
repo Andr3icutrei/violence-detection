@@ -74,21 +74,30 @@
       </asl-google-signin-button>
     </div>
 
-    <div class="submit-errors">
-      @if(form.hasError('accessForbidden')) {
-        <app-form-error
-          [errorMessage]="'error-messages.access-forbidden'"
-        ></app-form-error>
-      } @else if (form.hasError('server-error')) {
-        <app-form-error
-          [errorMessage]="'error-messages.server-error'">
-        ></app-form-error>
-      } @else if (form.hasError('invalidCredentials')) {
-        <app-form-error
-          [errorMessage]="'error-messages.invalid-credentials'"
-        ></app-form-error>
-      }
-    </div>
+    @if(
+      form.hasError('accessForbidden') ||
+      form.hasError('serverError') ||
+      form.hasError('invalidCredentials')
+    ) {
+      <div class="submit-errors-container">
+        @if(form.hasError('accountNotVerified')) {
+          <app-form-submit-detail
+            [message]="'error-messages.account-not-verified'"
+            [success]="false">
+            ></app-form-submit-detail>
+        } @else if (form.hasError('serverError')) {
+          <app-form-submit-detail
+            [message]="'error-messages.server-error'"
+            [success]="false">
+            ></app-form-submit-detail>
+        } @else if (form.hasError('invalidCredentials')) {
+          <app-form-submit-detail
+            [message]="'error-messages.invalid-credentials'"
+            [success]="false">
+          </app-form-submit-detail>
+        }
+      </div>
+    }
 
     <div class="redirect-link-container">
       <p>

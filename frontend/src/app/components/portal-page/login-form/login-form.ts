@@ -15,7 +15,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoginRequestDto } from '../../../core/api/models/login-request-dto';
 import { Router } from '@angular/router';
 import { UserResponseDto } from '../../../core/api/models/user-response-dto';
-import { FormError } from '../../form-error/form-error';
+import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
 
 @Component({
   selector: 'app-login-form',
@@ -24,7 +24,7 @@ import { FormError } from '../../form-error/form-error';
     TranslatePipe,
     GoogleSigninButtonModule,
     ControlError,
-    FormError
+    FormSubmitDetail,
   ],
   standalone: true,
   templateUrl: './login-form.html',
@@ -45,7 +45,7 @@ export class LoginForm implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private socialAuthService: SocialAuthService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -56,7 +56,7 @@ export class LoginForm implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.subscribe(() => {
-      if(
+      if (
         this.form.hasError('invalidCredentials') ||
         this.form.hasError('accessForbidden') ||
         this.form.hasError('serverError')
@@ -64,7 +64,7 @@ export class LoginForm implements OnInit, OnDestroy {
         this.form.setErrors(null);
         this.form.updateValueAndValidity({ emitEvent: false });
       }
-    })
+    });
 
     this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
       this.user = user;
@@ -98,20 +98,27 @@ export class LoginForm implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.isSubmitted = true;
     this.authService.login(this.form.value.email, this.form.value.password).subscribe({
       next: (data: UserResponseDto) => {
         this.router.navigate(['dashboard']);
       },
       error: (err: HttpErrorResponse) => {
-        if(err.status === 401) {
+        console.log(err.status);
+        if (err.status === 401) {
           this.form.setErrors({ invalidCredentials: true });
         }
-        if(err.status === 403) {
-          this.form.setErrors({ accessForbidden: true });
-        } else {
+        else if (err.status === 403) {
+          this.form.setErrors({ accountNotVerified: true });
+        } else if (err.status === 500) {
           this.form.setErrors({ serverError: true });
         }
-      }
+        setTimeout(() => {
+          this.isSubmitted = false;
+          this.form.setErrors(null);
+          this.form.updateValueAndValidity({ emitEvent: false });
+        }, 5000);
+      },
     });
   }
 

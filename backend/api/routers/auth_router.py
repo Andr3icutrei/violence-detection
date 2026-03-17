@@ -2,6 +2,7 @@ from fastapi import APIRouter, status, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_db
+from helpers.jwt_helper import create_jwt_token
 from models.user import User
 from schemas.auth_schema import LoginRequestDto, LogoutResponseDto
 from schemas.users_schema import UserResponseDto
@@ -29,14 +30,14 @@ async def login(
         "email": user.email,
         "is_admin": user.is_admin,
     }
-    jwt_token: str = authService.create_jwt_token(token_payload, "SECRET_JWT_KEY")
+    jwt_token: str = create_jwt_token(token_payload, "SECRET_JWT_KEY", expires=60)
     response.set_cookie(
         key=ACCESS_TOKEN_COOKIE,
         value=jwt_token,
         httponly=True,
         max_age=ACCESS_TOKEN_MAX_AGE_SECONDS,
         samesite="lax",
-        secure=False
+        secure=True
     )
     return user
 
@@ -48,7 +49,7 @@ async def logout(
     response.delete_cookie(
         key=ACCESS_TOKEN_COOKIE,
         samesite="lax",
-        secure=False,
+        secure=True,
     )
     return {
         "message": "Logout successful."

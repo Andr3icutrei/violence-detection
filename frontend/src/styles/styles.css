@@ -124,7 +124,7 @@ html, body {
 
 .error-message {
   color: var(--color-error);
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-left: 0.25rem;
 }
 
@@ -187,4 +187,20 @@ html, body {
   align-items: center;
   gap: 0.75rem;
   font-size: 0.9rem;
+}
+
+.submit-errors-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-detail-container {
+  margin: 0 1rem 1rem 1rem;
+}
+
+.success-message {
+  color: var(--color-success);
+  font-size: 1rem;
+  margin-left: 0.25rem;
 }

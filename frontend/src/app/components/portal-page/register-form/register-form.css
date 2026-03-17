@@ -1,3 +1,8 @@
 .input-group + .form-actions-btns-container {
   margin-top: 1rem;
 }
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
