@@ -34,10 +34,14 @@ conf = ConnectionConfig(
 async def create_user(user_create_data: CreateUserDto, db: AsyncSession = Depends(get_db)):
     return await users_service.create_user(db, user_create_data, conf)
 
+@router.patch("/verify_account", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
+async def verify_account(token: str, db: AsyncSession = Depends(get_db)):
+    return await users_service.verify_account(db, token)
+
+@router.get("/resend_verification_email", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
+async def resend_verification_email(token: str, db: AsyncSession = Depends(get_db)):
+    return await users_service.resend_verification_email(db, token, conf)
+
 @router.get("/{user_id}", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     return await users_service.get_user_by_id(db, user_id)
-
-@router.patch("/verify-account/z", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
-async def verify_account(token: str, db: AsyncSession = Depends(get_db)):
-    return await users_service.verify_account(db, token)

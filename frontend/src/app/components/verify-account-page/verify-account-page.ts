@@ -26,8 +26,8 @@ export class VerifyAccountPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token: string | null = this.activatedRoute.snapshot.params['token'];
-    if (token === null) {
+    const token: string | null = this.activatedRoute.snapshot.queryParamMap.get('token');
+    if (!token) {
       this.router.navigate(['login']);
       return;
     }

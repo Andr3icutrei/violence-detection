@@ -25,9 +25,13 @@ export class UsersService {
   }
 
   public verifyAccount(token: string): Observable<UserResponseDto> {
-    const params: HttpParams = new HttpParams();
-    params.set('token', token);
+    const params: HttpParams = new HttpParams().set('token', token);
+    return this.httpClient.patch<UserResponseDto>(environment.apiUrl + 'users/verify_account', null, { params });
+  }
 
-    return this.httpClient.patch<UserResponseDto>(environment.apiUrl + 'users/verify_account', token);
+  public resendVerificationEmail(token: string): Observable<any> {
+    const params: HttpParams = new HttpParams().set('token', token);
+
+    return this.httpClient.get<any>(environment.apiUrl + 'users/resend_verification_email', { params });
   }
 }

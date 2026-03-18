@@ -14,14 +14,20 @@
   <div class="verify-account-description-details-container">
     @if(status === 'success') {
       <span class="background-color-message">
-      <i class="fa-solid fa-check-circle"></i>
+        <i class="fa-solid fa-check-circle"></i>
         {{ status + '-description'  | translate }}
-    </span>
+      </span>
+    } @else if(status === 'invalid-token') {
+      <span class="background-color-message">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ status + '-description'  | translate }}
+        <a ref="" (click)="$event.preventDefault(); resendVerificationEmail()"></a>
+      </span>
     } @else {
       <span class="background-color-message">
-      <i class="fa-solid fa-circle-exclamation"></i>
+        <i class="fa-solid fa-circle-exclamation"></i>
         {{ status + '-description'  | translate }}
-    </span>
+      </span>
     }
   </div>
 

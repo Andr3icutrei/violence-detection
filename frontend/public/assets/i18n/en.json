@@ -51,7 +51,12 @@
     "unexistent-user-details": "The user associated with this verification link does not exist. Please register for an account first.",
     "server-error-title": "Verification Failed.",
     "server-error-details": "An error occurred while verifying your account. Please try again later.",
-    "redirect-to-login": "Return to login"
+    "redirect-to-login": "Return to login",
+    "resent-verification-email": "Verification email resent. Please check your inbox for the new verification link.",
+    "invalid-token-resent": "The verification link is invalid or has expired.",
+    "server-error-resent": "An error occurred while resending the verification email. Please try again later.",
+    "already-verified-resent": "Your account is already verified. Return to the login page.",
+    "unexisting-user-resent": "The user associated with this email does not exist. Please register for an account first."
   }
 }
 

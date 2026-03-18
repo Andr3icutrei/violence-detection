@@ -9,7 +9,6 @@ class Base(DeclarativeBase):
 
 load_dotenv()
 
-
 def _build_async_database_url(database_url: str) -> str:
     if database_url.startswith("postgresql+psycopg2://"):
         return database_url.replace("postgresql+psycopg2://", "postgresql+asyncpg://", 1)
@@ -27,7 +26,7 @@ if DATABASE_URL is None:
     raise ValueError("DATABASE_URL environment variable is not set")
 
 engine = create_async_engine(ASYNC_DATABASE_URL)
-SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     db: AsyncSession = SessionLocal()
