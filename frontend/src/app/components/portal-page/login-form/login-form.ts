@@ -1,4 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -13,7 +20,7 @@ import { PortalForm } from '../portal-form.type';
 import { AuthService } from '../../../services/auth/auth-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoginRequestDto } from '../../../core/api/models/login-request-dto';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserResponseDto } from '../../../core/api/models/user-response-dto';
 import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
 
@@ -25,6 +32,7 @@ import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
     GoogleSigninButtonModule,
     ControlError,
     FormSubmitDetail,
+    RouterLink,
   ],
   standalone: true,
   templateUrl: './login-form.html',
@@ -46,6 +54,7 @@ export class LoginForm implements OnInit, OnDestroy {
     private socialAuthService: SocialAuthService,
     private authService: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -57,9 +66,11 @@ export class LoginForm implements OnInit, OnDestroy {
   ngOnInit() {
     this.form.valueChanges.subscribe(() => {
       if (
-        this.form.hasError('invalidCredentials') ||
-        this.form.hasError('accessForbidden') ||
-        this.form.hasError('serverError')
+        this.form.dirty &&
+        (this.form.hasError('invalidCredentials') ||
+          this.form.hasError('accountNotVerified') ||
+          this.form.hasError('serverError') ||
+          this.form.hasError('userNotFound'))
       ) {
         this.form.setErrors(null);
         this.form.updateValueAndValidity({ emitEvent: false });
@@ -98,25 +109,40 @@ export class LoginForm implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    const email: string = this.form.value.email!;
+    const password: string = this.form.value.password!;
+    if (!email || !password) {
+      return;
+    }
     this.isSubmitted = true;
-    this.authService.login(this.form.value.email, this.form.value.password).subscribe({
+    this.form.markAsPristine();
+
+    this.authService.login(email, password).subscribe({
       next: (data: UserResponseDto) => {
         this.router.navigate(['dashboard']);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err.status);
-        if (err.status === 401) {
-          this.form.setErrors({ invalidCredentials: true });
-        }
-        else if (err.status === 403) {
-          this.form.setErrors({ accountNotVerified: true });
-        } else if (err.status === 500) {
-          this.form.setErrors({ serverError: true });
-        }
         setTimeout(() => {
           this.isSubmitted = false;
           this.form.setErrors(null);
           this.form.updateValueAndValidity({ emitEvent: false });
+          this.cdr.detectChanges();
+        }, 5000);
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          this.form.setErrors({ invalidCredentials: true });
+        } else if (err.status === 403) {
+          this.form.setErrors({ accountNotVerified: true });
+        } else if (err.status === 404) {
+          this.form.setErrors({ userNotFound: true });
+        } else if (err.status === 500) {
+          this.form.setErrors({ serverError: true });
+        }
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.isSubmitted = false;
+          this.form.setErrors(null);
+          this.form.updateValueAndValidity({ emitEvent: false });
+          this.cdr.detectChanges();
         }, 5000);
       },
     });

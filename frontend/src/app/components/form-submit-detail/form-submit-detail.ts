@@ -12,5 +12,7 @@ export class FormSubmitDetail {
   @Input() message!: string;
   @Input() success!: boolean;
 
-  constructor(private translationService: TranslateService) {}
+  constructor(private translationService: TranslateService) {
+
+  }
 }

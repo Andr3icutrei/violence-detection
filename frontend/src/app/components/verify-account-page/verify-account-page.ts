@@ -41,7 +41,7 @@ export class VerifyAccountPage implements OnInit {
         if (err.status === 400) {
           this.status = 'invalid-token';
         } else if (err.status === 404) {
-          this.status = 'unexisting-user';
+          this.status = 'unexistent-user';
         } else if (err.status === 409) {
           this.status = 'already-verified';
         } else if (err.status === 500) {

@@ -15,9 +15,7 @@
           type="email"
           [placeholder]="'login-form.email-placeholder' | translate"
           formControlName="email"/>
-          <app-control-error
-            [control]="form.get('email')!">
-          ></app-control-error>
+        <app-control-error [control]="form.get('email')!"></app-control-error>
       </div>
 
       <div class="input-group">
@@ -42,9 +40,7 @@
             (click)="togglePasswordVisibility()">
           </i>
         </div>
-        <app-control-error
-          [control]="form.get('password')!">
-          ></app-control-error>
+        <app-control-error [control]="form.get('password')!"></app-control-error>
       </div>
     </div>
 
@@ -75,21 +71,27 @@
     </div>
 
     @if(
-      form.hasError('accessForbidden') ||
+      form.hasError('accountNotVerified') ||
       form.hasError('serverError') ||
-      form.hasError('invalidCredentials')
-    ) {
+      form.hasError('invalidCredentials') ||
+      form.hasError('userNotFound')
+      ) {
       <div class="submit-errors-container">
         @if(form.hasError('accountNotVerified')) {
           <app-form-submit-detail
             [message]="'error-messages.account-not-verified'"
             [success]="false">
-            ></app-form-submit-detail>
+          </app-form-submit-detail>
         } @else if (form.hasError('serverError')) {
           <app-form-submit-detail
             [message]="'error-messages.server-error'"
             [success]="false">
-            ></app-form-submit-detail>
+          </app-form-submit-detail>
+        } @else if (form.hasError('userNotFound')) {
+          <app-form-submit-detail
+            [message]="'error-messages.user-not-found'"
+            [success]="false">
+          </app-form-submit-detail>
         } @else if (form.hasError('invalidCredentials')) {
           <app-form-submit-detail
             [message]="'error-messages.invalid-credentials'"
@@ -101,10 +103,9 @@
 
     <div class="redirect-link-container">
       <p>
-        {{'login-form.dont-have-account' | translate}} <a class="redirect-link" href="" (click)="$event.preventDefault(); switchForm('register')">{{'login-form.register-here' | translate}}</a>
+        {{'login-form.dont-have-account' | translate}} <a class="redirect-link" routerLink="../register">{{'login-form.register-here' | translate}}</a>
       </p>
-      <a class="redirect-link" href="" (click)="$event.preventDefault(); switchForm('forgot-password')">{{'login-form.reset-password' | translate}}</a>
+      <a class="redirect-link" href="" routerLink="../forgot-password">{{'login-form.reset-password' | translate}}</a>
     </div>
   </form>
 </div>
-

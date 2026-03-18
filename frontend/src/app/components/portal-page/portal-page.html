@@ -6,21 +6,7 @@
     <app-form-description
       [type]="form">
     ></app-form-description>
-    @switch (form) {
-      @case ('login') {
-        <app-login-form
-          (formChange)="switchForm($event)">
-        ></app-login-form>
-      }
-      @case ('register') {
-        <app-register-form
-          (switch)="switchForm($event)">
-        ></app-register-form>
-      }
-      @case ('forgot-password') {
-        <app-forgot-password-form></app-forgot-password-form>
-      }
-    }
+    <router-outlet></router-outlet>
   </div>
 
   <div class="portal-video-roll">

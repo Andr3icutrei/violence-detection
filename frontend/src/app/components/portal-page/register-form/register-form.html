@@ -57,10 +57,10 @@
       </label>
       <div class="password-input-container">
         <input
-          id="password"
-          name="password"
+          id="confirm-password"
+          name="confirmPassword"
           class="input-text-primary input-password-primary"
-          [type]="isPasswordVisible ? 'text' : 'password'"
+          [type]="isConfirmPasswordVisible ? 'text' : 'password'"
           [placeholder]="'register-form.confirm-password-placeholder' | translate"
           formControlName="confirmPassword"/>
         <i
@@ -94,7 +94,7 @@
     }
 
     <div class="redirect-link-container">
-      <p>{{ 'register-form.already-have-account' | translate }} <a class="redirect-link" ref="" (click)="$event.preventDefault(); switchForm('login')"> {{ 'register-form.sign-in' | translate }}</a></p>
+      <p>{{ 'register-form.already-have-account' | translate }} <a class="redirect-link" routerLink="../login"> {{ 'register-form.sign-in' | translate }}</a></p>
     </div>
   </form>
 </div>

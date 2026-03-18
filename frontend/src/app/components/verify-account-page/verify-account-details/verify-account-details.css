@@ -8,10 +8,10 @@
   justify-content: center;
   align-items: center;
   gap: 2vh;
-  width: 35vw;
+  width: 30vw;
   height: 50vh;
   border-radius: 1rem;
-  border: 1px solid gray;
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
   padding: 3rem;
   box-sizing: border-box;
 }

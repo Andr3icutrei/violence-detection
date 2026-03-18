@@ -31,7 +31,7 @@ export class ControlError {
         return this.translationService.instant('error-messages.min-length', { requiredLength });
       }
       if(this.control.hasError('passwordMismatch')) {
-        return this.translationService.instant('error-messages.passwordMismatch');
+        return this.translationService.instant('error-messages.password-mismatch');
       }
     }
     return null;
