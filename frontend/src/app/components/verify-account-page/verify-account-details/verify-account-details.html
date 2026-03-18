@@ -13,13 +13,13 @@
 
   <div class="verify-account-description-details-container">
     @if(status === 'success') {
-      <span class="detail-message">
-      <i class="fa-solid fa-check-circle success-message"></i>
+      <span class="background-color-message">
+      <i class="fa-solid fa-check-circle"></i>
         {{ status + '-description'  | translate }}
     </span>
     } @else {
-      <span class="error-message">
-      <i class="fa-solid fa-circle-exclamation error-message"></i>
+      <span class="background-color-message">
+      <i class="fa-solid fa-circle-exclamation"></i>
         {{ status + '-description'  | translate }}
     </span>
     }
@@ -29,7 +29,7 @@
     <div class="verify-account-description-redirect">
       <button
         type="button"
-        class="btn-primary btn-redirect"
+        class="btn-primary btn-redirect btn-wide"
         (click)="returnToLoginClick()">
         {{ 'verify-account.redirect-to-login' | translate }}
       </button>
