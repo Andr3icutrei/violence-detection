@@ -34,7 +34,34 @@ class UsersRepository:
                 is_active=True,
                 is_account_verified=False,
                 is_admin=user_create_data.is_admin,
-                auth_provider=user_create_data.auth_provider
+                auth_provider="local"
+            )
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+            return user
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e
+
+    async def create_user_google(self, db: AsyncSession, email: str) -> User:
+        try:
+            try:
+                load_dotenv()
+                DEFAULT_CREDITS:int = int(os.getenv("DEFAULT_CREDITS"))
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error loading environment variables: {str(e)}"
+                )
+            user = User(
+                email=email,
+                hashed_password="",
+                credits=DEFAULT_CREDITS,
+                is_active=True,
+                is_account_verified=True,
+                is_admin=False,
+                auth_provider="google"
             )
             db.add(user)
             await db.commit()

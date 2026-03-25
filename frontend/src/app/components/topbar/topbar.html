@@ -1,0 +1,25 @@
+<div class="topbar-container">
+  <div class="topbar-logo-container">
+    <img class="topbar-logo" src="/assets/images/logo-removebg.png" alt="VioLens">
+  </div>
+
+  <div class="topbar-user-container">
+
+    <div class="topbar-user-credits">
+      <i class="fa-regular fa-gem topbar-user-credits-icon no-credits">{{ credits }}</i>
+    </div>
+
+    <div class="topbar-user-details">
+      <span class="topbar-user-details-info"></span>
+    </div>
+
+    <div class="topbar-user-actions">
+      <button
+        type="button"
+        class="button-primary topbar-user-actions-btn"
+        (click)="logoutClick()">
+        {{ 'topbar.logout' | translate }}>
+      </button>
+    </div>
+  </div>
+</div>

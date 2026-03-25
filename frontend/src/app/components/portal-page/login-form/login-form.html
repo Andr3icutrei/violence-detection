@@ -1,3 +1,7 @@
+<app-form-description
+  [type]="'login'">
+</app-form-description>
+
 <div class="form-container">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="input-fields-container">
@@ -42,16 +46,6 @@
         </div>
         <app-control-error [control]="form.get('password')!"></app-control-error>
       </div>
-    </div>
-
-    <div class="input-group checkbox-group">
-      <input
-        id="rememeberMe"
-        name="rememberMe"
-        class="input-checkbox-primary"
-        type="checkbox"
-        formControlName="rememberMe"/>
-      <label for="rememeberMe" class="label-primary">{{'login-form.remember-me-label' | translate}}</label>
     </div>
 
     <div class="form-actions-btns-container">
@@ -105,7 +99,7 @@
       <p>
         {{'login-form.dont-have-account' | translate}} <a class="redirect-link" routerLink="../register">{{'login-form.register-here' | translate}}</a>
       </p>
-      <a class="redirect-link" href="" routerLink="../forgot-password">{{'login-form.reset-password' | translate}}</a>
+      <a class="redirect-link" href="" routerLink="../reset-password">{{'login-form.reset-password' | translate}}</a>
     </div>
   </form>
 </div>

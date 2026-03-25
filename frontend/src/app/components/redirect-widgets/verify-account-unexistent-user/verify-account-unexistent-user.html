@@ -1,0 +1,29 @@
+<div class="redirect-widget-content">
+  <div class="redirect-widget-title-container">
+    <h2 class="redirect-widget-title">
+      {{ 'verify-account.verify-account-unexistent-user-title' | translate }}
+    </h2>
+  </div>
+
+  <div class="redirect-widget-icon-container">
+    <i
+      class="redirect-widget-icon error-message fa-solid fa-user-xmark">
+    </i>
+  </div>
+
+  <div class="redirect-widget-details-container">
+    <span class="background-color-message">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      {{ 'verify-account.verify-account-unexistent-user-description' | translate }}
+    </span>
+  </div>
+
+  <div class="redirect-widget-redirect">
+    <button
+      type="button"
+      class="btn-primary redirect-widget-btn"
+      (click)="returnToLoginClick()">
+      {{ 'verify-account.redirect-to-login' | translate }}
+    </button>
+  </div>
+</div>

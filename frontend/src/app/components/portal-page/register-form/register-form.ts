@@ -17,10 +17,18 @@ import { UserResponseDto } from '../../../core/api/models/user-response-dto';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
+import { FormDescription } from '../form-description/form-description';
 
 @Component({
   selector: 'app-register-form',
-  imports: [ReactiveFormsModule, TranslatePipe, ControlError, FormSubmitDetail, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    TranslatePipe,
+    ControlError,
+    FormSubmitDetail,
+    RouterLink,
+    FormDescription,
+  ],
   templateUrl: './register-form.html',
   styleUrl: './register-form.css',
 })
@@ -37,9 +45,9 @@ export class RegisterForm implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private usersService: UsersService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private usersService: UsersService,
   ) {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],

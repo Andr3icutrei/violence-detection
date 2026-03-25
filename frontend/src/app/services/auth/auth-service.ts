@@ -21,6 +21,11 @@ export class AuthService {
     return this.http.post<UserResponseDto>(environment.apiUrl + 'auth/login', body, {withCredentials: true});
   }
 
+  public loginWithGoogle(tokenId: string): Observable<UserResponseDto> {
+    const body = { tokenId };
+    return this.http.post<UserResponseDto>(environment.apiUrl + 'auth/google-login', body, { withCredentials: true });
+  }
+
   public logout(): Observable<void> {
     return this.http.post<void>(environment.apiUrl + 'auth/logout', null, { withCredentials: true });
   }

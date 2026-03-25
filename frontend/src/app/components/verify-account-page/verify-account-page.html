@@ -3,9 +3,7 @@
     <img class="verify-account-logo-img" src="/assets/images/logo-removebg.png" alt="VioLens">
   </div>
 
-  <app-verify-account-details
-    [status]="status!"
-    [icon]="icon!"
-    [showReturnToLogin]="true"
-  ></app-verify-account-details>
+  <div class="redirect-widget-container">
+    <router-outlet></router-outlet>
+  </div>
 </div>

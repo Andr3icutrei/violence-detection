@@ -6,7 +6,6 @@ class UserBase(BaseModel):
     credits: int = 0
     is_active: bool = True
     is_admin: bool = False
-    auth_provider: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

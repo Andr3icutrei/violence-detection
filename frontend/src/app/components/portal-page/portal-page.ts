@@ -10,16 +10,10 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-portal-page',
   imports: [
     RouterOutlet,
-    FormDescription,
   ],
   standalone: true,
   templateUrl: './portal-page.html',
   styleUrl: './portal-page.css',
 })
 export class PortalPage {
-  form: PortalForm = 'login';
-
-  switchForm(formToSwitch: PortalForm): void {
-    this.form = formToSwitch;
-  }
 }

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VerifyAccountDetails } from './verify-account-details';
+import { Topbar } from './topbar';
 
-describe('VerifyAccountDetails', () => {
-  let component: VerifyAccountDetails;
-  let fixture: ComponentFixture<VerifyAccountDetails>;
+describe('Topbar', () => {
+  let component: Topbar;
+  let fixture: ComponentFixture<Topbar>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VerifyAccountDetails],
+      imports: [Topbar],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VerifyAccountDetails);
+    fixture = TestBed.createComponent(Topbar);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

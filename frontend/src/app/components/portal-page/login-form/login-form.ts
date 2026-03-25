@@ -33,6 +33,7 @@ import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
     ControlError,
     FormSubmitDetail,
     RouterLink,
+    FormDescription,
   ],
   standalone: true,
   templateUrl: './login-form.html',
@@ -40,8 +41,6 @@ import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
 })
 export class LoginForm implements OnInit, OnDestroy {
   form: FormGroup;
-  user: SocialUser | null = null;
-  loggedIn: boolean = false;
   isSubmitted: boolean = false;
   isPasswordVisible: boolean = false;
 
@@ -78,17 +77,35 @@ export class LoginForm implements OnInit, OnDestroy {
     });
 
     this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
-      this.user = user;
-      this.loggedIn = user != null;
-
-      if (this.loggedIn) {
-        console.log('Datele utilizatorului:', this.user);
-        // Aici extragi this.user.idToken și faci request-ul HTTP către backend
+      if (user && user.idToken) {
+        this.authService.loginWithGoogle(user.idToken).subscribe({
+          next: () => {
+            this.router.navigate(['dashboard']);
+          },
+          error: (err: HttpErrorResponse) => {
+            if (err.status === 403) {
+              this.form.setErrors({ accountNotVerified: true });
+            } else if (err.status === 404) {
+              this.form.setErrors({ userNotFound: true });
+            } else if (err.status === 500) {
+              this.form.setErrors({ serverError: true });
+            } else {
+              this.form.setErrors({ invalidCredentials: true });
+            }
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.isSubmitted = false;
+              this.form.setErrors(null);
+              this.form.updateValueAndValidity({ emitEvent: false });
+              this.cdr.detectChanges();
+            }, 5000);
+          },
+        });
       }
     });
   }
 
-  isControlRequired(controlName: string): boolean {
+  public isControlRequired(controlName: string): boolean {
     if (this.form.contains(controlName)) {
       const control = this.form.get(controlName);
       return control?.hasValidator(Validators.required) || false;
@@ -96,7 +113,7 @@ export class LoginForm implements OnInit, OnDestroy {
     return false;
   }
 
-  isControlValid(controlName: string): boolean {
+  public isControlValid(controlName: string): boolean {
     if (this.form.contains(controlName)) {
       const control = this.form.get(controlName);
       return control!.dirty && control!.invalid;
@@ -104,11 +121,19 @@ export class LoginForm implements OnInit, OnDestroy {
     return false;
   }
 
-  isFormValid(): boolean {
+  public isFormValid(): boolean {
     return this.form.valid && !this.isSubmitted;
   }
 
-  onSubmit(): void {
+  public togglePasswordVisibility(): void {
+    this.isPasswordVisible = !this.isPasswordVisible;
+  }
+
+  public switchForm(form: PortalForm): void {
+    this.formChange.emit(form);
+  }
+
+  public onSubmit(): void {
     const email: string = this.form.value.email!;
     const password: string = this.form.value.password!;
     if (!email || !password) {
@@ -146,14 +171,6 @@ export class LoginForm implements OnInit, OnDestroy {
         }, 5000);
       },
     });
-  }
-
-  togglePasswordVisibility(): void {
-    this.isPasswordVisible = !this.isPasswordVisible;
-  }
-
-  switchForm(form: PortalForm): void {
-    this.formChange.emit(form);
   }
 
   ngOnDestroy() {

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import String, Boolean, DateTime, func, Integer
+from sqlalchemy import String, Boolean, DateTime, func, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, TYPE_CHECKING
 
@@ -23,5 +23,12 @@ class User(Base):
     auth_provider: Mapped[str] = mapped_column(String(50), nullable=True)
 
     inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="user")
+
+    __table_args__ = (
+        CheckConstraint(
+            "(auth_provider = 'google') OR (password IS NOT NULL)",
+            name="check_password_if_not_google"
+        ),
+    )
 
 

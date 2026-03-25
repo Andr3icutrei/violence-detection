@@ -14,3 +14,6 @@ class LoginRequestDto(BaseModel):
 class LogoutResponseDto(BaseModel):
     message: str = "Successfully logged out"
     model_config = ConfigDict(from_attributes=True)
+
+class TokenSchema(BaseModel):
+    tokenId: str
