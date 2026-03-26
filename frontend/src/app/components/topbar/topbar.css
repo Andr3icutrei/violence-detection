@@ -8,6 +8,12 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  background-color: var(--color-background);
+  border-bottom: 1px solid rgba(109, 8, 241, 0.18);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  z-index: 900;
 }
 
 .topbar-logo-container {
@@ -21,6 +27,7 @@
 }
 
 .topbar-user-container {
+  height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -32,40 +39,179 @@
   font-size: 1.5rem;
 }
 
-.topbar-user-credits-icon {
-
-}
-
-.topbar-user {
-
-}
-
-.topbar-user-icon {
-
-}
-
 .topbar-user-details {
-
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .topbar-user-details-info {
-
+  font-size: 1.2rem;
+  font-weight: 500;
 }
+
+.topbar-user-details-info-email {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.topbar-user-credits-icon {
+  margin: 0.5rem;
+}
+
+.topbar-user-initials {
+  height: 2.6rem;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topbar-user-initials-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #a511c6 0%,
+    #5d10a8 50%,
+    #c78cea 100%
+  );
+  color: var(--color-white-text);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .topbar-user-actions {
-
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
-.topbar-user-actions-btn {
+.dropdown-toggle-btn {
+  border: none;
+  background: inherit;
+  cursor: pointer;
+  padding: 0.2rem;
+}
 
+.dropdown-toggle-icon {
+  display: inline-block;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  transform: rotate(0deg) scale(1);
+  transition: transform 220ms ease, color 220ms ease;
+  transform-origin: center;
+}
+
+.dropdown-toggle-icon-open {
+  transform: rotate(180deg) scale(1.08);
+  color: var(--color-primary-dark);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 15rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(109, 8, 241, 0.24);
+  border-radius: 0.95rem;
+  overflow: hidden;
+  background-color: var(--color-background);
+  box-shadow: 0 14px 26px rgba(27, 25, 25, 0.12);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-0.2rem) scale(0.98);
+  transform-origin: top right;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+
+.dropdown-menu-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.dropdown-menu-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.4rem 0.5rem;
+}
+
+.dropdown-menu-email {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.dropdown-menu-credits {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.dropdown-menu-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(109, 8, 241, 0.22);
+  margin: 0.15rem 0 0.2rem;
+}
+
+.dropdown-item {
+  width: 100%;
+  border: none;
+  border-radius: 0.55rem;
+  background: transparent;
+  padding: 0.6rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  outline: none;
 }
 
 .no-credits {
   background: linear-gradient(
     135deg,
-    #fccca9 0%,
-    #cc99ff 50%,
-    #3377ff 100%
+    #a511c6 0%,
+    #5d10a8 50%,
+    #c78cea 100%
   );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.no-credits::before {
+  background: inherit;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

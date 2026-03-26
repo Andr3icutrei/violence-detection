@@ -4,22 +4,41 @@
   </div>
 
   <div class="topbar-user-container">
-
     <div class="topbar-user-credits">
       <i class="fa-regular fa-gem topbar-user-credits-icon no-credits">{{ credits }}</i>
     </div>
 
+    <div class="topbar-user-initials">
+      <i class="topbar-user-initials-icon">{{ emailInitials }}</i>
+    </div>
+
     <div class="topbar-user-details">
-      <span class="topbar-user-details-info"></span>
+      <span class="topbar-user-details-info">{{ 'topbar.hello' | translate }}</span>
+      <span class="topbar-user-details-info-email no-credits">{{ email }}</span>
     </div>
 
     <div class="topbar-user-actions">
       <button
         type="button"
-        class="button-primary topbar-user-actions-btn"
-        (click)="logoutClick()">
-        {{ 'topbar.logout' | translate }}>
+        class="dropdown-toggle-btn"
+        [attr.aria-expanded]="isDropdownOpen"
+        aria-haspopup="menu"
+        (click)="toggleDropdown()">
+        <i
+          class="fa-solid fa-angle-down dropdown-toggle-icon"
+          [class.dropdown-toggle-icon-open]="isDropdownOpen"></i>
       </button>
+
+      <div
+        class="dropdown-menu"
+        [class.dropdown-menu-open]="isDropdownOpen"
+        role="menu"
+        [attr.aria-hidden]="!isDropdownOpen">
+        <button type="button" class="dropdown-item" role="menuitem" (click)="logoutClick()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>{{ 'topbar.logout' | translate }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>

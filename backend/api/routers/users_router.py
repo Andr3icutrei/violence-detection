@@ -57,11 +57,7 @@ async def verify_reset_password_token(token: str, db: AsyncSession = Depends(get
 async def resend_verification_email(token: str, db: AsyncSession = Depends(get_db)):
     return await users_service.resend_verification_email(db, token, conf)
 
-@router.get("/{user_id}", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
-async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
-    return await users_service.get_user_by_id(db, user_id)
-
-@router.get("/topbar-information", response_model=UserResponseDto, status_code=HTTP_200_OK)
+@router.get("/topbar_information", response_model=UserResponseDto, status_code=HTTP_200_OK)
 async def get_topbar_information(db: AsyncSession = Depends(get_db), current_user: User = Depends(authService.get_current_user)):
     user: User = await users_service.get_user_by_id(db, current_user.id)
 
@@ -70,3 +66,7 @@ async def get_topbar_information(db: AsyncSession = Depends(get_db), current_use
         email=user.email,
         credits=user.credits,
     )
+
+@router.get("/{user_id}", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
+async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
+    return await users_service.get_user_by_id(db, user_id)

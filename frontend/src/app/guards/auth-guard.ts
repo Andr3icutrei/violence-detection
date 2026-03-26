@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         if (adminRole) {
           return true;
         } else {
-          router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+          router.navigate(['/portal/login'], { queryParams: { returnUrl: state.url } });
           return false;
         }
       }
@@ -26,7 +26,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       return true;
     }),
     catchError((err: HttpErrorResponse) => {
-      router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+      router.navigate(['/portal/login'], { queryParams: { returnUrl: state.url } });
       return of(false);
     }),
   );

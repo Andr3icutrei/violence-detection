@@ -61,6 +61,6 @@ export class UsersService {
   }
 
   public getTopbarInformation(): Observable<UserResponseDto> {
-    return this.httpClient.get<UserResponseDto>(environment.apiUrl + 'users/topbar_information');
+    return this.httpClient.get<UserResponseDto>(environment.apiUrl + 'users/topbar_information', { withCredentials: true });
   }
 }

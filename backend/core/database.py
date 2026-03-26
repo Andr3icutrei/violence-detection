@@ -25,7 +25,11 @@ ASYNC_DATABASE_URL = _build_async_database_url(DATABASE_URL)
 if DATABASE_URL is None:
     raise ValueError("DATABASE_URL environment variable is not set")
 
-engine = create_async_engine(ASYNC_DATABASE_URL)
+engine_kwargs = {}
+if "asyncpg" in ASYNC_DATABASE_URL:
+    engine_kwargs["connect_args"] = {"statement_cache_size": 0}
+
+engine = create_async_engine(ASYNC_DATABASE_URL, **engine_kwargs)
 SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:

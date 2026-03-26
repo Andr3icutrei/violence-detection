@@ -24,3 +24,8 @@ class UserResponseDto(UserBase):
 
     class Config:
         from_attributes = True
+
+class TopbarInformationDto(BaseModel):
+    email: EmailStr
+    credits: int
+    nameInitials: str
