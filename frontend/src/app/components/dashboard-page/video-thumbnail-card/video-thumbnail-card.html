@@ -1,0 +1,23 @@
+<div class="video-card">
+  <div class="video-preview-container">
+    <video
+      class="video-preview"
+      controls
+      [src]="video.path"
+      poster=""
+      preload="metadata">
+    </video>
+    <div class="duration-badge">{{ formatDuration(video.duration) }}</div>
+    <div class="violence-badge" [class.is-violent]="video.is_violent">
+      {{ (video.is_violent ? 'dashboard.violent' : 'dashboard.non-violent') | translate }}
+    </div>
+  </div>
+
+  <div class="video-info">
+    <h3 class="video-name" [title]="video.name">{{ video.name }}</h3>
+    <div class="dataset-info">
+      <span class="dataset-label">Dataset:</span>
+      <span class="dataset-name">{{ video.dataset.name }}</span>
+    </div>
+  </div>
+</div>

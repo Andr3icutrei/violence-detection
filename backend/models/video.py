@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey, Integer
+from sqlalchemy import String, ForeignKey, Integer, Boolean
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from typing import TYPE_CHECKING, List
 
@@ -12,6 +12,8 @@ class Video(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     path: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    is_violent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     dataset_id: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="video")

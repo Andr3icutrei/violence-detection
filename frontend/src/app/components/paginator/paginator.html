@@ -1,0 +1,50 @@
+<div class="paginator-container">
+  <!-- First Page Button -->
+  <button
+    class="paginator-btn icon-btn"
+    [class.active]="false"
+    [disabled]="page === 0"
+    (click)="firstPage()"
+    title="First Page">
+    &laquo;
+  </button>
+
+  <!-- Previous Page Button -->
+  <button
+    class="paginator-btn icon-btn"
+    [disabled]="page === 0"
+    (click)="previousPage()">
+    &lsaquo;
+  </button>
+
+  <!-- Page Numbers -->
+  <button
+    *ngFor="let p of displayPages"
+    class="paginator-btn"
+    [class.active]="p === page"
+    (click)="goToPage(p)">
+    {{ p + 1 }}
+  </button>
+
+  <!-- Ellipsis Spacer -->
+  <span class="paginator-ellipsis" *ngIf="hasMore">...</span>
+
+  <!-- Next Page Button -->
+  <button
+    class="paginator-btn icon-btn"
+    [disabled]="!hasMore"
+    (click)="nextPage()">
+    &rsaquo;
+  </button>
+
+  <!-- Last Page Button -->
+  <button
+    *ngIf="totalPages !== undefined"
+    class="paginator-btn icon-btn"
+    [class.active]="false"
+    [disabled]="page >= totalPages - 1"
+    (click)="lastPage()"
+    title="Last Page">
+    &raquo;
+  </button>
+</div>

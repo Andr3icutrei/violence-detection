@@ -37,6 +37,10 @@
 .topbar-user-credits {
   height: 100%;
   font-size: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .topbar-user-details {

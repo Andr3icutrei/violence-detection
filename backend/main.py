@@ -2,15 +2,15 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-import models
-from api.routers import users_router, auth_router
+from api.routers import users_router, auth_router, videos_router, datasets_router
 from exception_handling.exception_handler import global_exception_handler
 
 app = FastAPI(title="Violence Detection API")
 
 app.include_router(users_router.router)
-# app.include_router(vidoes_router.router)
+app.include_router(videos_router.router)
 app.include_router(auth_router.router)
+app.include_router(datasets_router.router)
 
 origins = [
     "http://localhost:4200",

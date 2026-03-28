@@ -16,7 +16,7 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-authService: AuthService = AuthService()
+auth_service: AuthService = AuthService()
 
 ACCESS_TOKEN_COOKIE = "access_token"
 ACCESS_TOKEN_MAX_AGE_SECONDS = 3600
@@ -27,7 +27,7 @@ async def login(
     response: Response,
     db: AsyncSession = Depends(get_db)
 ):
-    user: User = await authService.login(db, login_dto.email, login_dto.password)
+    user: User = await auth_service.login(db, login_dto.email, login_dto.password)
     token_payload = {
         "sub": str(user.id),
         "email": user.email,
@@ -46,7 +46,7 @@ async def login(
 
 @router.post("/google-login", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def login_google(data: TokenSchema, response: Response, db: AsyncSession = Depends(get_db)):
-    user: User = await authService.login_google(data, db)
+    user: User = await auth_service.login_google(data, db)
     token_payload = {
         "sub": str(user.id),
         "email": user.email,
@@ -66,7 +66,7 @@ async def login_google(data: TokenSchema, response: Response, db: AsyncSession =
 @router.post("/logout", response_model=LogoutResponseDto, status_code=status.HTTP_200_OK)
 async def logout(
     response: Response,
-    user: User = Depends(authService.get_current_user)
+    user: User = Depends(auth_service.get_current_user)
 ):
     response.delete_cookie(
         key=ACCESS_TOKEN_COOKIE,
@@ -77,6 +77,6 @@ async def logout(
 
 @router.get("/me", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def get_current_logged_user(
-    user: User = Depends(authService.get_current_user)
+    user: User = Depends(auth_service.get_current_user)
 ):
     return user

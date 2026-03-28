@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from starlette.status import HTTP_200_OK
 
-from api.routers.auth_router import authService
+from api.routers.auth_router import auth_service
 from core.database import get_db
 from models import User
 from schemas.users_schema import CreateUserDto, UserResponseDto
@@ -58,7 +58,7 @@ async def resend_verification_email(token: str, db: AsyncSession = Depends(get_d
     return await users_service.resend_verification_email(db, token, conf)
 
 @router.get("/topbar_information", response_model=UserResponseDto, status_code=HTTP_200_OK)
-async def get_topbar_information(db: AsyncSession = Depends(get_db), current_user: User = Depends(authService.get_current_user)):
+async def get_topbar_information(db: AsyncSession = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     user: User = await users_service.get_user_by_id(db, current_user.id)
 
     return UserResponseDto(

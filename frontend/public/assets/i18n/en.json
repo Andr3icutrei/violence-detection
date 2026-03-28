@@ -88,6 +88,9 @@
     "submit-successful-message": "Your password has been successfully reset. You can now log in with your new password."
   },
   "dashboard": {
+    "violent": "Violent",
+    "non-violent": "Non-Violent",
+    "search-bar-placeholder": "Search for videos by name, dataset or violent/non-violent..."
   },
   "topbar": {
     "hello": "Hello,",

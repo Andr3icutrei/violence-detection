@@ -1,0 +1,24 @@
+<div class="dashboard-container">
+  <div class="dashboard-searchbar-container">
+    <app-search-bar
+      (onDebouncedSearch)="debouncedSearch($event)"
+      [placeholderText]="'dashboard.search-bar-placeholder' | translate"
+    ></app-search-bar>
+  </div>
+
+  <div class="dashboard-inspect-videos-container">
+    <div class="videos-grid" #videosGrid>
+      <app-video-thumbnail-card
+        *ngFor="let video of videos"
+        [video]="video">
+      </app-video-thumbnail-card>
+    </div>
+
+    <app-paginator
+      [page]="page"
+      [pageSize]="pageSize"
+      [hasMore]="hasMoreVideos"
+      (pageChange)="onPageChange($event)">
+    </app-paginator>
+  </div>
+</div>
