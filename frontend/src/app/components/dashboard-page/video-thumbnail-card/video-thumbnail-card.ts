@@ -19,4 +19,15 @@ export class VideoThumbnailCard {
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
+
+  public playPreview(videoElement: HTMLVideoElement): void {
+    videoElement.play().catch(() => {
+      // Ignore AbortError if playback is interrupted
+    });
+  }
+
+  public stopPreview(videoElement: HTMLVideoElement): void {
+    videoElement.pause();
+    videoElement.currentTime = 0;
+  }
 }

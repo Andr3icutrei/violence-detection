@@ -1,11 +1,15 @@
 <div class="video-card">
-  <div class="video-preview-container">
+  <div class="video-preview-container"
+       (mouseenter)="playPreview(videoPreview)"
+       (mouseleave)="stopPreview(videoPreview)">
     <video
+      #videoPreview
       class="video-preview"
-      controls
       [src]="video.path"
       poster=""
-      preload="metadata">
+      preload="metadata"
+      muted
+      loop>
     </video>
     <div class="duration-badge">{{ formatDuration(video.duration) }}</div>
     <div class="violence-badge" [class.is-violent]="video.is_violent">

@@ -1,11 +1,16 @@
 .portal-container {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .portal-form {
-  width: 30%;
-  margin: 5vh 5vw 3.5vh 3.5vw;
+  flex: 3;
+  margin: 0 5vw 3.5vh 3.5vw;
   padding: 1rem;
   box-sizing: border-box;
 }
@@ -16,8 +21,8 @@
 
 .portal-logo-img-container {
   margin-bottom: 3vh;
-  height: 20%;
-  width: 45%;
+  height: 25%;
+  width: 50%;
 }
 
 .title {
@@ -27,4 +32,15 @@
 .description {
   margin-bottom: 3vh;
   color: var(--color-gray);
+}
+
+.portal-video-roll-container {
+  flex: 7;
+  height: 100%;
+  width: 100%;
+}
+
+.portal-video-roll {
+  height: 100%;
+  width: 100%;
 }

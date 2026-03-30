@@ -283,6 +283,7 @@ input[type="password"]::-ms-clear {
   align-items: center;
   width: 50%;
   height: 50%;
+  margin-bottom: 2rem;
 }
 
 .redirect-widget-icon {
@@ -302,8 +303,8 @@ input[type="password"]::-ms-clear {
   width: 100%;
   height: 15%;
   padding: 1rem;
-  background-color: var(--color-primary-light);
-  margin-bottom: 2rem;
+  background-color: var(--color-primary);
+  margin-bottom: 1rem;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -322,7 +323,7 @@ input[type="password"]::-ms-clear {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2vh;
+  gap: 3vh;
 }
 
 .redirect-widget-title-container {
@@ -344,6 +345,6 @@ input[type="password"]::-ms-clear {
   width: 100%;
   height: 100%;
   font-size: 1.25rem;
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   box-sizing: border-box;
 }
