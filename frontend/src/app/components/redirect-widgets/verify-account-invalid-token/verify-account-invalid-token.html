@@ -7,23 +7,34 @@
 
   <div class="redirect-widget-icon-container">
     <i
-      class="redirect-widget-icon fa-solid fa-link-slash">
+      class="redirect-widget-icon error-message fa-solid fa-link-slash">
     </i>
   </div>
 
   <div class="redirect-widget-details-container">
     <span class="background-color-message">
-      <i class="fa-solid fa-circle-exclamation"></i>
+      <i class="fa-solid fa-circle-exclamation error-message"></i>
       {{ 'verify-account.verify-account-invalid-token-description' | translate }}
       <a class="redirect-link" (click)="$event.preventDefault(); resendVerificationEmail()">{{ 'verify-account.resend-verification-email' | translate }}</a>
     </span>
-    @if(resentVerificationEmailMessage) {
-      <span class="background-color-message success-message">
-        <i class="fa-solid fa-check-circle"></i>
+  </div>
+
+  @if(resentVerificationEmailMessage) {
+    <div class="redirect-widget-details-container">
+      <span
+        class="background-color-message"
+        [class.success-message]="success"
+        [class.error-message]="!success">
+        <i
+          class="fa-solid"
+          [class.success-message]="success"
+          [class.error-message]="!success"
+          [class.fa-check-circle]="success"
+          [class.fa-circle-exclamation]="!success"></i>
         {{ resentVerificationEmailMessage | translate }}
       </span>
-    }
-  </div>
+    </div>
+  }
 
   <div class="redirect-widget-redirect">
     <button

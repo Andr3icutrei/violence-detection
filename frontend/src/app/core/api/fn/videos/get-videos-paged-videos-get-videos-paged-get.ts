@@ -7,7 +7,6 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Dataset } from '../../models/dataset';
 import { VideoResponseDto } from '../../models/video-response-dto';
 
 export interface GetVideosPagedVideosGetVideosPagedGet$Params {
@@ -16,7 +15,7 @@ export interface GetVideosPagedVideosGetVideosPagedGet$Params {
   page_size?: number;
   is_violent?: (boolean | null);
   search_term?: (string | null);
-  dataset_id?: (Dataset | null);
+  dataset_id?: (number | null);
 }
 
 export function getVideosPagedVideosGetVideosPagedGet(http: HttpClient, rootUrl: string, params?: GetVideosPagedVideosGetVideosPagedGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<VideoResponseDto>>> {

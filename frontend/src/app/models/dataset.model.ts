@@ -1,6 +1,8 @@
-import { Dataset } from '../core/api/models/dataset';
+import { UserResponseDto } from '../core/api/models/user-response-dto';
 
 export interface DatasetModel {
-  id: Dataset;
+  id: number;
   name: string;
+  is_official: boolean;
+  user?: UserResponseDto;
 }

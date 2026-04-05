@@ -1,0 +1,14 @@
+.main-layout-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar {
+  flex: 1;
+  background-color: var(--color-background);
+  border-right: 2px solid var(--color-background-faded);
+}
+
+.main-component-container {
+  flex: 25;
+}

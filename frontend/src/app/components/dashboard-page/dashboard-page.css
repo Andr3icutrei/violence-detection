@@ -1,5 +1,0 @@
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  padding-top: 10vh; /* Accounts for the fixed topbar taking up 10vh */
-}

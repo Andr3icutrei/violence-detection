@@ -1,0 +1,17 @@
+<div class="sidebar-container">
+  <div
+    class="sidebar-item"
+    [class.sidebar-item-selected]="selectedSidebarItem === 'dashboard'"
+    (click)="goToPage('dashboard')"
+  >
+    <i class="fa-solid fa-house sidebar-item-icon"></i>
+  </div>
+
+  <div
+    class="sidebar-item"
+    [class.sidebar-item-selected]="selectedSidebarItem === 'inference'"
+    (click)="goToPage('inference')"
+  >
+    <i class="fa-solid fa-layer-group sidebar-item-icon"></i>
+  </div>
+</div>

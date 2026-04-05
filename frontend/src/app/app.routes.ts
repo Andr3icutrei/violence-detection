@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { PortalPage } from './components/portal-page/portal-page';
-import { DashboardPage } from './components/dashboard-page/dashboard-page';
+import { DashboardPage } from './components/main-layout/dashboard-page/dashboard-page';
 import { authGuard } from './guards/auth-guard';
 import { VerifyAccountPage } from './components/verify-account-page/verify-account-page';
 import { RegisterForm } from './components/portal-page/register-form/register-form';
@@ -24,6 +24,8 @@ import { ResetPasswordForm } from './components/redirect-widgets/reset-password-
 import {
   ResetPasswordInvalidToken
 } from './components/redirect-widgets/reset-password-invalid-token/reset-password-invalid-token';
+import { InferencePage } from './components/main-layout/inference-page/inference-page';
+import { MainLayout } from './components/main-layout/main-layout';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'portal', pathMatch: 'full' },
@@ -37,7 +39,15 @@ export const routes: Routes = [
       { path: 'reset-password', component: ForgotPasswordForm }
     ],
   },
-  { path: 'dashboard', component: DashboardPage, canActivate: [authGuard] }, // data: { role: 'admin' } for admins
+  {
+    path: '',
+    component: MainLayout,
+    canActivate: [authGuard],
+    children: [
+      { path: 'dashboard', component: DashboardPage, canActivate: [authGuard] },
+      { path: 'inference', component: InferencePage, canActivate: [authGuard] },
+    ]
+  }, // data: { role: 'admin' } for admins
   {
     path: 'verify-account',
     component: VerifyAccountPage,
@@ -56,5 +66,9 @@ export const routes: Routes = [
       { path: 'reset', component: ResetPasswordForm },
       { path: 'invalid-token', component: ResetPasswordInvalidToken },
     ]
+  },
+  {
+    path: 'inference',
+    component: InferencePage,
   }
 ];

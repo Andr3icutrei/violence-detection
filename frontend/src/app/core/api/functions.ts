@@ -19,6 +19,8 @@ export type { GetUserUsersUserIdGet$Params as GetUserUsersUserIdGet$Params } fro
 export { getUserUsersUserIdGet as getUserUsersUserIdGet } from './fn/users/get-user-users-user-id-get';
 export type { GetVideosPagedVideosGetVideosPagedGet$Params as GetVideosPagedVideosGetVideosPagedGet$Params } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
 export { getVideosPagedVideosGetVideosPagedGet as getVideosPagedVideosGetVideosPagedGet } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
+export type { ExistsVideoVideosExistsVideoVideoUidGet$Params as ExistsVideoVideosExistsVideoVideoUidGet$Params } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
+export { existsVideoVideosExistsVideoVideoUidGet as existsVideoVideosExistsVideoVideoUidGet } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
 export type { LoginAuthLoginPost$Params as LoginAuthLoginPost$Params } from './fn/authentication/login-auth-login-post';
 export { loginAuthLoginPost as loginAuthLoginPost } from './fn/authentication/login-auth-login-post';
 export type { LoginGoogleAuthGoogleLoginPost$Params as LoginGoogleAuthGoogleLoginPost$Params } from './fn/authentication/login-google-auth-google-login-post';

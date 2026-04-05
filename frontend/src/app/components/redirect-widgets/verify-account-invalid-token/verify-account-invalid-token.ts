@@ -12,6 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class VerifyAccountInvalidToken {
   resentVerificationEmailMessage: string | null = null;
+  success: boolean | null = null;
 
   constructor(
     public router: Router,
@@ -25,16 +26,19 @@ export class VerifyAccountInvalidToken {
 
   public resendVerificationEmail(): void {
     const token: string | null = this.activatedRoute.snapshot.queryParamMap.get('token');
+    console.log(token);
     if (!token) {
       this.router.navigate(['/portal/login']);
       return;
     }
-
     this.usersService.resendVerificationEmail(token).subscribe({
       next: (): void => {
         this.resentVerificationEmailMessage = 'verify-account.resent-verification-email';
+        this.success = true;
       },
-      error: (_err: HttpErrorResponse): void => {
+      error: (err: HttpErrorResponse): void => {
+        this.resentVerificationEmailMessage = 'verify-account.resend-verification-email-failed';
+        this.success = false;
       }
     });
   }

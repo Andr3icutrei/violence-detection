@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.control-error-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.error-message i {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}

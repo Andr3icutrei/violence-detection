@@ -5,8 +5,10 @@ export interface VideoResponseDto {
   dataset_id: number;
   dataset_name: string;
   duration: number;
+  frame_rate: number;
   id: number;
   is_violent: boolean;
   name: string;
   path: string;
+  uid: string;
 }

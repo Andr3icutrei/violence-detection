@@ -24,11 +24,11 @@ export class ControlError {
         return this.translationService.instant('error-messages.invalid-email');
       if(this.control.hasError('maxlength')) {
         const { requiredLength } = this.control.getError('maxlength');
-        return this.translationService.instant('error-messages.max-length', { requiredLength });
+        return this.translationService.instant('error-messages.max-length', { max: requiredLength });
       }
       if (this.control.hasError('minlength')) {
         const { requiredLength } = this.control.getError('minlength');
-        return this.translationService.instant('error-messages.min-length', { requiredLength });
+        return this.translationService.instant('error-messages.min-length', { min: requiredLength });
       }
       if(this.control.hasError('passwordMismatch')) {
         return this.translationService.instant('error-messages.password-mismatch');

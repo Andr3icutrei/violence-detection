@@ -32,8 +32,8 @@
   "error-messages": {
     "required": "This field is required.",
     "invalid-email": "Please enter a valid email address.",
-    "max-length": "This field cannot exceed {max} characters.",
-    "min-length": "This field must be at least {min} characters.",
+    "max-length": "This field cannot exceed {{max}} characters.",
+    "min-length": "At least {{min}} characters are required.",
     "password-mismatch": "Passwords do not match.",
     "access-forbidden": "Access forbidden.",
     "server-error": "Server error.",
@@ -65,7 +65,8 @@
     "server-error-resent": "An error occurred while resending the verification email. Please try again later.",
     "already-verified-resent": "Your account is already verified. Return to the login page.",
     "unexistent-user-resent": "The user associated with this email does not exist. Please register for an account first.",
-    "resend-verification-email": "Resend verification email."
+    "resend-verification-email": "Resend verification email.",
+    "resend-verification-email-failed": "Failed to resend verification email. Please try again later."
   },
   "forgot-password-form": {
     "title": "Forgot your password?",
@@ -95,5 +96,28 @@
   "topbar": {
     "hello": "Hello,",
     "logout": "Logout"
+  },
+  "inference": {
+    "original-video": "Original Video",
+    "inference-result": "Inference Result",
+    "play": "Play",
+    "pause": "Pause",
+    "playback-speed": "Speed",
+    "dataset": "Dataset",
+    "dataset-badge-official": "Official dataset",
+    "dataset-badge-unofficial": "Unofficial dataset",
+    "is-violent": "Is Violent",
+    "yes": "Yes",
+    "no": "No",
+    "length": "Length",
+    "name": "Name",
+    "video-details-title": "Video Details",
+    "framerate": "Framerate",
+    "person-tracking": "Person Tracking",
+    "classification": "Classification",
+    "inference-options": "Inference Options",
+    "run-inference": "Run Inference",
+    "results-title": "Inference Results",
+    "no-metrics": "No metrics available. Click 'Run Inference' to see the results."
   }
 }

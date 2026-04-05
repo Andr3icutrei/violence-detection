@@ -18,7 +18,6 @@ export class VideosService {
     dataset_id?: number,
   ): Observable<VideoResponseDto[]> {
     let params = new HttpParams().set('page', page).set('page_size', page_size).set('asc', asc);
-
     if (search_term) {
       params = params.set('search_term', search_term);
     }
@@ -32,5 +31,9 @@ export class VideosService {
         withCredentials: true,
       },
     );
+  }
+
+  public existsVideo(uid: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${environment.apiUrl}videos/exists_video/${uid}`, { withCredentials: true });
   }
 }

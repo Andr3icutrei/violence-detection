@@ -58,7 +58,6 @@ export class LoginForm implements OnInit, OnDestroy {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       password: ['', [Validators.required, Validators.maxLength(50)]],
-      rememberMe: [false],
     });
   }
 

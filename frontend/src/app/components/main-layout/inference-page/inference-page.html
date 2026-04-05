@@ -1,0 +1,185 @@
+<div class="inference-container">
+  <div class="videos-container">
+    <div class="videos-description-container">
+      <h2 class="videos-title">
+        {{ 'inference.original-video' | translate }}
+      </h2>
+      <h2 class="videos-title">
+        {{ 'inference.inference-result' | translate }}
+      </h2>
+    </div>
+
+    <div class="videos-content-container">
+      <div class="video-container left" #leftViewport (wheel)="onVideosWheel($event, leftViewport)">
+        <video
+          #leftVideo
+          class="video zoomable-video"
+          [src]="videoDetails?.path"
+          preload="metadata"
+          muted
+          (loadedmetadata)="onVideoMetadataLoaded()"
+          (timeupdate)="onPrimaryVideoTimeUpdate()"
+          (ended)="onPlaybackEnded()"
+          [style.transform]="'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')'">
+        </video>
+      </div>
+
+      <div class="video-container right" #rightViewport (wheel)="onVideosWheel($event, rightViewport)">
+        <video
+          #rightVideo
+          class="video zoomable-video"
+          [src]="videoDetails?.path"
+          preload="metadata"
+          (loadedmetadata)="onVideoMetadataLoaded()"
+          (ended)="onPlaybackEnded()"
+          [style.transform]="'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')'">
+        </video>
+      </div>
+    </div>
+
+    <div class="playback-bar-container">
+      <div class="playback-main-row">
+        <button
+          class="playback-toggle-button btn-primary"
+          type="button"
+          (click)="togglePlayback()">
+          {{ isPlaying ? ('inference.pause' | translate) : ('inference.play' | translate) }}
+        </button>
+
+        <div class="timeline-slider-column">
+          <input
+            class="timeline-slider"
+            type="range"
+            min="0"
+            [max]="durationSeconds"
+            [value]="currentTimeSeconds"
+            step="0.01"
+            (input)="seekFromSlider($event)" />
+
+          <div class="current-timestamp">
+            <span>{{ formatDuration(currentTimeSeconds) }}</span>
+            <span class="timestamp-seconds">({{ formatTimelineSeconds(currentTimeSeconds) }})</span>
+            <span class="timestamp-frame">{{ currentFrame }}f</span>
+          </div>
+        </div>
+
+        <div class="playback-speed-control">
+          <label for="playback-rate-select">{{ 'inference.playback-speed' | translate }}</label>
+          <select
+            id="playback-rate-select"
+            [value]="playbackRate"
+            (change)="onPlaybackRateChange($event)">
+            @for (rate of playbackRateOptions; track rate) {
+              <option [value]="rate">{{ rate }}x</option>
+            }
+          </select>
+        </div>
+
+        <div class="timeline-time-summary">
+          <span>{{ formatDuration(currentTimeSeconds) }}</span>
+          <span>/</span>
+          <span>{{ formatDuration(durationSeconds) }}</span>
+          <span class="duration-seconds">({{ formatTimelineSeconds(durationSeconds) }})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inference-description-container">
+    <div class="original-video-details-container">
+      <div class="details-card">
+        <div class="details-header">
+          <h3 class="details-title">{{ 'inference.video-details-title' | translate}}</h3>
+          <span [class]="datasetBadgeClass">{{ datasetBadgeLabelKey | translate }}</span>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">{{ 'inference.name' | translate}}</span>
+            <span class="detail-value">{{ videoDetails?.name || '-' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">{{ 'inference.dataset' | translate }}</span>
+            <span class="detail-value dataset-name">{{ videoDetails?.dataset?.name || '-' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">{{ 'inference.framerate' | translate }} </span>
+            <span class="detail-value">{{ formatFrameRate(videoDetails?.frameRate) }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">{{ 'inference.length' | translate }}</span>
+            <span class="detail-value">{{ formatDuration(videoDetails?.duration) }}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">{{ 'inference.is-violent' | translate }}</span>
+            <span class="detail-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
+              {{ videoDetails?.is_violent ? ('inference.yes' | translate) : ('inference.no' | translate) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="inferenceForm" (ngSubmit)="submitInference()">
+      <div class="inference-form">
+        <div class="inference-options-title">
+          <h3 class="options-title">{{ 'inference.inference-options' | translate }}</h3>
+        </div>
+
+        <div class="inference-options-container">
+          <div class="inference-option">
+            <input
+              id="person-tracking-checkbox"
+              type="checkbox"
+              class="input-checkbox-primary"
+              formControlName="personTrackingSelected"/>
+            <label for="person-tracking-checkbox">
+              {{ 'inference.person-tracking' | translate }}
+            </label>
+          </div>
+
+          <div class="inference-option">
+            <input
+              id="classification-checkbox"
+              type="checkbox"
+              class="input-checkbox-primary"
+              formControlName="classificationSelected"/>
+            <label for="classification-checkbox">
+              {{ 'inference.classification' | translate }}
+            </label>
+          </div>
+        </div>
+
+        <div class="inference-run-button-container">
+          <button
+            class="inference-run-button btn-primary"
+            type="submit"
+            [disabled]="isFormInvalid()">
+            {{ 'inference.run-inference' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+
+    <div class="inference-results-container">
+      <div class="inference-results-title-container">
+        <h3 class="inference-results-title"> {{ 'inference.results-title' | translate }} </h3>
+      </div>
+
+      @if (isInferenceSubmitted) {
+        <div class="inference-results-metric-container">
+
+        </div>
+      } @else {
+        <div class="inference-results-no-metrics-container">
+          <span class="no-metrics-message">{{ 'inference.no-metrics' | translate }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

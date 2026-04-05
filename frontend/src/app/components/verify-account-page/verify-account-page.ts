@@ -31,12 +31,12 @@ export class VerifyAccountPage implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 401 || err.status === 400) {
-          this.router.navigate(['/verify-account/invalid-token']);
+          this.router.navigate(['/verify-account/invalid-token'], { queryParams: { token: token! } });
         } else if (err.status === 404) {
           this.router.navigate(['/verify-account/unexistent-user']);
         } else if (err.status === 409) {
           this.router.navigate(['/verify-account/already-verified']);
-        } else if (err.status === 500) {
+        } else if (err.status === 500 || err.status === 0) {
           this.router.navigate(['/verify-account/server-error']);
         }
       },
