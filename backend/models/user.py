@@ -6,6 +6,7 @@ from typing import List, TYPE_CHECKING
 from core.database import Base
 if TYPE_CHECKING:
     from .inference_history import InferenceHistory
+    from .dataset import Dataset
 
 class User(Base):
     __tablename__ = "users"
@@ -23,6 +24,8 @@ class User(Base):
     auth_provider: Mapped[str] = mapped_column(String(50), nullable=True)
 
     inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="user")
+
+    datasets_created: Mapped[List["Dataset"]] = relationship(back_populates="created_by_user")
 
     __table_args__ = (
         CheckConstraint(

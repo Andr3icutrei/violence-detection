@@ -17,7 +17,7 @@ class VideosService:
             self,
             db: AsyncSession,
             search_term: str | None,
-            dataset_id: Dataset | None = None,
+            dataset_id: int | None = None,
             is_violent: bool | None = None,
             asc: bool = True,
             page: int = 0,
@@ -36,3 +36,7 @@ class VideosService:
             result.append(video)
 
         return result
+
+    async def exists_video(self, db: AsyncSession, video_uid: str) -> bool:
+        video: Video = await self.videos_repository.get_by_uid(db, video_uid)
+        return video is not None

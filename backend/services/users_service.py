@@ -105,8 +105,6 @@ class UsersService:
         return user_to_verify
 
     async def resend_verification_email(self, db: AsyncSession, token: str, conf: ConnectionConfig) -> User:
-        decoded_jwt_token: dict = decode_jwt_token(token, "SECRET_JWT_EMAIL")
-
         decoded_jwt_token: dict = decode_jwt_token_without_exp_check(token, "SECRET_JWT_EMAIL")
 
         email: str = decoded_jwt_token["email"]
@@ -170,7 +168,7 @@ class UsersService:
 
     async def reset_password(self, db: AsyncSession, token: str, new_password: str) -> User:
         try:
-            unverified_payload = jwt.decode(token, options={"verify_signature": False})
+            unverified_payload = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
         except jwt.PyJWTError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -202,7 +200,7 @@ class UsersService:
 
     async def verify_reset_password_token(self, token: str, db: AsyncSession) -> bool:
         try:
-            unverified_payload = jwt.decode(token, options={"verify_signature": False})
+            unverified_payload = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
         except PyJWTError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

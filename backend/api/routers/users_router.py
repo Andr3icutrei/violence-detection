@@ -51,7 +51,7 @@ async def request_reset_password(email: str, db: AsyncSession = Depends(get_db))
 
 @router.get("/verify_reset_password_token", status_code=status.HTTP_200_OK)
 async def verify_reset_password_token(token: str, db: AsyncSession = Depends(get_db)):
-    return  await users_service.verify_reset_password_token(token, db)
+    return await users_service.verify_reset_password_token(token, db)
 
 @router.get("/resend_verification_email", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def resend_verification_email(token: str, db: AsyncSession = Depends(get_db)):

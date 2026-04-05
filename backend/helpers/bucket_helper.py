@@ -1,9 +1,6 @@
 import os
 import aioboto3
-import botocore
 from dotenv import load_dotenv
-from fastapi import HTTPException
-from starlette.responses import StreamingResponse
 
 load_dotenv()
 
