@@ -146,7 +146,7 @@ def process_frame(frame, bbox, target_size):
 
 
 def main():
-    yolo_model = YOLO("yolov8m.pt")
+    yolo_model = YOLO("../training_ai4risk_x3dL_binary/yolov8m.pt")
 
     input_path_obj = Path(INPUT_ROOT)
     all_files = []

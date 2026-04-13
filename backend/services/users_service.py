@@ -1,9 +1,12 @@
+from typing import List
+
 from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from fastapi_mail import ConnectionConfig
 import jwt
 
+from helpers.env_helper import get_env_variable
 from schemas.users_schema import CreateUserDto, UserResponseDto
 from core.security import get_password_hash
 from repositories.users_repository import UsersRepository
@@ -223,3 +226,14 @@ class UsersService:
             return True
         except PyJWTError:
             return False
+
+    async def update_all_users_credits(self, db: AsyncSession) -> None:
+        try:
+            credits_to_update = int(get_env_variable("DEFAULT_CREDITS"))
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error loading environment variable DEFAULT_CREDITS: {str(e)}"
+            ) from e
+        users: List[User] = await self.users_repository.get_all(db)
+        await self.users_repository.update_users_credits(db, users, credits_to_update)

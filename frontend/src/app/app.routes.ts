@@ -26,6 +26,7 @@ import {
 } from './components/redirect-widgets/reset-password-invalid-token/reset-password-invalid-token';
 import { InferencePage } from './components/main-layout/inference-page/inference-page';
 import { MainLayout } from './components/main-layout/main-layout';
+import { ReviewDatasetsPage } from './components/main-layout/review-datasets-page/review-datasets-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'portal', pathMatch: 'full' },
@@ -36,7 +37,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'register', component: RegisterForm },
       { path: 'login', component: LoginForm },
-      { path: 'reset-password', component: ForgotPasswordForm }
+      { path: 'reset-password', component: ForgotPasswordForm },
     ],
   },
   {
@@ -46,7 +47,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardPage, canActivate: [authGuard] },
       { path: 'inference', component: InferencePage, canActivate: [authGuard] },
-    ]
+    ],
   }, // data: { role: 'admin' } for admins
   {
     path: 'verify-account',
@@ -57,7 +58,7 @@ export const routes: Routes = [
       { path: 'server-error', component: VerifyAccountServerError },
       { path: 'success', component: VerifyAccountSuccess },
       { path: 'unexistent-user', component: VerifyAccountUnexistentUser },
-    ]
+    ],
   },
   {
     path: 'reset-password',
@@ -65,10 +66,16 @@ export const routes: Routes = [
     children: [
       { path: 'reset', component: ResetPasswordForm },
       { path: 'invalid-token', component: ResetPasswordInvalidToken },
-    ]
+    ],
   },
   {
     path: 'inference',
     component: InferencePage,
-  }
+    canActivate: [authGuard],
+  },
+  {
+    path: 'review-datasets',
+    component: ReviewDatasetsPage,
+    canActivate: [authGuard],
+  },
 ];

@@ -5,7 +5,9 @@ import numpy as np
 from pathlib import Path
 import imageio
 from tqdm import tqdm
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score, roc_curve
 
 from model import SlowFastViolence
 from dataset import SlowFastVideoDataset
@@ -472,7 +474,43 @@ def evaluate_model_multiview(model_path, config, num_clips=10):
     npv = tn / (tn + fn) * 100 if (tn + fn) > 0 else 0
 
     try:
+        sns.set(font_scale=1.5)
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                    xticklabels=['Non-Violence', 'Violence'], 
+                    yticklabels=['Non-Violence', 'Violence'],
+                    annot_kws={"size": 35})
+        plt.xlabel('Predicted', fontsize=18)
+        plt.ylabel('Actual', fontsize=18)
+        plt.title('Confusion Matrix', fontsize=22)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        cm_path = Path(config.SAVE_DIR) / "confusion_matrix.jpg"
+        plt.savefig(cm_path, format='jpg', dpi=300, bbox_inches='tight')
+        plt.close()
+        sns.reset_orig()
+        print(f"Confusion matrix saved to: {cm_path}")
+    except Exception as e:
+        print(f"Confusion matrix save error: {e}")
+
+    try:
         roc_auc = roc_auc_score(all_labels, all_violence_probs) * 100
+        
+        fpr, tpr, _ = roc_curve(all_labels, all_violence_probs)
+        plt.figure(figsize=(8, 6))
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc/100:.3f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('Receiver Operating Characteristic (ROC) Curve')
+        plt.legend(loc="lower right")
+        roc_curve_path = Path(config.SAVE_DIR) / "roc_curve.jpg"
+        plt.savefig(roc_curve_path, format='jpg', dpi=300, bbox_inches='tight')
+        plt.close()
+        print(f"ROC curve saved to: {roc_curve_path}")
+        
     except Exception as e:
         roc_auc = None
         print(f"ROC-AUC error: {e}")

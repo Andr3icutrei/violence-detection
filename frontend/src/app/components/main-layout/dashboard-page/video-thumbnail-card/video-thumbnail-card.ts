@@ -26,12 +26,19 @@ export class VideoThumbnailCard {
   }
 
   public playPreview(videoElement: HTMLVideoElement): void {
+    // Enforce mute at runtime; some browsers/devices can ignore attribute-only muting.
+    videoElement.defaultMuted = true;
+    videoElement.muted = true;
+    videoElement.volume = 0;
+
     videoElement.play().catch(() => {});
   }
 
   public stopPreview(videoElement: HTMLVideoElement): void {
     videoElement.pause();
     videoElement.currentTime = 0;
+    videoElement.muted = true;
+    videoElement.volume = 0;
   }
 
   public goToInferencePage(): void {

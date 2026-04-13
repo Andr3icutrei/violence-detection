@@ -21,6 +21,10 @@ export type { GetVideosPagedVideosGetVideosPagedGet$Params as GetVideosPagedVide
 export { getVideosPagedVideosGetVideosPagedGet as getVideosPagedVideosGetVideosPagedGet } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
 export type { ExistsVideoVideosExistsVideoVideoUidGet$Params as ExistsVideoVideosExistsVideoVideoUidGet$Params } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
 export { existsVideoVideosExistsVideoVideoUidGet as existsVideoVideosExistsVideoVideoUidGet } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
+export type { InferenceVideoVideosInferenceVideoPost$Params as InferenceVideoVideosInferenceVideoPost$Params } from './fn/videos/inference-video-videos-inference-video-post';
+export { inferenceVideoVideosInferenceVideoPost as inferenceVideoVideosInferenceVideoPost } from './fn/videos/inference-video-videos-inference-video-post';
+export type { PeopleTrackingVideosPeopleTrackingVideoUidPost$Params as PeopleTrackingVideosPeopleTrackingVideoUidPost$Params } from './fn/videos/people-tracking-videos-people-tracking-video-uid-post';
+export { peopleTrackingVideosPeopleTrackingVideoUidPost as peopleTrackingVideosPeopleTrackingVideoUidPost } from './fn/videos/people-tracking-videos-people-tracking-video-uid-post';
 export type { LoginAuthLoginPost$Params as LoginAuthLoginPost$Params } from './fn/authentication/login-auth-login-post';
 export { loginAuthLoginPost as loginAuthLoginPost } from './fn/authentication/login-auth-login-post';
 export type { LoginGoogleAuthGoogleLoginPost$Params as LoginGoogleAuthGoogleLoginPost$Params } from './fn/authentication/login-google-auth-google-login-post';
@@ -31,5 +35,7 @@ export type { GetCurrentLoggedUserAuthMeGet$Params as GetCurrentLoggedUserAuthMe
 export { getCurrentLoggedUserAuthMeGet as getCurrentLoggedUserAuthMeGet } from './fn/authentication/get-current-logged-user-auth-me-get';
 export type { GetDatasetsDatasetsGetDatasetsGet$Params as GetDatasetsDatasetsGetDatasetsGet$Params } from './fn/datasets/get-datasets-datasets-get-datasets-get';
 export { getDatasetsDatasetsGetDatasetsGet as getDatasetsDatasetsGetDatasetsGet } from './fn/datasets/get-datasets-datasets-get-datasets-get';
+export type { GetInferenceActionsInferenceActionsGetInferenceActionsGet$Params as GetInferenceActionsInferenceActionsGetInferenceActionsGet$Params } from './fn/inference-actions/get-inference-actions-inference-actions-get-inference-actions-get';
+export { getInferenceActionsInferenceActionsGetInferenceActionsGet as getInferenceActionsInferenceActionsGetInferenceActionsGet } from './fn/inference-actions/get-inference-actions-inference-actions-get-inference-actions-get';
 export type { RootGet$Params as RootGet$Params } from './fn/operations/root-get';
 export { rootGet as rootGet } from './fn/operations/root-get';

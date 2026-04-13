@@ -1,4 +1,5 @@
-from typing import List, Sequence
+from typing import Sequence
+import uuid
 
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +15,7 @@ class VideosRepository:
             search_term: str | None,
             dataset_id: int | None = None,
             is_violent: bool | None = None,
-            asc: bool = True,
+            asc: bool | None = None,
             page: int = 0,
             page_size: int = 40
     ) -> Sequence[Video]:
@@ -53,6 +54,20 @@ class VideosRepository:
         result = await db.execute(query)
         return result.scalars().all()
 
-    async def get_by_uid(self, db: AsyncSession, video_uid: str) -> Video | None:
-        result = await db.execute(select(Video).filter(Video.uid == video_uid))
+    async def get_by_uid(self, db: AsyncSession, video_uid: str | int) -> Video | None:
+        try:
+            parsed_uid = uuid.UUID(str(video_uid))
+        except ValueError:
+            return None
+
+        result = await db.execute(select(Video).filter(Video.uid == parsed_uid))
+        return result.scalars().first()
+
+    async def get_by_id(self, db: AsyncSession, video_id: int) -> Video | None:
+        result = await db.execute(select(Video).filter(Video.id == video_id))
+        return result.scalars().first()
+
+    async def get_by_id_for_classification(self, db: AsyncSession, video_id: int) -> Video | None:
+        query = select(Video).join(Video.dataset).options(contains_eager(Video.dataset)).filter(Video.id == video_id)
+        result = await db.execute(query)
         return result.scalars().first()

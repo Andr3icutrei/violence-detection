@@ -112,14 +112,6 @@ export class LoginForm implements OnInit, OnDestroy {
     return false;
   }
 
-  public isControlValid(controlName: string): boolean {
-    if (this.form.contains(controlName)) {
-      const control = this.form.get(controlName);
-      return control!.dirty && control!.invalid;
-    }
-    return false;
-  }
-
   public isFormValid(): boolean {
     return this.form.valid && !this.isSubmitted;
   }

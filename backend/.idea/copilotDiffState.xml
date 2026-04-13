@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="/config (snapshot).py">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="/config (snapshot).py" />
+              <option name="originalContent" value="class InferenceConfig:&#10;    TARGET_SIZE = (224, 224)&#10;    MIN_CROP_SIZE = (140, 140)&#10;    CONFIDENCE_THRESHOLD = 0.25&#10;    PADDING_PIXELS = 20&#10;&#10;    NUM_CLASSES = 2&#10;    X3D_VERSION = &quot;m&quot;&#10;    NUM_FRAMES = 16&#10;    TEMPORAL_STRIDE = 2&#10;    CROP_SIZE = 224&#10;&#10;    KINETICS_MEAN = [0.45, 0.45, 0.45]&#10;    KINETICS_STD = [0.225, 0.225, 0.225]&#10;&#10;    DEVICE = &quot;cuda&quot;" />
+              <option name="updatedContent" value="class InferenceConfig:&#13;&#10;    TARGET_SIZE = (112, 112)&#13;&#10;    MIN_CROP_SIZE = (112, 112)&#13;&#10;    CONFIDENCE_THRESHOLD = 0.25&#13;&#10;    PADDING_PIXELS = 20&#13;&#10;&#13;&#10;    NUM_CLASSES = 2&#13;&#10;    X3D_VERSION = &quot;m&quot;&#13;&#10;    NUM_FRAMES = 16&#13;&#10;    TEMPORAL_STRIDE = 1&#13;&#10;    CROP_SIZE = 112&#13;&#10;&#13;&#10;    KINETICS_MEAN = [0.43216, 0.394666, 0.37645]&#13;&#10;    KINETICS_STD = [0.22803, 0.22145, 0.216989]&#13;&#10;&#13;&#10;    DEVICE = &quot;cuda&quot;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

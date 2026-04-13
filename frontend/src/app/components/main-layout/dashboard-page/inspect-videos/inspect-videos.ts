@@ -10,10 +10,11 @@ import { VideoThumbnailCard } from '../video-thumbnail-card/video-thumbnail-card
 import { Paginator } from '../../../paginator/paginator';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CreateDataset } from '../../create-dataset/create-dataset';
 
 @Component({
   selector: 'app-inspect-videos',
-  imports: [SearchBar, VideoThumbnailCard, Paginator, CommonModule, TranslatePipe],
+  imports: [SearchBar, VideoThumbnailCard, Paginator, CommonModule, TranslatePipe, CreateDataset],
   templateUrl: './inspect-videos.html',
   styleUrl: './inspect-videos.css',
 })
@@ -29,6 +30,9 @@ export class InspectVideos implements OnInit, AfterViewInit {
   selectedDataset: DatasetModel | null = null;
   videos: Video[] = [];
   hasMoreVideos: boolean = true;
+  isLoadingVideos: boolean = false;
+
+  isCreateDatasetPopupOpen: boolean = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -80,7 +84,7 @@ export class InspectVideos implements OnInit, AfterViewInit {
           (dataset: DatasetResponseDto): DatasetModel => ({
             id: dataset.id,
             name: dataset.name,
-            is_official: dataset.is_official
+            is_official: dataset.is_official,
           }),
         );
         this.cdr.detectChanges();
@@ -92,6 +96,8 @@ export class InspectVideos implements OnInit, AfterViewInit {
   }
 
   public getVideosPaged(): void {
+    this.isLoadingVideos = true;
+
     this.videosService
       .getVideosPaged(this.asc, this.page, this.pageSize, this.searchTerm, this.selectedDataset?.id)
       .subscribe({
@@ -109,13 +115,19 @@ export class InspectVideos implements OnInit, AfterViewInit {
               dataset: {
                 id: video.dataset_id,
                 name: video.dataset_name,
+                is_official: video.dataset_is_official,
               } as DatasetModel,
             }),
           );
+          this.isLoadingVideos = false;
           this.cdr.detectChanges();
         },
         error: (err): void => {
           console.error('Failed to load videos.', err);
+          this.videos = [];
+          this.hasMoreVideos = false;
+          this.isLoadingVideos = false;
+          this.cdr.detectChanges();
         },
       });
   }
@@ -130,5 +142,9 @@ export class InspectVideos implements OnInit, AfterViewInit {
     this.searchTerm = searchTerm;
     this.page = 0;
     this.getVideosPaged();
+  }
+
+  public openCreateDatasetModal() {
+    this.isCreateDatasetPopupOpen = true;
   }
 }

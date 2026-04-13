@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Video } from '../../../models/video.model';
 import { VideosService } from '../../../services/videos/videos-service';
@@ -7,9 +7,12 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup, FormsModule, ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
+  Validators,
 } from '@angular/forms';
+import { InferenceActionsService } from '../../../services/inference_actions/inference-actions.service';
+import { InferenceActionResponseDto } from '../../../core/api/models/inference-action-response-dto';
+import { InferenceAction } from '../../../models/inference-action.model';
+import { TopbarRefreshService } from '../../../services/users/topbar-refresh.service';
 
 @Component({
   selector: 'app-inference-page',
@@ -17,11 +20,19 @@ import {
   templateUrl: './inference-page.html',
   styleUrl: './inference-page.css',
 })
-export class InferencePage implements OnInit {
+export class InferencePage implements OnInit, OnDestroy {
   @ViewChild('leftVideo') leftVideoRef?: ElementRef<HTMLVideoElement>;
   @ViewChild('rightVideo') rightVideoRef?: ElementRef<HTMLVideoElement>;
 
   videoDetails: Video | null = null;
+  inferenceResultVideoUrl: string | null = null;
+  predictedLabel: boolean | null = null;
+  predictedConfidence: number | null = null;
+  predictedClassProbability: number | null = null;
+  trackedPeople: number | null = null;
+
+  availableInferenceActions: InferenceAction[] = [];
+  public readonly selectedActionControlName: string = 'selectedActionId';
 
   inferenceForm: FormGroup;
   isInferenceSubmitted: boolean = false;
@@ -43,15 +54,18 @@ export class InferencePage implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
+    private readonly cdr: ChangeDetectorRef,
     private readonly videosService: VideosService,
+    private readonly inferenceActionsService: InferenceActionsService,
+    private readonly topbarRefreshService: TopbarRefreshService,
   ) {
-    this.inferenceForm = this.fb.group(
-      {
-        personTrackingSelected: [false],
-        classificationSelected: [false],
-      },
-      { validators: this.requireAtLeastOneCheckbox() },
-    );
+    this.inferenceForm = this.fb.group({
+      [this.selectedActionControlName]: [null, Validators.required],
+    });
+  }
+
+  public ngOnDestroy(): void {
+    this.revokeInferenceVideoUrl();
   }
 
   ngOnInit(): void {
@@ -67,6 +81,22 @@ export class InferencePage implements OnInit {
 
     this.videosService.existsVideo(stateVideo.uid).subscribe({
       next: () => {},
+      error: () => {
+        this.redirectToDashboard();
+      },
+    });
+
+    this.inferenceActionsService.getInferenceActions().subscribe({
+      next: (data: InferenceActionResponseDto[]): void => {
+        this.availableInferenceActions = data.map((action) => ({
+          id: action.id,
+          action_id: action.action_id,
+          name: action.name,
+          credits: action.credits,
+        }));
+
+        this.buildInferenceFormControls(this.availableInferenceActions);
+      },
       error: () => {
         this.redirectToDashboard();
       },
@@ -116,29 +146,55 @@ export class InferencePage implements OnInit {
     });
   }
 
-  private requireAtLeastOneCheckbox(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const personTrackingSelected = control.get('personTrackingSelected')?.value;
-      const classificationSelected = control.get('classificationSelected')?.value;
+  private buildInferenceFormControls(actions: InferenceAction[]): void {
+    const defaultActionId = actions.length ? actions[0].action_id : null;
 
-      if (!personTrackingSelected && !classificationSelected) {
-        return { atLeastOneRequired: true };
-      }
+    this.inferenceForm = this.fb.group({
+      [this.selectedActionControlName]: [defaultActionId, Validators.required],
+    });
 
-      if (personTrackingSelected || classificationSelected) {
-        return null;
-      }
-
-      return { atLeastOneRequired: true };
-    };
+    this.cdr.detectChanges();
   }
 
   public submitInference(): void {
+    const selectedActionIdControl = this.inferenceForm.get(this.selectedActionControlName) as AbstractControl | null;
+    const selectedActionId = Number(selectedActionIdControl?.value);
 
+    if (!this.videoDetails?.id || !Number.isFinite(selectedActionId) || selectedActionId <= 0) {
+      return;
+    }
+
+    this.isInferenceSubmitted = false;
+
+    this.videosService.inferenceVideo(this.videoDetails.id, selectedActionId).subscribe({
+      next: (response): void => {
+        if(selectedActionId === 10) {
+          this.predictedLabel = this.parseHeaderBoolean(response.headers.get('X-Predicted-Label'));
+          this.predictedConfidence = this.parseHeaderNumber(response.headers.get('X-Confidence'));
+          this.predictedClassProbability = this.parseHeaderNumber(response.headers.get('X-Predicted-Class-Probability'));
+        } else if(selectedActionId === 20) {
+          this.trackedPeople = this.parseHeaderNumber(response.headers.get('X-Tracked-People-Count'));
+        }
+
+        if (response.body) {
+          this.revokeInferenceVideoUrl();
+          this.inferenceResultVideoUrl = URL.createObjectURL(response.body);
+
+          const rightVideo = this.rightVideoRef?.nativeElement;
+          if (rightVideo) {
+            rightVideo.load();
+          }
+        }
+
+        this.isInferenceSubmitted = true;
+        this.topbarRefreshService.notifyRefresh();
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   public isFormInvalid(): boolean {
-    return this.inferenceForm.invalid  || this.isInferenceSubmitted;
+    return this.inferenceForm.invalid || this.isInferenceSubmitted;
   }
 
   private clamp(value: number, min: number, max: number): number {
@@ -149,10 +205,11 @@ export class InferencePage implements OnInit {
     const leftVideo = this.leftVideoRef?.nativeElement;
     const rightVideo = this.rightVideoRef?.nativeElement;
 
-    const metadataDuration = this.getPositiveNumber(leftVideo?.duration)
-      ?? this.getPositiveNumber(rightVideo?.duration)
-      ?? this.getPositiveNumber(this.videoDetails?.duration)
-      ?? 0;
+    const metadataDuration =
+      this.getPositiveNumber(leftVideo?.duration) ??
+      this.getPositiveNumber(rightVideo?.duration) ??
+      this.getPositiveNumber(this.videoDetails?.duration) ??
+      0;
 
     const metadataFrameRate = this.getPositiveNumber(this.videoDetails?.frameRate) ?? 0;
 
@@ -257,7 +314,6 @@ export class InferencePage implements OnInit {
     return Math.floor(this.currentTimeSeconds * this.effectiveFrameRate);
   }
 
-
   private getPositiveNumber(value: number | null | undefined): number | null {
     if (value === null || value === undefined || Number.isNaN(value) || value <= 0) {
       return null;
@@ -279,7 +335,10 @@ export class InferencePage implements OnInit {
     }
   }
 
-  private getPanBounds(viewport: HTMLElement, scale: number): {
+  private getPanBounds(
+    viewport: HTMLElement,
+    scale: number,
+  ): {
     minOffsetX: number;
     maxOffsetX: number;
     minOffsetY: number;
@@ -307,7 +366,12 @@ export class InferencePage implements OnInit {
     };
   }
 
-  private clampOffsets(viewport: HTMLElement, scale: number, offsetX: number, offsetY: number): {
+  private clampOffsets(
+    viewport: HTMLElement,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+  ): {
     x: number;
     y: number;
   } {
@@ -348,5 +412,41 @@ export class InferencePage implements OnInit {
       this.offsetX = 0;
       this.offsetY = 0;
     }
+  }
+
+  private parseHeaderBoolean(headerValue: string | null): boolean | null {
+    if (headerValue === null) {
+      return null;
+    }
+
+    const normalizedValue = headerValue.trim().toLowerCase();
+
+    if (normalizedValue === 'true') {
+      return true;
+    }
+
+    if (normalizedValue === 'false') {
+      return false;
+    }
+
+    return null;
+  }
+
+  private parseHeaderNumber(headerValue: string | null): number | null {
+    if (headerValue === null) {
+      return null;
+    }
+
+    const parsedValue = Number(headerValue);
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  private revokeInferenceVideoUrl(): void {
+    if (!this.inferenceResultVideoUrl) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.inferenceResultVideoUrl);
+    this.inferenceResultVideoUrl = null;
   }
 }

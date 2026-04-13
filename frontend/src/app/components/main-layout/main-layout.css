@@ -1,14 +1,18 @@
 .main-layout-container {
   display: flex;
   flex-direction: row;
+  min-height: 100vh;
 }
 
 .sidebar {
   flex: 1;
   background-color: var(--color-background);
   border-right: 2px solid var(--color-background-faded);
+  padding-top: 10vh;
+  box-sizing: border-box;
 }
 
 .main-component-container {
   flex: 25;
+  min-width: 0;
 }

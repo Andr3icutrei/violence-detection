@@ -46,7 +46,10 @@
     "forgot-password-unverified-user": "Your account is not verified. Please check your email for verification instructions before resetting your password.",
     "reset-password-invalid-token": "The password reset link is invalid or has expired. Please request a new password reset email.",
     "reset-password-unexistent-user": "The user associated with this password reset link does not exist. Please register for an account first.",
-    "reset-password-server-error": "An error occurred while resetting your password. Please try again later."
+    "reset-password-server-error": "An error occurred while resetting your password. Please try again later.",
+    "no-files-uploaded": "No files were uploaded. Please select at least one video file to upload.",
+    "too-many-files-uploaded": "You have exceeded the maximum number of files allowed ({{max}}). Please select fewer files to upload.",
+    "different-files-format": "All uploaded files must be {{format}} format. Please ensure all selected files have the same extension."
   },
   "verify-account": {
     "verify-account-success-title": "Account Verified!",
@@ -91,11 +94,17 @@
   "dashboard": {
     "violent": "Violent",
     "non-violent": "Non-Violent",
-    "search-bar-placeholder": "Search for videos by name, dataset or violent/non-violent..."
+    "search-bar-placeholder": "Search for videos by name, dataset or violent/non-violent...",
+    "no-videos-found": "No videos were found for the current search.",
+    "create-dataset": "Create Dataset"
   },
   "topbar": {
     "hello": "Hello,",
     "logout": "Logout"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "datasets": "Datasets"
   },
   "inference": {
     "original-video": "Original Video",
@@ -118,6 +127,16 @@
     "inference-options": "Inference Options",
     "run-inference": "Run Inference",
     "results-title": "Inference Results",
-    "no-metrics": "No metrics available. Click 'Run Inference' to see the results."
+    "no-metrics": "No metrics available. Click 'Run Inference' to see the results.",
+    "predicted-label": "Predicted Label",
+    "predicted-confidence": "Confidence Score",
+    "predicted-class-probability": "Class Probability",
+    "tracked-people": "Tracked People"
+  },
+  "create-dataset": {
+    "title": "Create a New Unofficial Dataset",
+    "name-placeholder": "Enter dataset name",
+    "dataset-name": "Dataset Name",
+    "dataset-name-placeholder": "Enter dataset name"
   }
 }

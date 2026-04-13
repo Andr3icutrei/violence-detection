@@ -191,39 +191,41 @@
   gap: 0.5rem;
 }
 
-.detail-item {
+.inference-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.625rem;
+  padding: 0.7rem 0.625rem;
   border-radius: 0.5rem;
   background: var(--color-primary-light);
+  min-width: 0;
 }
 
-.detail-label {
+.inference-item-label {
   color: var(--color-gray);
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 
-.detail-value {
+.inference-item-value {
   color: var(--color-text);
   font-size: 0.9rem;
   font-weight: 600;
+  min-width: 0;
 }
 
-.detail-value.dataset-name {
+.inference-item-value.dataset-name {
   padding: 0.2rem 0.55rem;
   border-radius: 0.35rem;
   background: var(--color-background);
   border: 1px solid var(--color-background-faded);
 }
 
-.detail-value.is-violent {
+.inference-item-value.is-violent {
   color: var(--color-error);
 }
 
-.detail-value.not-violent {
+.inference-item-value.not-violent {
   color: var(--color-success);
 }
 
@@ -283,7 +285,14 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 0.5rem;
+}
+
+.inference-option-details {
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
 }
 
 .inference-run-button-container {
@@ -327,3 +336,36 @@
   color: var(--color-gray);
 }
 
+.no-credits {
+  background: linear-gradient(
+    135deg,
+    #a511c6 0%,
+    #5d10a8 50%,
+    #c78cea 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 0.5rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.1rem;
+}
+
+.inference-results-metric-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.inference-item-video-name {
+  max-width: 11rem;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}

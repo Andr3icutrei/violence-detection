@@ -1,0 +1,90 @@
+<div class="create-dataset-overlay">
+  <div class="create-dataset-content">
+    <div class="create-dataset-title-container">
+      <h2 class="create-dataset-title">
+        {{ 'create-dataset.title' | translate }}
+      </h2>
+    </div>
+
+    <div class="create-dataset-form-container">
+      <form [formGroup]="form" (ngSubmit)="submitDataset()">
+        <div class="input-fields-container">
+          <div class="input-group">
+            <label
+              for="name"
+              class="label-primary"
+              [class.required-asterisk]="isControlRequired('name')">
+              {{'create-dataset.dataset-name' | translate}}
+            </label>
+            <input
+              id="name"
+              name="name"
+              class="input-text-primary dataset-name"
+              type="text"
+              [placeholder]="'create-dataset.dataset-name-placeholder' | translate"
+              formControlName="name"/>
+            <app-control-error [control]="form.get('datasetName')!"></app-control-error>
+          </div>
+
+          <div class="videos-to-input-container">
+            <div class="videos-input-container">
+              <input
+                class="videos-input"
+                type="file"
+                accept="video/mp4"
+                (change)="onFileSelected($event)"
+                multiple
+                #fileInput
+              >
+            </div>
+
+            <button
+              class="btn-primary select-videos-btn"
+              type="button"
+              (click)="fileInput.click()">
+              {{ 'create-dataset.select-videos' | translate }}
+            </button>
+
+            @if(selectedFiles.length > 0) {
+              <div class="selected-files-container">
+                <p><strong>{{ 'create-dataset.selected-files' | translate }}</strong></p>
+                <ul>
+                  @for(file of selectedFiles; track file) {
+                    <li>
+                      {{ file.name }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if(
+          this.form.hasError('noFilesUploaded') ||
+          this.form.hasError('tooManyFilesUploaded') ||
+          this.form.hasError('differentFilesFormat')
+          ) {
+          <div class="submit-errors-container">
+            @if(form.hasError('noFilesUploaded')) {
+              <app-form-submit-detail
+                [message]="'error-messages.no-files-uploaded'"
+                [success]="false">
+              </app-form-submit-detail>
+            } @else if (form.hasError('tooManyFilesUploaded')) {
+              <app-form-submit-detail
+                [message]="'error-messages.too-many-files-uploaded'"
+                [success]="false">
+              </app-form-submit-detail>
+            } @else if (form.hasError('differentFilesFormat')) {
+              <app-form-submit-detail
+                [message]="'error-messages.different-files-format'"
+                [success]="false">
+              </app-form-submit-detail>
+            }
+          </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>

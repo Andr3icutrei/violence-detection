@@ -1,7 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UsersService } from '../../services/users/users-service';
 import { UserResponseDto } from '../../core/api/models/user-response-dto';
+import { TopbarRefreshService } from '../../services/users/topbar-refresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
@@ -9,20 +11,34 @@ import { UserResponseDto } from '../../core/api/models/user-response-dto';
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
-export class Topbar implements OnInit {
+export class Topbar implements OnInit, OnDestroy {
   email!: string;
   credits!: number;
   emailInitials!: string;
   isDropdownOpen: boolean = false;
+  private refreshSubscription?: Subscription;
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private topbarRefreshService: TopbarRefreshService,
   ) {
 
   }
 
   ngOnInit(): void {
+    this.loadTopbarInformation();
+
+    this.refreshSubscription = this.topbarRefreshService.refresh$.subscribe(() => {
+      this.loadTopbarInformation();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.refreshSubscription?.unsubscribe();
+  }
+
+  private loadTopbarInformation(): void {
     this.usersService.getTopbarInformation().subscribe({
       next: (data: UserResponseDto): void => {
         this.email = data.email;

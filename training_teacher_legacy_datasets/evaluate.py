@@ -1,6 +1,7 @@
 import torch
 import cv2
 import numpy as np
+import random
 from pathlib import Path
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -55,6 +56,8 @@ class MultiViewVideoDataset:
                 dir_path = base_path / dir_name
                 if dir_path.exists():
                     dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
+                    random.seed(R3DTransferConfig.SEED)
+                    random.shuffle(dataset_videos)
                     split_idx = int(len(dataset_videos) * self.split_ratio)
 
                     if self.training:
@@ -66,6 +69,8 @@ class MultiViewVideoDataset:
                 dir_path = base_path / dir_name
                 if dir_path.exists():
                     dataset_videos = sorted([f for f in dir_path.rglob('*') if f.is_file()])
+                    random.seed(R3DTransferConfig.SEED)
+                    random.shuffle(dataset_videos)
                     split_idx = int(len(dataset_videos) * self.split_ratio)
 
                     if self.training:
@@ -75,6 +80,8 @@ class MultiViewVideoDataset:
         else:
             for violence_path in self.violence_paths:
                 dataset_videos = sorted([f for f in violence_path.rglob('*') if f.is_file()])
+                random.seed(R3DTransferConfig.SEED)
+                random.shuffle(dataset_videos)
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
                 if self.training:
@@ -84,6 +91,8 @@ class MultiViewVideoDataset:
 
             for non_violence_path in self.non_violence_paths:
                 dataset_videos = sorted([f for f in non_violence_path.rglob('*') if f.is_file()])
+                random.seed(R3DTransferConfig.SEED)
+                random.shuffle(dataset_videos)
                 split_idx = int(len(dataset_videos) * self.split_ratio)
 
                 if self.training:

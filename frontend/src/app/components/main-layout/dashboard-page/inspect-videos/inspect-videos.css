@@ -5,9 +5,22 @@
   gap: 1.25rem;
 }
 
-.dashboard-searchbar-container {
+.dashboard-topbar-container {
   width: 100%;
   height: 4vh;
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.dashboard-searchbar-container {
+  flex: 9;
+}
+
+.dashboard-inspect-videos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .videos-grid {
@@ -15,4 +28,28 @@
   grid-template-columns: repeat(auto-fill, minmax(18.75rem, 1fr));
   gap: 1.5rem;
   width: 100%;
+}
+
+.videos-empty-state {
+  width: 100%;
+  border: 2px dashed var(--color-gray);
+  border-radius: 0.5rem;
+  padding: 1.5rem 1rem;
+  color: var(--color-gray);
+  text-align: center;
+  background-color: var(--color-primary-light);
+}
+
+.create-dataset-button-container {
+  display: flex;
+  flex: 1;
+}
+
+.create-dataset-button {
+  width: 100%;
+  font-size: medium;
+}
+
+.plus-icon {
+  margin-right: 0.5rem;
 }

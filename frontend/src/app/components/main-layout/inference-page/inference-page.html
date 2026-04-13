@@ -28,8 +28,9 @@
         <video
           #rightVideo
           class="video zoomable-video"
-          [src]="videoDetails?.path"
+          [src]="inferenceResultVideoUrl || videoDetails?.path"
           preload="metadata"
+          muted
           (loadedmetadata)="onVideoMetadataLoaded()"
           (ended)="onPlaybackEnded()"
           [style.transform]="'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')'">
@@ -94,29 +95,29 @@
         </div>
 
         <div class="details-grid">
-          <div class="detail-item">
-            <span class="detail-label">{{ 'inference.name' | translate}}</span>
-            <span class="detail-value">{{ videoDetails?.name || '-' }}</span>
+          <div class="inference-item">
+            <span class="inferencel-item-label">{{ 'inference.name' | translate}}</span>
+            <span class="inference-item-value inference-item-video-name" [title]="videoDetails?.name || '-'">{{ videoDetails?.name || '-' }}</span>
           </div>
 
-          <div class="detail-item">
-            <span class="detail-label">{{ 'inference.dataset' | translate }}</span>
-            <span class="detail-value dataset-name">{{ videoDetails?.dataset?.name || '-' }}</span>
+          <div class="inference-item">
+            <span class="inferencel-item-label">{{ 'inference.dataset' | translate }}</span>
+            <span class="inference-item-value dataset-name">{{ videoDetails?.dataset?.name || '-' }}</span>
           </div>
 
-          <div class="detail-item">
-            <span class="detail-label">{{ 'inference.framerate' | translate }} </span>
-            <span class="detail-value">{{ formatFrameRate(videoDetails?.frameRate) }}</span>
+          <div class="inference-item">
+            <span class="inferencel-item-label">{{ 'inference.framerate' | translate }} </span>
+            <span class="inference-item-value">{{ formatFrameRate(videoDetails?.frameRate) }}</span>
           </div>
 
-          <div class="detail-item">
-            <span class="detail-label">{{ 'inference.length' | translate }}</span>
-            <span class="detail-value">{{ formatDuration(videoDetails?.duration) }}</span>
+          <div class="inference-item">
+            <span class="inferencel-item-label">{{ 'inference.length' | translate }}</span>
+            <span class="inference-item-value">{{ formatDuration(videoDetails?.duration) }}</span>
           </div>
 
-          <div class="detail-item">
-            <span class="detail-label">{{ 'inference.is-violent' | translate }}</span>
-            <span class="detail-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
+          <div class="inference-item">
+            <span class="inferencel-item-label">{{ 'inference.is-violent' | translate }}</span>
+            <span class="inference-item-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
               {{ videoDetails?.is_violent ? ('inference.yes' | translate) : ('inference.no' | translate) }}
             </span>
           </div>
@@ -131,27 +132,26 @@
         </div>
 
         <div class="inference-options-container">
-          <div class="inference-option">
-            <input
-              id="person-tracking-checkbox"
-              type="checkbox"
-              class="input-checkbox-primary"
-              formControlName="personTrackingSelected"/>
-            <label for="person-tracking-checkbox">
-              {{ 'inference.person-tracking' | translate }}
-            </label>
-          </div>
+          @for (inferenceAction of availableInferenceActions; track inferenceAction.id) {
+            <div class="inference-option">
+              <div class="inference-option-details">
+                <input
+                  [id]="'inference-action-' + inferenceAction.id"
+                  type="radio"
+                  [name]="selectedActionControlName"
+                  [value]="inferenceAction.action_id"
+                  class="input-checkbox-primary"
+                  [formControlName]="selectedActionControlName"/>
+                <label [for]="'inference-action-' + inferenceAction.id">
+                  {{ inferenceAction.name }}
+                </label>
+              </div>
 
-          <div class="inference-option">
-            <input
-              id="classification-checkbox"
-              type="checkbox"
-              class="input-checkbox-primary"
-              formControlName="classificationSelected"/>
-            <label for="classification-checkbox">
-              {{ 'inference.classification' | translate }}
-            </label>
-          </div>
+              <div class="inference-option-credits">
+                <i class="fa-regular fa-gem user-credits-icon no-credits">{{ inferenceAction.credits }}</i>
+              </div>
+            </div>
+          }
         </div>
 
         <div class="inference-run-button-container">
@@ -165,16 +165,37 @@
       </div>
     </form>
 
-
     <div class="inference-results-container">
       <div class="inference-results-title-container">
         <h3 class="inference-results-title"> {{ 'inference.results-title' | translate }} </h3>
       </div>
 
       @if (isInferenceSubmitted) {
-        <div class="inference-results-metric-container">
-
-        </div>
+        @if(trackedPeople) {
+          <div class="inference-results-metric-container">
+            <div class="inference-item">
+              <span class="inferencel-item-label">{{ 'inference.tracked-people' | translate }}</span>
+              <span class="inference-item-value">{{ trackedPeople }}</span>
+            </div>
+          </div>
+        } @else {
+          <div class="inference-results-metric-container">
+            <div class="inference-item">
+              <span class="inferencel-item-label">{{ 'inference.predicted-label' | translate }}</span>
+              <span class="inference-item-value" [class.is-violent]="predictedLabel" [class.not-violent]="!predictedLabel">
+                {{ predictedLabel ? ('inference.yes' | translate) : ('inference.no' | translate) }}
+              </span>
+            </div>
+            <div class="inference-item">
+              <span class="inferencel-item-label">{{ 'inference.predicted-confidence' | translate }} </span>
+              <span class="inference-item-value">{{ predictedConfidence }}</span>
+            </div>
+            <div class="inference-item">
+              <span class="inferencel-item-label">{{ 'inference.predicted-class-probability' | translate }} </span>
+              <span class="inference-item-value">{{ predictedClassProbability }}</span>
+            </div>
+          </div>
+        }
       } @else {
         <div class="inference-results-no-metrics-container">
           <span class="no-metrics-message">{{ 'inference.no-metrics' | translate }}</span>

@@ -26,7 +26,6 @@ export class VerifyAccountInvalidToken {
 
   public resendVerificationEmail(): void {
     const token: string | null = this.activatedRoute.snapshot.queryParamMap.get('token');
-    console.log(token);
     if (!token) {
       this.router.navigate(['/portal/login']);
       return;

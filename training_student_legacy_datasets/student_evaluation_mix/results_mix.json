@@ -1,0 +1,9077 @@
+[
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__BRANNIK_Football_Violence_CSKA__Arpecua__gew9Ks_9VRU",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          75.0,
+          85.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.42608797550201416,
+        0.5739120244979858
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi169_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          45.0,
+          54.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07700394839048386,
+        0.9229960441589355
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no481_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          42.0,
+          82.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9556734561920166,
+        0.0443265363574028
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no197_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          28.0,
+          66.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.985413670539856,
+        0.014586348086595535
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi457_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          42.0,
+          45.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.013970435597002506,
+        0.9860295653343201
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi326_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          44.0,
+          73.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.02230273187160492,
+        0.9776972532272339
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no218_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          22.0,
+          75.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9763538837432861,
+        0.023646114394068718
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no156_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          30.0,
+          67.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9888269901275635,
+        0.011173021048307419
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__FootBall_Fans_Violence__xxxXLsDXxxx__EaCpQJLdxJ8",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          66.0,
+          68.0,
+          46.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.036046963185071945,
+        0.9639530777931213
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no354_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          31.0,
+          63.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9438592791557312,
+        0.0561407096683979
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi265_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          40.0,
+          63.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09619232267141342,
+        0.9038076996803284
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no336_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          34.0,
+          63.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9806787967681885,
+        0.01932121068239212
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi432_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          48.0,
+          56.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.030366117134690285,
+        0.9696338772773743
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Fans_Fighting_Roma_vs_Man_Utd__teafor22__oYikreK6ng4",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          10.0,
+          22.0,
+          92.0,
+          75.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.025327730923891068,
+        0.9746721982955933
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "soccer_violence__Football_riots__madlu__OpgL3ZlF-gg",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          49.0,
+          81.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.5489163994789124,
+        0.45108360052108765
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__2010_Probowl__SuperBowlWayne64__5aG92ySPbag",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          43.0,
+          81.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9319794178009033,
+        0.06802058964967728
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no175_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          20.0,
+          72.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9881465435028076,
+        0.011853484436869621
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no207_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          19.0,
+          68.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.740233838558197,
+        0.25976619124412537
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi19_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          39.0,
+          49.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.002798386150971055,
+        0.997201681137085
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_violence__soccer_riot_compilation__qqcolaman__URwiZLZipeg",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          8.0,
+          22.0,
+          63.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.046566735953092575,
+        0.9534332752227783
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi374_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          39.0,
+          76.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.06116258352994919,
+        0.9388374090194702
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi311_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          45.0,
+          62.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.038845788687467575,
+        0.9611542224884033
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi356_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          44.0,
+          63.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.020818691700696945,
+        0.9791812896728516
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi31_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          38.0,
+          36.0,
+          57.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.019337650388479233,
+        0.9806622862815857
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi74avi",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          51.0,
+          56.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.3959164619445801,
+        0.6040834784507751
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "16",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          14.0,
+          53.0,
+          86.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9771889448165894,
+        0.022811053320765495
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_violence__Football_violence__lamufle__ucUm3sb39Cs",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          44.0,
+          80.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.16137216985225677,
+        0.838627815246582
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no185_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          30.0,
+          92.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9528211355209351,
+        0.04717888683080673
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Bowman_Gray_New_Tourist_Destination__WXIItv__FIdbB90Dr2o",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          12.0,
+          49.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9858962893486023,
+        0.014103690162301064
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi465_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          30.0,
+          74.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.11154308170080185,
+        0.8884569406509399
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi65",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          39.0,
+          63.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03711462393403053,
+        0.962885320186615
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi404_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          46.0,
+          63.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07689682394266129,
+        0.9231032133102417
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Football_Hooligans_Carlisle_v_Preston_1993__prestonparasoccer__J",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          44.0,
+          72.0,
+          54.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.056958891451358795,
+        0.9430410861968994
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi34",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          56.0,
+          49.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03723936155438423,
+        0.9627606868743896
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi279_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          43.0,
+          49.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.012290021404623985,
+        0.9877099990844727
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no178_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          40.0,
+          51.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9656559824943542,
+        0.03434407711029053
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Cougar_Football__montanhaf100__tZMx6fr49H0",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          53.0,
+          43.0,
+          59.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9802049994468689,
+        0.019795039668679237
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "53",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          35.0,
+          94.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9422895908355713,
+        0.057710371911525726
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no117_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          23.0,
+          81.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9715774059295654,
+        0.028422625735402107
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no349_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          32.0,
+          65.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.96566241979599,
+        0.034337542951107025
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no395_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          36.0,
+          63.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9183586835861206,
+        0.08164127916097641
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi358_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          45.0,
+          48.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.017132041975855827,
+        0.982867956161499
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no390_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          36.0,
+          48.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9294626712799072,
+        0.07053728401660919
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi233_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          48.0,
+          51.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.02500683069229126,
+        0.9749931693077087
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no170_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          19.0,
+          91.0,
+          80.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9630963802337646,
+        0.036903660744428635
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi392_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          47.0,
+          66.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03169337287545204,
+        0.9683066606521606
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi88_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          22.0,
+          52.0,
+          75.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.024002689868211746,
+        0.9759973287582397
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi442_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          56.0,
+          59.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.051839567720890045,
+        0.9481604695320129
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no407_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          31.0,
+          78.0,
+          70.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9656752943992615,
+        0.034324660897254944
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi216_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          38.0,
+          66.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0709228366613388,
+        0.9290771484375
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no14_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          30.0,
+          66.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9775726795196533,
+        0.02242729626595974
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Australia_vs_Ghana__cubicspacedivision__hy9sgs_Rzbg",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          24.0,
+          62.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.7174948453903198,
+        0.28250521421432495
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_violence__ardcore_hooligans__bigmunro60__9tkj8gtIoNM",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          62.0,
+          66.0,
+          37.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10360943526029587,
+        0.8963904976844788
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Croatia_Hooligans__EXB04__JQrSRtqoU_I",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          71.0,
+          35.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1595403552055359,
+        0.8404595851898193
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__5x5_russian_hooligans_fight__Parkhom__GnfpwW6sMkc",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          49.0,
+          86.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.2117609679698944,
+        0.7882390022277832
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi336_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          44.0,
+          70.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0034814404789358377,
+        0.996518611907959
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi285_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          37.0,
+          50.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.027999641373753548,
+        0.9720003604888916
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no72_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          28.0,
+          65.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9616857767105103,
+        0.038314204663038254
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Mexican_Wave_at_Cape_Town_Stadium__mallix2000__oyESuDC-dl0",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          54.0,
+          77.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.990131139755249,
+        0.009868829511106014
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi92",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          53.0,
+          67.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.12233449518680573,
+        0.8776655793190002
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no250_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          38.0,
+          96.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9253854751586914,
+        0.0746145248413086
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no282_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          17.0,
+          76.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8385059237480164,
+        0.16149409115314484
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi81_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          50.0,
+          53.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.012891430407762527,
+        0.9871086478233337
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi158_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          49.0,
+          83.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.049939412623643875,
+        0.9500605463981628
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no479_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          35.0,
+          72.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9511072635650635,
+        0.048892807215452194
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "49",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          13.0,
+          52.0,
+          78.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9730722904205322,
+        0.026927698403596878
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no391_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          40.0,
+          76.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9158656001091003,
+        0.08413438498973846
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds__USC_Football_Team_arriving_at_Lincoln_stadium_2007__jmsotojr__um",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          59.0,
+          20.0,
+          53.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.93736732006073,
+        0.06263265758752823
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi215_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          10.0,
+          38.0,
+          82.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.14260269701480865,
+        0.8573973178863525
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi163_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          52.0,
+          62.0,
+          43.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07519392669200897,
+        0.9248060584068298
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi255_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          40.0,
+          59.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.029855376109480858,
+        0.9701446294784546
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no446_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          27.0,
+          73.0,
+          70.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9643421769142151,
+        0.03565780445933342
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi82_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          41.0,
+          56.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.016513030976057053,
+        0.9834870100021362
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no380_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          33.0,
+          97.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9363975524902344,
+        0.06360239535570145
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no423_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          26.0,
+          84.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9544400572776794,
+        0.045559924095869064
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi464_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          35.0,
+          65.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.17265085875988007,
+        0.8273491263389587
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi112_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          36.0,
+          74.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.02293582260608673,
+        0.9770641922950745
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "crowd_violence__Rostock_Anti_G8_Demo_Police_Violence__erikaransom__f185olt6W4I",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          40.0,
+          98.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.12113193422555923,
+        0.8788681030273438
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no403_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          23.0,
+          48.0,
+          69.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9906512498855591,
+        0.00934874638915062
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Inside_the_Iowa_Spirit_Squads__uimediaproduction__V365Mro2t88",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          15.0,
+          100.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9509757161140442,
+        0.04902432858943939
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no82_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          34.0,
+          70.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9531564712524414,
+        0.04684358835220337
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi391_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          24.0,
+          64.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.11304568499326706,
+        0.8869543075561523
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi126_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          38.0,
+          46.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0705738216638565,
+        0.9294261336326599
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no131_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          34.0,
+          74.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9415329098701477,
+        0.05846715345978737
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no303_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          40.0,
+          56.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8965835571289062,
+        0.10341647267341614
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "47",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          0.0,
+          50.0,
+          97.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9748150110244751,
+        0.025184940546751022
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__bohemka_viktorka_I__averlaagen__FDu-Q6Q5OVk",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          73.0,
+          62.0,
+          39.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9541069865226746,
+        0.045893024653196335
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi443_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          36.0,
+          71.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.08014923334121704,
+        0.9198507070541382
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__World_Cup_2010_Korea_vs_Uruguay_Han_River_Seoul_Pre_game__vivach",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          51.0,
+          94.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9602636694908142,
+        0.039736270904541016
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi168_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          45.0,
+          49.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.05567539483308792,
+        0.9443245530128479
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no317_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          24.0,
+          77.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9563850164413452,
+        0.04361502081155777
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no56_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          24.0,
+          71.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9804613590240479,
+        0.01953861303627491
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no321_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          40.0,
+          29.0,
+          58.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9597821235656738,
+        0.04021792113780975
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi76",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          26.0,
+          76.0,
+          65.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.26307910680770874,
+        0.7369208931922913
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi500_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          38.0,
+          59.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.01793854311108589,
+        0.9820614457130432
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi242_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          37.0,
+          59.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.00385133340023458,
+        0.9961487054824829
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no270_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          34.0,
+          79.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9673723578453064,
+        0.03262770175933838
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Violence_in_Soccer_Stadiums_The_Hooligan_Syndrome__evanese1__-x2",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          43.0,
+          54.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.008093933574855328,
+        0.9919060468673706
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi127_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          24.0,
+          47.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03084532730281353,
+        0.9691546559333801
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no378_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          21.0,
+          74.0,
+          68.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9671233296394348,
+        0.032876670360565186
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no290_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          13.0,
+          36.0,
+          65.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8455489873886108,
+        0.15445099771022797
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds__MaximsNewsNetwork_SUDAN_ELECTIONS_YASIR_ARMAN_OMAR_AL_BASHIR_UNM",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          8.0,
+          80.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.904556393623352,
+        0.09544360637664795
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Roma_vs_Man_United_Police_violence_DANISH_TV__7Anotnac7__gIfgEwL",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          63.0,
+          75.0,
+          49.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10620918869972229,
+        0.8937908411026001
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi5",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          44.0,
+          62.0,
+          57.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.05299476161599159,
+        0.9470052123069763
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi41",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          9.0,
+          78.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.056028567254543304,
+        0.9439714550971985
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no300_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          22.0,
+          79.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9836644530296326,
+        0.016335569322109222
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi267_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          43.0,
+          56.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0403994545340538,
+        0.9596005082130432
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi107_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          48.0,
+          65.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.05236251279711723,
+        0.9476374387741089
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi266_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          44.0,
+          62.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.02954728901386261,
+        0.9704527258872986
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi46_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          40.0,
+          57.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.031475622206926346,
+        0.9685244560241699
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi82",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          45.0,
+          54.0,
+          67.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.17533734440803528,
+        0.8246626853942871
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi39_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          27.0,
+          47.0,
+          67.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1758706271648407,
+        0.8241294026374817
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi209_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          43.0,
+          71.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.022158943116664886,
+        0.9778410792350769
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no206_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          23.0,
+          76.0,
+          67.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9815912246704102,
+        0.018408820033073425
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no59_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          22.0,
+          70.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9681094288825989,
+        0.0318906269967556
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no298_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          37.0,
+          80.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.7568210363388062,
+        0.24317897856235504
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi195_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          40.0,
+          67.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.06767646223306656,
+        0.9323235154151917
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "soccer_violence__FENERBAHCE_ULTRAS_VS_COPS_VIOLENCE_RIOT__2maxpower1453__e7Bv5fTB",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          52.0,
+          93.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.094093918800354,
+        0.905906081199646
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no470_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          28.0,
+          56.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9444223046302795,
+        0.055577702820301056
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi6_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          46.0,
+          67.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.013771983794867992,
+        0.9862280488014221
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi26_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          27.0,
+          56.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04483854025602341,
+        0.955161452293396
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no389_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          26.0,
+          59.0,
+          68.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8510733842849731,
+        0.14892664551734924
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Life_in_a_Day_Cheering_in_a_crowd_of_44_000__TheMariaMcD__EnR2uY",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          46.0,
+          39.0,
+          66.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9637820720672607,
+        0.036217860877513885
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no69_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          36.0,
+          74.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.991222620010376,
+        0.008777379058301449
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi200_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          29.0,
+          60.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09565117210149765,
+        0.9043488502502441
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no348_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          21.0,
+          69.0,
+          66.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9708095192909241,
+        0.029190506786108017
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "balcony_football__Seoul_vs_Dae_Gu_Futbol_Roman_Candles__JOECORE__bbpgvaM2sxs",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          40.0,
+          71.0,
+          72.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9284146428108215,
+        0.07158538699150085
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi412_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          25.0,
+          76.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.4251195192337036,
+        0.5748804807662964
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_violence__stadium_violence__Barras_Argentinas__alebb77__en5llVbjq20",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          44.0,
+          86.0,
+          68.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.019510706886649132,
+        0.9804893732070923
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi68",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          49.0,
+          47.0,
+          63.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0659274309873581,
+        0.9340726137161255
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no245_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          25.0,
+          70.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9546585083007812,
+        0.04534147307276726
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi492_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          39.0,
+          57.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.007658122573047876,
+        0.9923418760299683
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi472_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          37.0,
+          59.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09298974275588989,
+        0.9070103168487549
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "43 (1)",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          30.0,
+          61.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9436836838722229,
+        0.056316349655389786
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi342_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          45.0,
+          72.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.019800100475549698,
+        0.980199933052063
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no498_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          30.0,
+          78.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9866727590560913,
+        0.013327267952263355
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Hooligans_violence__BRANNIK_football_violence__KD666999__YTqe4xf5o6U",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          48.0,
+          64.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07704201340675354,
+        0.9229579567909241
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds__Massena_Central_High_School_Hall_Of_Fame_Football_Game_2009__joh",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          50.0,
+          99.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9535338282585144,
+        0.04646614193916321
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no95_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          36.0,
+          65.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.5347396731376648,
+        0.4652603566646576
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no375_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          49.0,
+          59.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9035567045211792,
+        0.09644332528114319
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi20_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          38.0,
+          46.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.013550536707043648,
+        0.9864494204521179
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "87",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          34.0,
+          71.0,
+          78.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9259804487228394,
+        0.07401957362890244
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi446_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          45.0,
+          76.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0263633131980896,
+        0.9736366271972656
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no100_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          41.0,
+          83.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.6730632185935974,
+        0.3269367814064026
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi154_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          45.0,
+          69.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10491759330034256,
+        0.8950824737548828
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no396_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          38.0,
+          75.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8704725503921509,
+        0.12952743470668793
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Polish_Hooligans__tigardojaja__YLSsmo2Glyk",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          68.0,
+          56.0,
+          44.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.12012225389480591,
+        0.8798776865005493
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "crowd_violence__Roma_V_Man_Utd_Police_beating_crowd__Beck84Utd__jwtg8AkcAfc",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          40.0,
+          81.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.08015438169240952,
+        0.9198456406593323
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no301_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          42.0,
+          31.0,
+          70.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9300879240036011,
+        0.0699121356010437
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi11",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          37.0,
+          60.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.017052724957466125,
+        0.9829472899436951
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no315_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          24.0,
+          54.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9410861730575562,
+        0.058913856744766235
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no153_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          22.0,
+          80.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9671562910079956,
+        0.03284364938735962
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no163_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          13.0,
+          25.0,
+          87.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9842101335525513,
+        0.015789849683642387
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no465_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          27.0,
+          67.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9885129928588867,
+        0.011487068608403206
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi283_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          32.0,
+          52.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10624779760837555,
+        0.8937522172927856
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi292_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          47.0,
+          52.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03333090990781784,
+        0.9666690230369568
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi299_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          40.0,
+          55.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03720908239483833,
+        0.9627909660339355
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no414_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          20.0,
+          79.0,
+          80.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9721747040748596,
+        0.027825288474559784
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi40",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          28.0,
+          84.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.24374094605445862,
+        0.7562590837478638
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi418_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          38.0,
+          39.0,
+          58.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.05969110503792763,
+        0.9403089284896851
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi22",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          43.0,
+          75.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.030702874064445496,
+        0.9692971706390381
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no228_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          23.0,
+          59.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9751099944114685,
+        0.024890011176466942
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi211_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          24.0,
+          61.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.5275084376335144,
+        0.4724915623664856
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__larson_is_welcomed_to_OT__mc4566__sBVBkxmK3VY",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          10.0,
+          17.0,
+          89.0,
+          75.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9634600877761841,
+        0.036539867520332336
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Hooligans_war_in_Russian_vk__artemorlik__6UNj6fEgz8U",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          46.0,
+          70.0,
+          58.0,
+          31.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.13476935029029846,
+        0.8652306795120239
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "6",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          13.0,
+          60.0,
+          83.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9888172149658203,
+        0.011182785965502262
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi49",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          39.0,
+          76.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.3623708188533783,
+        0.6376292109489441
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "soccer_violence__SCC_gets_owned_by_real_football_fans__JayFCAK47__32N5pojPfV8",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          55.0,
+          85.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.01176893338561058,
+        0.9882310032844543
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi221_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          40.0,
+          66.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09558341652154922,
+        0.9044165015220642
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi28",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          39.0,
+          62.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07127311825752258,
+        0.9287269115447998
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no324_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          34.0,
+          72.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9824129343032837,
+        0.017587004229426384
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi223_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          43.0,
+          45.0,
+          52.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.08466505259275436,
+        0.915334939956665
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no467_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          30.0,
+          88.0,
+          64.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9284617304801941,
+        0.0715382844209671
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no489_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          31.0,
+          86.0,
+          67.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9559224843978882,
+        0.044077541679143906
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no29_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          26.0,
+          34.0,
+          75.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9140775799751282,
+        0.08592239767313004
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no1_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          37.0,
+          75.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8578457236289978,
+        0.14215433597564697
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no356_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          23.0,
+          84.0,
+          76.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.957696259021759,
+        0.04230377823114395
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi229_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          44.0,
+          61.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0291169211268425,
+        0.9708830118179321
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi483_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          52.0,
+          64.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.08059229701757431,
+        0.9194077253341675
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi10",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          34.0,
+          61.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.022257911041378975,
+        0.9777421355247498
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "84",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          73.0,
+          75.0,
+          39.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9249948263168335,
+        0.0750051885843277
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi466_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          40.0,
+          56.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.044424816966056824,
+        0.9555752277374268
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no285_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          21.0,
+          61.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9521774649620056,
+        0.047822561115026474
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "27",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          13.0,
+          54.0,
+          83.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.930759608745575,
+        0.06924041360616684
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi489_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          43.0,
+          62.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.024113187566399574,
+        0.9758868217468262
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi119_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          42.0,
+          60.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.01492114458233118,
+        0.9850788116455078
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "balcony_football_violence__Brannik_Football_Violence__Nattevandring__ysW-tGv-YjI",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          45.0,
+          57.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.029080040752887726,
+        0.9709200263023376
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no313_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          36.0,
+          61.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9652358293533325,
+        0.034764159470796585
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no462_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          47.0,
+          77.0,
+          39.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8818745017051697,
+        0.1181255355477333
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no28_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          19.0,
+          80.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9730753302574158,
+        0.026924706995487213
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__The_Best_Fans_in_the_World_Part_4_Hooligans__crvenobeli__3mXS25x",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          59.0,
+          53.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1504063457250595,
+        0.8495936393737793
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Violence_after_bball_game__shlomipr__WSFdO3em2I8",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          39.0,
+          91.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09993773698806763,
+        0.9000622630119324
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no18_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          13.0,
+          31.0,
+          77.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.959479808807373,
+        0.040520209819078445
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no213_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          27.0,
+          33.0,
+          68.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9738311767578125,
+        0.026168841868638992
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi324_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          45.0,
+          62.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.016910791397094727,
+        0.9830892086029053
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi83_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          46.0,
+          46.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.009620662778615952,
+        0.9903793334960938
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi184_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          40.0,
+          52.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10173541307449341,
+        0.8982645869255066
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Spartans_What_Is_Your_Profession_Chant__PaulWaLL4EvR__KeWNYvvINZ",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          35.0,
+          94.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9312772154808044,
+        0.06872280687093735
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no157_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          25.0,
+          56.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9691449999809265,
+        0.0308549702167511
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi490_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          40.0,
+          41.0,
+          54.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.008137906901538372,
+        0.9918620586395264
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi340_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          49.0,
+          74.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.016121335327625275,
+        0.9838787317276001
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no189_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          27.0,
+          87.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8677763342857361,
+        0.13222365081310272
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi174_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          41.0,
+          58.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07102005928754807,
+        0.9289799332618713
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi37",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          26.0,
+          48.0,
+          54.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0389447845518589,
+        0.9610552191734314
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no27_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          21.0,
+          77.0,
+          74.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9827720522880554,
+        0.01722799800336361
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi100_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          21.0,
+          64.0,
+          75.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1352672278881073,
+        0.8647327423095703
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no193_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          21.0,
+          71.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9777013063430786,
+        0.022298656404018402
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Ghana_stars_in_heroes_reception__NTVKenya__RXQA-gagvKI",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          41.0,
+          0.0,
+          63.0,
+          35.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.44197267293930054,
+        0.5580273270606995
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__New_Mexico_Men_s_Soccer_Crowd_Atmosphere__menslobosoccer__us9aHz",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          22.0,
+          112.0,
+          73.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9109030365943909,
+        0.0890970304608345
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no132_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          25.0,
+          70.0,
+          70.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.969242513179779,
+        0.030757445842027664
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Bands_talk_about_their_influences_from_Punk_s_Not_Dead__PNDmovie",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          23.0,
+          100.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.5239858627319336,
+        0.4760141670703888
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no200_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          38.0,
+          81.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.35359513759613037,
+        0.6464048624038696
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_violence__Football_Factory_PV_by_Daryl_T_Fave_Films_Clips__LogicBomb777__vnwttRPHdnw",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          35.0,
+          58.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.034270890057086945,
+        0.9657291173934937
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi452_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          42.0,
+          57.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.00485409889370203,
+        0.995145857334137
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi51_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          47.0,
+          43.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03321302309632301,
+        0.9667870402336121
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no231_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          23.0,
+          62.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9675225019454956,
+        0.03247746825218201
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi94",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          43.0,
+          101.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.19612853229045868,
+        0.8038715124130249
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi177_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          41.0,
+          41.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1363399475812912,
+        0.8636600375175476
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi397_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          39.0,
+          69.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.020859142765402794,
+        0.9791408181190491
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no106_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          28.0,
+          67.0,
+          56.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9588568210601807,
+        0.04114311933517456
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no418_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          26.0,
+          26.0,
+          56.0,
+          70.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9265708327293396,
+        0.0734291672706604
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi48",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          44.0,
+          64.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.06652715802192688,
+        0.9334728717803955
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no223_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          23.0,
+          72.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9756166934967041,
+        0.024383317679166794
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "71avi",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          11.0,
+          63.0,
+          85.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9732037782669067,
+        0.026796258985996246
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no15_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          20.0,
+          70.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9652996063232422,
+        0.03470034897327423
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi196_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          46.0,
+          78.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.021124636754393578,
+        0.9788753986358643
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Outside_Yankee_Stadium_Following_World_Series_Win_vs_Phillies_11",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          14.0,
+          103.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9138422012329102,
+        0.08615776151418686
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi8",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          63.0,
+          60.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03706619143486023,
+        0.9629337787628174
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi438_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          47.0,
+          60.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.3410855233669281,
+        0.6589144468307495
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no48_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          17.0,
+          70.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9678381085395813,
+        0.03216195106506348
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi165_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          51.0,
+          75.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.052149202674627304,
+        0.9478508234024048
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no286_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          50.0,
+          61.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8958556652069092,
+        0.10414434969425201
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi68_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          37.0,
+          51.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0184436347335577,
+        0.9815562963485718
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "15",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          16.0,
+          64.0,
+          84.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9816664457321167,
+        0.018333537504076958
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__LIVE_SQUAD_Morgan_State_University_Band_Pep_Club__DShock17__2x96",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          63.0,
+          22.0,
+          49.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9754806756973267,
+        0.0245193000882864
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi89",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          33.0,
+          97.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.4677627384662628,
+        0.5322372317314148
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi41_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          27.0,
+          63.0,
+          64.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.080471470952034,
+        0.9195285439491272
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi441_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          40.0,
+          53.0,
+          63.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.02714003436267376,
+        0.9728599786758423
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "32",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          21.0,
+          72.0,
+          59.0,
+          30.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9270696043968201,
+        0.07293043285608292
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds__ASB_SHOW_HOMECOMING_VIDEO_2010__deweesbrofilms__RUAVfS2OyX0",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          13.0,
+          14.0,
+          81.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9434176087379456,
+        0.05658235773444176
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no128_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          29.0,
+          53.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9427582025527954,
+        0.05724179372191429
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "19",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          14.0,
+          50.0,
+          81.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9732891917228699,
+        0.026710782200098038
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi332_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          46.0,
+          58.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.049846600741147995,
+        0.9501534104347229
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "48",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          27.0,
+          13.0,
+          60.0,
+          83.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9822110533714294,
+        0.017788918688893318
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no135_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          29.0,
+          56.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9931331276893616,
+        0.006866934709250927
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Hajduk_Split_vs_Dinamo_Zagreb_28_May_2009_Croatia_Cup_Final__jay",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          0.0,
+          17.0,
+          89.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9374479055404663,
+        0.0625520795583725
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no271_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          23.0,
+          70.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.7971585392951965,
+        0.20284147560596466
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no352_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          28.0,
+          66.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9599610567092896,
+        0.04003896191716194
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no40_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          22.0,
+          76.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.974225640296936,
+        0.025774288922548294
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "33",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          17.0,
+          44.0,
+          78.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9892697930335999,
+        0.010730179958045483
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no497_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          26.0,
+          80.0,
+          67.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9797881245613098,
+        0.020211851224303246
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi70",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          43.0,
+          46.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.011927643790841103,
+        0.988072395324707
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no448_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          39.0,
+          21.0,
+          73.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9582468867301941,
+        0.04175311699509621
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "14",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          13.0,
+          49.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.968048095703125,
+        0.031951915472745895
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no305_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          55.0,
+          30.0,
+          57.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9802613258361816,
+        0.019738689064979553
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi314_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          45.0,
+          64.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.008392591960728168,
+        0.9916074275970459
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi228_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          38.0,
+          49.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.014125719666481018,
+        0.9858742952346802
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "26 (1)",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          32.0,
+          79.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9799758791923523,
+        0.020024115219712257
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Inside_the_Iowa_Spirit_Squads__uimediaproduction__V365Mro2t88",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          72.0,
+          22.0,
+          40.0,
+          72.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9793282151222229,
+        0.020671769976615906
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi80_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          51.0,
+          80.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.028522886335849762,
+        0.9714771509170532
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no483_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          44.0,
+          82.0,
+          55.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8165264129638672,
+        0.1834735870361328
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi262_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          27.0,
+          32.0,
+          64.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.11087319999933243,
+        0.8891267776489258
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Brisbane_Lions_v_Carlton_Blues_The_Gabba_5_Sept_2009__jacktion19",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          43.0,
+          35.0,
+          61.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8848029375076294,
+        0.11519705504179001
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no121_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          26.0,
+          75.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9756996631622314,
+        0.02430034801363945
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no52_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          24.0,
+          59.0,
+          61.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9772384762763977,
+        0.022761531174182892
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi333_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          45.0,
+          65.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0845937579870224,
+        0.9154062271118164
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "46",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          0.0,
+          54.0,
+          97.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9803991913795471,
+        0.019600840285420418
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi424_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          38.0,
+          39.0,
+          55.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07360902428627014,
+        0.9263909459114075
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no370_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          33.0,
+          62.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9757434725761414,
+        0.02425648458302021
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi70_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          47.0,
+          65.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.023026738315820694,
+        0.9769732356071472
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi484_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          46.0,
+          61.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.024844905361533165,
+        0.9751551151275635
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "39",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          15.0,
+          50.0,
+          76.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9714896082878113,
+        0.02851032093167305
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi362_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          49.0,
+          60.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04237337410449982,
+        0.9576265811920166
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi199_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          41.0,
+          49.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.053419917821884155,
+        0.9465801119804382
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no203_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          28.0,
+          72.0,
+          65.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9533458352088928,
+        0.046654243022203445
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi360_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          45.0,
+          67.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03003658726811409,
+        0.9699633717536926
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi113_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          43.0,
+          70.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.044532112777233124,
+        0.955467939376831
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no323_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          22.0,
+          68.0,
+          69.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.927479088306427,
+        0.07252088934183121
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no404_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          23.0,
+          61.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.992950439453125,
+        0.007049571722745895
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no451_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          30.0,
+          59.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9812175035476685,
+        0.018782489001750946
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_violence__FUCK_YOU_FOOTBALL_HOOLIGANS_FRENZY_PART1_SCOTLAND__W00FAM__Yy73o",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          63.0,
+          76.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.2172306776046753,
+        0.7827692627906799
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi369_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          37.0,
+          74.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.16581296920776367,
+        0.8341870307922363
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi213_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          39.0,
+          66.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.08689006417989731,
+        0.9131099581718445
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Human_LCD_Close_Up_Video_SOUTH_KOREA__rnqhdtnr__7Jgkm2pdWgY",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          25.0,
+          20.0,
+          87.0,
+          73.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9735706448554993,
+        0.026429321616888046
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi194_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          51.0,
+          62.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07899246364831924,
+        0.9210074543952942
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no432_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          26.0,
+          74.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8704771995544434,
+        0.12952280044555664
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Slovak_chauvinism_nationalism_extremism_intolerance_and_all_form",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          75.0,
+          76.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.01911502331495285,
+        0.9808850288391113
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no77_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          33.0,
+          80.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8161730766296387,
+        0.18382695317268372
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi28_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          36.0,
+          46.0,
+          45.0,
+          47.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.11235368996858597,
+        0.8876462578773499
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi118_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          40.0,
+          58.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.032226696610450745,
+        0.9677733182907104
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi7_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          42.0,
+          52.0,
+          42.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.018964236602187157,
+        0.9810357093811035
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi87_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          40.0,
+          51.0,
+          45.0,
+          43.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.021217139437794685,
+        0.9787828922271729
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi47_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          41.0,
+          65.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.012877379544079304,
+        0.987122654914856
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi33_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          49.0,
+          76.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03367581218481064,
+        0.9663241505622864
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Feel_the_buzz_of_Croke_Park__DiscoverGAA__bCYSflQwc7o",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          57.0,
+          76.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.974881112575531,
+        0.025118939578533173
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no428_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          25.0,
+          87.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9613378643989563,
+        0.0386621356010437
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no385_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          34.0,
+          68.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9751514792442322,
+        0.02484849840402603
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi230_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          38.0,
+          63.0,
+          53.0,
+          34.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.15440590679645538,
+        0.8455941081047058
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no254_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          30.0,
+          71.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9547753930091858,
+        0.045224569737911224
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no166_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          29.0,
+          63.0,
+          65.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9870296716690063,
+        0.012970300391316414
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no280_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          22.0,
+          79.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.967599630355835,
+        0.032400328665971756
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds__Spain_World_Cup_team_receives_hero_s_welcome__timesofearth__Pz3z",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          0.0,
+          66.0,
+          65.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8403458595275879,
+        0.15965411067008972
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no134_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          30.0,
+          64.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9740380048751831,
+        0.025962024927139282
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "45",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          47.0,
+          55.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9494009017944336,
+        0.05059915408492088
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi429_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          37.0,
+          51.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07962696254253387,
+        0.9203730821609497
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi87",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          16.0,
+          53.0,
+          76.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.10376197844743729,
+        0.8962380290031433
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no283_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          19.0,
+          78.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9013838768005371,
+        0.0986161082983017
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no441_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          26.0,
+          33.0,
+          63.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.913120687007904,
+        0.08687925338745117
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi224_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          45.0,
+          61.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.040952425450086594,
+        0.9590476155281067
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no393_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          32.0,
+          103.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9439727067947388,
+        0.05602731555700302
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi468_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          37.0,
+          66.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.1053454577922821,
+        0.8946545124053955
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no204_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          26.0,
+          60.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9813963770866394,
+        0.018603654578328133
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi303_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          40.0,
+          60.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.012784481048583984,
+        0.987215518951416
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no257_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          18.0,
+          25.0,
+          84.0,
+          62.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9624276757240295,
+        0.037572287023067474
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi100",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          30.0,
+          81.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.0782572478055954,
+        0.9217426776885986
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "25",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          11.0,
+          60.0,
+          83.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9812759160995483,
+        0.01872408017516136
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi480_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          37.0,
+          44.0,
+          58.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04022853448987007,
+        0.959771454334259
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no70_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          32.0,
+          20.0,
+          57.0,
+          75.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9200142621994019,
+        0.07998576015233994
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi153_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          27.0,
+          47.0,
+          63.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03982679545879364,
+        0.9601731896400452
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no410_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          22.0,
+          66.0,
+          60.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9762091040611267,
+        0.023790869861841202
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no261_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          15.0,
+          35.0,
+          97.0,
+          63.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.3822987973690033,
+        0.6177011728286743
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "59",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          28.0,
+          78.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9784368872642517,
+        0.02156313881278038
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi385_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          30.0,
+          35.0,
+          56.0,
+          44.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04764297977089882,
+        0.9523569941520691
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi353_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          43.0,
+          73.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.008849608711898327,
+        0.9911503791809082
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no226_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          18.0,
+          66.0,
+          57.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9633437991142273,
+        0.036656253039836884
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi131_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          46.0,
+          50.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.014592607505619526,
+        0.9854074120521545
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no330_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          28.0,
+          31.0,
+          64.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9744393229484558,
+        0.02556062862277031
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no45_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          29.0,
+          51.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9801645278930664,
+        0.019835444167256355
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no369_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          18.0,
+          70.0,
+          67.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8937498927116394,
+        0.10625013709068298
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__HARRY_KEWELL_SCORES_CROWD_GO_NUTS__phillipstama__K7qlpU7tMhQ",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          53.0,
+          92.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9812321066856384,
+        0.018767938017845154
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi251_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          26.0,
+          23.0,
+          58.0,
+          67.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.4366184175014496,
+        0.5633816123008728
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi312_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          44.0,
+          58.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07854386419057846,
+        0.9214561581611633
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no224_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          22.0,
+          67.0,
+          76.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.976869523525238,
+        0.023130450397729874
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi274_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          33.0,
+          47.0,
+          59.0,
+          37.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04807186871767044,
+        0.9519281387329102
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi46",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          43.0,
+          78.0,
+          54.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.134073868393898,
+        0.8659260869026184
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi263_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          35.0,
+          76.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.01658698357641697,
+        0.9834129810333252
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no430_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          31.0,
+          90.0,
+          65.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9729740619659424,
+        0.027025870978832245
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__F_GHT_S_MORE_MPORTANT_THAN_FOOTBALL_sometimes__shevchenko776__9a616Ppoeak",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          14.0,
+          59.0,
+          89.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.015086558647453785,
+        0.9849134087562561
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no263_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          38.0,
+          75.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9197706580162048,
+        0.08022931963205338
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no357_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          17.0,
+          33.0,
+          81.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9109312891960144,
+        0.08906868100166321
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi27_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          23.0,
+          30.0,
+          48.0,
+          58.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.04932958632707596,
+        0.9506703615188599
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi388_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          31.0,
+          39.0,
+          52.0,
+          45.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.09590847790241241,
+        0.9040915369987488
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "52",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          51.0,
+          64.0,
+          48.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8605762124061584,
+        0.13942377269268036
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "76",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          15.0,
+          72.0,
+          88.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8413596153259277,
+        0.15864036977291107
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no173_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          48.0,
+          72.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9205594658851624,
+        0.07944058626890182
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "Hooligans_violence__Football_Hooligans_Finland_v_Russia_World_Cup_Qualifier_June_2009__lancashirelads__SmxsnplMtb8",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          44.0,
+          23.0,
+          68.0,
+          71.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.21999649703502655,
+        0.780003547668457
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi304_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          22.0,
+          44.0,
+          71.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.07467323541641235,
+        0.9253267645835876
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi301_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          43.0,
+          64.0,
+          50.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.025574255734682083,
+        0.974425733089447
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi260_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          20.0,
+          49.0,
+          56.0,
+          46.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.023104481399059296,
+        0.9768955707550049
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fans_violence__Football_Hooligans_Preston_North_End_Mix__prestonparasoccer__qwrOc8xmlpY",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          21.0,
+          53.0,
+          81.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.014864097349345684,
+        0.9851359724998474
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "newfi44",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          45.0,
+          32.0,
+          67.0,
+          51.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.23368695378303528,
+        0.7663130164146423
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "football_crowds_cheering__Scenes_from_Friday_s_ESPN_College_Game_Day_at_UK__UKSGREAT__dXA5",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          11.0,
+          40.0,
+          101.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.3876665234565735,
+        0.6123334765434265
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "37",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          34.0,
+          15.0,
+          44.0,
+          82.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9902635812759399,
+        0.009736412204802036
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__Wales_Wonderful_Rugby_Win_1922__BFIfilms__Mb89swT_V3M",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          14.0,
+          85.0,
+          80.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9733649492263794,
+        0.026635020971298218
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi409_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          24.0,
+          48.0,
+          88.0,
+          49.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.11662941426038742,
+        0.883370578289032
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no392_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          19.0,
+          36.0,
+          61.0,
+          53.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.8964570164680481,
+        0.1035429835319519
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no244_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          23.0,
+          62.0,
+          66.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9675919413566589,
+        0.03240809217095375
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "stadium_crowds__50000_people_in_a_stadium__simoncharlesspencerg__fLKom2IbDlg",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          13.0,
+          22.0,
+          65.0,
+          68.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9984610080718994,
+        0.0015389923937618732
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "soccer_violence__HOOLIGANS__mscs01__YWE3lKNm8aA",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          10.0,
+          78.0,
+          86.0,
+          34.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.029904313385486603,
+        0.9700957536697388
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "58",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          29.0,
+          30.0,
+          71.0,
+          59.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9819750189781189,
+        0.018024932593107224
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "group_violence__group_violence__football_violence__aliiie__qfKD35PYwok",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          9.0,
+          11.0,
+          51.0,
+          41.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.029560934752225876,
+        0.9704390168190002
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "fi139_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          35.0,
+          24.0,
+          58.0,
+          66.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.03705884888768196,
+        0.9629411697387695
+      ]
+    }
+  },
+  {
+    "algorithmId": "irrelevant",
+    "predictions": {
+      "type": "identification",
+      "metadata": {
+        "video_name": "no33_xvid",
+        "sequence_number": 0,
+        "timestamp": 0.0,
+        "bbox": [
+          12.0,
+          28.0,
+          75.0,
+          52.0
+        ]
+      },
+      "class": [
+        "Non-Violent",
+        "Violent"
+      ],
+      "score": [
+        0.9434110522270203,
+        0.056588977575302124
+      ]
+    }
+  }
+]

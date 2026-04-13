@@ -1,0 +1,21 @@
+{
+    "model_path": "checkpoints_x3d_ai4risk\\x3d_violence_ai4risk_best.pth",
+    "checkpoint_epoch": 10,
+    "num_clips_per_video": 4,
+    "total_videos": 1422,
+    "metrics": {
+        "accuracy": 87.9747,
+        "precision": 79.1228,
+        "recall": 89.662,
+        "f1_score": 84.0634,
+        "specificity": 87.0511,
+        "negative_predictive_value": 93.8967,
+        "roc_auc": 93.766
+    },
+    "confusion_matrix": {
+        "tn": 800,
+        "fp": 119,
+        "fn": 52,
+        "tp": 451
+    }
+}

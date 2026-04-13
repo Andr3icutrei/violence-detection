@@ -11,7 +11,7 @@ class R3DTransferConfig:
     SPLIT_RATIO = 0.8
     N_FRAMES = 16
 
-    BATCH_SIZE = 32
+    BATCH_SIZE = 16
     NUM_EPOCHS = 100
 
     OPTIMIZER = "adamw"
@@ -32,6 +32,8 @@ class R3DTransferConfig:
     DROPOUT_P = 0.5
     LABEL_SMOOTHING = 0.1
     GRAD_CLIP = 1.0
+
+    SEED = 42
 
     USE_SCHEDULER = True
     SCHEDULER_TYPE = "cosine"
@@ -73,7 +75,7 @@ class R3DTransferConfig:
             'non_violence_dirs': ['0'],
             'violence_dirs': ['1', '2', '3', '4'],
             'type': 'multiclass'
-        },
+        }
     }
 
     def __init__(self, dataset_name='Crowd'):

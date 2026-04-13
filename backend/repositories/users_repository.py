@@ -1,7 +1,9 @@
 import os
+from typing import List
+
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update, bindparam
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -71,7 +73,7 @@ class UsersRepository:
             await db.rollback()
             raise e
 
-    async def get_all(self, db: AsyncSession) -> list[User]:
+    async def get_all(self, db: AsyncSession) -> List[User]:
         result = await db.execute(select(User))
         return list(result.scalars().all())
 
@@ -81,3 +83,32 @@ class UsersRepository:
         except SQLAlchemyError as e:
             await db.rollback()
             raise e
+
+    async def add_user(self, db: AsyncSession, user: User) -> User:
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+            return user
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e
+
+    async def update_users_credits(self, db: AsyncSession, users: List[User], credits_to_update: int) -> List[User]:
+        if not users:
+            return users
+        stmt = (
+            update(User)
+            .where(User.id == bindparam("b_id"))
+            .values(credits=bindparam("new_credits"))
+        )
+        update_data = [
+            {"b_id": user.id, "new_credits": user.credits + credits_to_update} 
+            for user in users
+        ]
+        await db.execute(stmt, update_data)
+        await db.commit()
+        for user in users:
+            await db.refresh(user)
+        return users
+

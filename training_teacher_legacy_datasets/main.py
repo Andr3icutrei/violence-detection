@@ -14,7 +14,7 @@ def train_model(config):
 
     if config.DATASET_NAME == 'Mix':
         violence_paths, non_violence_paths = config.get_mix_paths()
-        dataset_names = ['Crowd', 'Hockey', 'Movies']
+        dataset_names = ['Crowd', 'Hockey', 'Movies', 'RWF-2000']
         print(f"\nMix dataset includes: {', '.join(dataset_names)}")
         print(
             f"Each dataset contributes {config.SPLIT_RATIO:.0%} to train and {1 - config.SPLIT_RATIO:.0%} to validation")
@@ -204,7 +204,7 @@ def main():
                         choices=['train', 'evaluate', 'info'],
                         help='Mode: train, evaluate, or info')
     parser.add_argument('--dataset', type=str, default='Crowd',
-                        choices=['Crowd', 'Hockey', 'Movies', 'RLVS', 'Mix', 'AI4RiSK'],
+                        choices=['Crowd', 'Hockey', 'Movies', 'RLVS', 'Mix', 'AI4RiSK', "RWF-2000"],
                         help='Dataset name: Crowd, Hockey, Movies, RLVS, AI4RiSK, or Mix (default: Crowd)')
     parser.add_argument('--batch_size', type=int, default=None,
                         help='Batch size (overrides config default)')

@@ -1,1 +1,1 @@
-export type MainLayoutPage = 'dashboard' | 'inference';
+export type MainLayoutPage = 'dashboard' | 'inference' | 'datasets';
