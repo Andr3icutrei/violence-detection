@@ -14,13 +14,11 @@ import { SidebarService } from '../../services/sidebar/sidebar.service';
 export class Sidebar {
   selectedSidebarItem: MainLayoutPage | null = 'dashboard';
 
-  private refreshSubscription: Subscription;
-
   constructor(
     private router: Router,
     private sidebarService: SidebarService,
   ) {
-    this.refreshSubscription = this.sidebarService.refresh$.subscribe((page: MainLayoutPage) => {
+    this.sidebarService.refresh$.subscribe((page: MainLayoutPage) => {
       this.syncSelectedSidebarItem(page);
     });
   }
