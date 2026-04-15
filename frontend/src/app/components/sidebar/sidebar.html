@@ -5,15 +5,15 @@
     (click)="goToPage('dashboard')"
   >
     <i class="fa-solid fa-house sidebar-item-icon"></i>
-    <span class="sidebar-item-title">Dashboard</span>
+    <span class="sidebar-item-title">{{ 'sidebar.dashboard' | translate }}</span>
   </div>
 
   <div
     class="sidebar-item"
-    [class.sidebar-item-selected]="selectedSidebarItem === 'inference'"
-    (click)="goToPage('inference')"
+    [class.sidebar-item-selected]="selectedSidebarItem === 'review-dataset'"
+    (click)="goToPage('review-dataset')"
   >
     <i class="fa-solid fa-layer-group sidebar-item-icon"></i>
-    <span class="sidebar-item-title">Inference</span>
+    <span class="sidebar-item-title">{{ 'sidebar.review-dataset' | translate }}</span>
   </div>
 </div>

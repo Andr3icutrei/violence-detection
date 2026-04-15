@@ -1,50 +1,37 @@
 import { Component } from '@angular/core';
 import { MainLayoutPage } from '../main-layout/main-layout-page.type';
 import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SidebarService } from '../../services/sidebar/sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
   selectedSidebarItem: MainLayoutPage | null = 'dashboard';
 
-  constructor(private router: Router) {
-    this.syncSelectedSidebarItem();
+  private refreshSubscription: Subscription;
 
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe(() => this.syncSelectedSidebarItem());
+  constructor(
+    private router: Router,
+    private sidebarService: SidebarService,
+  ) {
+    this.refreshSubscription = this.sidebarService.refresh$.subscribe((page: MainLayoutPage) => {
+      this.syncSelectedSidebarItem(page);
+    });
   }
 
   public goToPage(sidebarItem: MainLayoutPage): void {
     this.selectedSidebarItem = sidebarItem;
 
-    const extras: NavigationExtras | undefined =
-      sidebarItem === 'inference' ? { state: { fromVideoCard: false } } : undefined;
-
-    this.router.navigate([sidebarItem], extras);
+    this.router.navigate([sidebarItem]);
   }
 
-  private syncSelectedSidebarItem(): void {
-    const navigationState =
-      (this.router.getCurrentNavigation()?.extras.state ?? history.state) as
-        | { fromVideoCard?: boolean }
-        | undefined;
-
-    if (this.router.url.includes('/inference')) {
-      this.selectedSidebarItem = navigationState?.fromVideoCard ? null : 'inference';
-      return;
-    }
-
-    if (this.router.url.includes('/dashboard')) {
-      this.selectedSidebarItem = 'dashboard';
-      return;
-    }
-
-    this.selectedSidebarItem = null;
+  private syncSelectedSidebarItem(page: MainLayoutPage): void {
+    this.selectedSidebarItem = page;
   }
 }

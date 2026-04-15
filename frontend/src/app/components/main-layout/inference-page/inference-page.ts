@@ -13,6 +13,7 @@ import { InferenceActionsService } from '../../../services/inference_actions/inf
 import { InferenceActionResponseDto } from '../../../core/api/models/inference-action-response-dto';
 import { InferenceAction } from '../../../models/inference-action.model';
 import { TopbarRefreshService } from '../../../services/users/topbar-refresh.service';
+import { SidebarService } from '../../../services/sidebar/sidebar.service';
 
 @Component({
   selector: 'app-inference-page',
@@ -58,7 +59,10 @@ export class InferencePage implements OnInit, OnDestroy {
     private readonly videosService: VideosService,
     private readonly inferenceActionsService: InferenceActionsService,
     private readonly topbarRefreshService: TopbarRefreshService,
+    private readonly sidebarService: SidebarService
   ) {
+    this.sidebarService.notifyRefresh(null);
+
     this.inferenceForm = this.fb.group({
       [this.selectedActionControlName]: [null, Validators.required],
     });
@@ -445,7 +449,6 @@ export class InferencePage implements OnInit, OnDestroy {
     if (!this.inferenceResultVideoUrl) {
       return;
     }
-
     URL.revokeObjectURL(this.inferenceResultVideoUrl);
     this.inferenceResultVideoUrl = null;
   }
