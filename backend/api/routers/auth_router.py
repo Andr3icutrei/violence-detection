@@ -1,10 +1,10 @@
+from typing import Literal, cast
+
 from fastapi import APIRouter, status, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from google.oauth2 import id_token
-from google.auth.transport import requests
-
 from core.database import get_db
+from helpers.env_helper import get_env_variable
 from helpers.jwt_helper import create_jwt_token
 from models.user import User
 from schemas.auth_schema import LoginRequestDto, LogoutResponseDto, TokenSchema
@@ -20,6 +20,16 @@ auth_service: AuthService = AuthService()
 
 ACCESS_TOKEN_COOKIE = "access_token"
 ACCESS_TOKEN_MAX_AGE_SECONDS = 3600
+raw_samesite_value = get_env_variable("ACCESS_TOKEN_COOKIE_SAMESITE", "none").lower()
+if raw_samesite_value not in {"lax", "strict", "none"}:
+    raw_samesite_value = "none"
+ACCESS_TOKEN_COOKIE_SAMESITE: Literal["lax", "strict", "none"] = cast(
+    Literal["lax", "strict", "none"], raw_samesite_value
+)
+ACCESS_TOKEN_COOKIE_SECURE = get_env_variable("ACCESS_TOKEN_COOKIE_SECURE", "true").lower() == "true"
+ACCESS_TOKEN_COOKIE_DOMAIN = get_env_variable("ACCESS_TOKEN_COOKIE_DOMAIN", "").strip() or None
+
+
 
 @router.post("/login", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED)
 async def login(
@@ -39,10 +49,13 @@ async def login(
         value=jwt_token,
         httponly=True,
         max_age=ACCESS_TOKEN_MAX_AGE_SECONDS,
-        samesite="lax",
-        secure=True
+        samesite=ACCESS_TOKEN_COOKIE_SAMESITE,
+        secure=ACCESS_TOKEN_COOKIE_SECURE,
+        path="/",
+        domain=ACCESS_TOKEN_COOKIE_DOMAIN,
     )
     return user
+
 
 @router.post("/google-login", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def login_google(data: TokenSchema, response: Response, db: AsyncSession = Depends(get_db)):
@@ -58,10 +71,13 @@ async def login_google(data: TokenSchema, response: Response, db: AsyncSession =
         value=jwt_token,
         httponly=True,
         max_age=ACCESS_TOKEN_MAX_AGE_SECONDS,
-        samesite="lax",
-        secure=True
+        samesite=ACCESS_TOKEN_COOKIE_SAMESITE,
+        secure=ACCESS_TOKEN_COOKIE_SECURE,
+        path="/",
+        domain=ACCESS_TOKEN_COOKIE_DOMAIN,
     )
     return user
+
 
 @router.post("/logout", response_model=LogoutResponseDto, status_code=status.HTTP_200_OK)
 async def logout(
@@ -70,10 +86,13 @@ async def logout(
 ):
     response.delete_cookie(
         key=ACCESS_TOKEN_COOKIE,
-        samesite="lax",
-        secure=True,
+        samesite=ACCESS_TOKEN_COOKIE_SAMESITE,
+        secure=ACCESS_TOKEN_COOKIE_SECURE,
+        path="/",
+        domain=ACCESS_TOKEN_COOKIE_DOMAIN,
     )
-    return { "message": "Logout successful." }
+    return {"message": "Logout successful."}
+
 
 @router.get("/me", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def get_current_logged_user(

@@ -1,1 +1,1 @@
-export type MainLayoutPage = null | 'dashboard' | 'review-dataset';
+export type MainLayoutPage = null | 'dashboard' | 'review-datasets';

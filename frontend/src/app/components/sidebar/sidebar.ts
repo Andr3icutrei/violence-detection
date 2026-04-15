@@ -26,7 +26,7 @@ export class Sidebar {
   public goToPage(sidebarItem: MainLayoutPage): void {
     this.selectedSidebarItem = sidebarItem;
 
-    this.router.navigate([sidebarItem]);
+    this.router.navigate(['/' + sidebarItem]);
   }
 
   private syncSelectedSidebarItem(page: MainLayoutPage): void {

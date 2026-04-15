@@ -8,7 +8,7 @@
 
     <div class="create-dataset-form-container">
       <form [formGroup]="form" (ngSubmit)="submitDataset()">
-        <div class="input-fields-container">
+        <div class="input-fields-container fields-container">
           <div class="input-group">
             <label
               for="name"
@@ -51,19 +51,17 @@
                 {{ 'create-dataset.create-dataset-submit' | translate }}
               </button>
             </div>
-
           </div>
+          @if(getSubmitMessageKey()) {
+            <div class="submit-errors-container errors-container">
+              <app-form-submit-detail
+                [message]="getSubmitMessageKey()!"
+                [success]="success === true"
+                [translateParams]="getSubmitTranslateParams()">
+              </app-form-submit-detail>
+            </div>
+          }
         </div>
-
-        @if(getSubmitMessageKey()) {
-          <div class="submit-errors-container">
-            <app-form-submit-detail
-              [message]="getSubmitMessageKey()!"
-              [success]="success === true"
-              [translateParams]="getSubmitTranslateParams()">
-            </app-form-submit-detail>
-          </div>
-        }
       </form>
     </div>
   </div>

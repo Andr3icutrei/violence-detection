@@ -11,6 +11,7 @@ from api.routers import users_router, auth_router, videos_router, datasets_route
 from api.routers.inference_actions_router import inference_actions_service
 from core.database import get_db
 from exception_handling.exception_handler import global_exception_handler
+from helpers.env_helper import get_env_variable
 from services.inference_runtime import load_inference_runtime
 from services.users_service import UsersService
 from services.videos_service import VideosService
@@ -38,7 +39,9 @@ app.include_router(datasets_router.router)
 app.include_router(inference_actions_router.router)
 
 origins = [
-    "http://localhost:4200",
+    origin.strip()
+    for origin in get_env_variable("CORS_ALLOW_ORIGINS", "http://localhost:4200").split(",")
+    if origin.strip()
 ]
 
 app.add_middleware(

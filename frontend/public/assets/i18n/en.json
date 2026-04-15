@@ -110,7 +110,8 @@
   },
   "sidebar": {
     "dashboard": "Dashboard",
-    "datasets": "Datasets"
+    "datasets": "Datasets",
+    "review-datasets": "Review Datasets"
   },
   "inference": {
     "original-video": "Original Video",
