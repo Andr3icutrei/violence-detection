@@ -78,7 +78,7 @@ export class InspectVideos implements OnInit, AfterViewInit {
   }
 
   public getDatasets(): void {
-    this.datasetsService.getDatasets().subscribe({
+    this.datasetsService.getAcceptedDatasets().subscribe({
       next: (data: DatasetResponseDto[]): void => {
         this.datasets = data.map(
           (dataset: DatasetResponseDto): DatasetModel => ({

@@ -5,10 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from helpers.bucket_helper import create_unofficial_dataset_bucket
-from models import Dataset, User
+from models import Dataset, User, user
 from repositories.datasets_repository import DatasetsRepository
 from repositories.users_repository import UsersRepository
-from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto
+from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, PendingDatasetResponseDto
+from schemas.users_schema import UserResponseDto
 
 
 class DatasetsService:
@@ -16,13 +17,35 @@ class DatasetsService:
         self.datasets_repository = DatasetsRepository()
         self.users_repository = UsersRepository()
 
-    async def get_datasets(self, db: AsyncSession) -> List[DatasetResponseDto]:
-        result: List[Dataset] = await self.datasets_repository.get_all(db)
+    async def get_accepted_datasets(self, db: AsyncSession) -> List[DatasetResponseDto]:
+        result: List[Dataset] = await self.datasets_repository.get_all_accepted(db)
         return [
             DatasetResponseDto(
                 id=dataset.id,
                 name=dataset.name,
                 is_official=dataset.is_official
+            ) for dataset in result
+        ]
+
+    async def get_pending_datasets(
+        self,
+        db: AsyncSession,
+        search_term: str,
+        page: int,
+        page_size: int
+    ) -> List[PendingDatasetResponseDto]:
+        result: List[Dataset] = await self.datasets_repository.get_all_pending(db, search_term=search_term, page=page, page_size=page_size)
+        return [
+            PendingDatasetResponseDto(
+                id=dataset.id,
+                name=dataset.name,
+                is_official=dataset.is_official,
+                user=UserResponseDto(
+                    id=dataset.created_by_user.id,
+                    email=dataset.created_by_user.email,
+                    is_admin=dataset.created_by_user.is_admin,
+                ),
+                videos_count=len(dataset.videos)
             ) for dataset in result
         ]
 

@@ -19,10 +19,8 @@ router = APIRouter(
 
 auth_service = AuthService()
 
-
 def get_videos_service(request: Request) -> VideosService:
     return request.app.state.videos_service
-
 
 def _cleanup_temp_file(file_path: str) -> None:
     if os.path.exists(file_path):

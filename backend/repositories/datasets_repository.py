@@ -7,6 +7,8 @@ import cv2
 import tempfile
 import os
 
+from sqlalchemy.orm import contains_eager
+
 from models import Dataset, Video
 from models.dataset_status import DatasetStatus
 
@@ -20,8 +22,21 @@ class DatasetsRepository:
         result = await db.execute(select(Dataset).filter(Dataset.id == dataset_id))
         return result.scalars().first()
 
-    async def get_all(self, db: AsyncSession) -> List[Dataset]:
-        result = await db.execute(select(Dataset))
+    async def get_all_accepted(self, db: AsyncSession) -> List[Dataset]:
+        result = await db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
+        return list(result.scalars().all())
+
+    async def get_all_pending(self, db: AsyncSession, search_term: str, page: int, page_size: int) -> List[Dataset]:
+        query = (select(Dataset)
+             .filter(Dataset.status == DatasetStatus.PENDING)
+             .join(Dataset.created_by_user)
+             .join(Dataset.videos)
+             .options(contains_eager(Dataset.created_by_user)))
+        if search_term is not None or search_term != "":
+            query = query.filter(Dataset.name.lower().contains(search_term.lower()))
+        if page is not None and page_size is not None:
+            query = query.offset(page * page_size).limit(page_size)
+        result = await db.execute(query)
         return list(result.scalars().all())
 
     async def create_unofficial_dataset(self,

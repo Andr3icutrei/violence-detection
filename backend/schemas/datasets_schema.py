@@ -5,12 +5,17 @@ from fastapi import UploadFile, Form, File
 from pydantic import BaseModel
 
 from schemas.users_schema import UserResponseDto
+from schemas.videos_schema import VideoResponseDto
+
 
 class DatasetResponseDto(BaseModel):
     id: int
     name: str
     is_official: bool
-    user: UserResponseDto | None = None
+
+class PendingDatasetResponseDto(DatasetResponseDto):
+    user: UserResponseDto
+    videos_count: int = 0
 
 @dataclass
 class CreateDatasetRequestDto:

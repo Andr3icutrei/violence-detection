@@ -111,7 +111,7 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "datasets": "Datasets",
-    "review-datasets": "Review Datasets"
+    "review-dataset": "Review Datasets"
   },
   "inference": {
     "original-video": "Original Video",
@@ -152,5 +152,8 @@
     "invalid-file-format": "Invalid file format. Please upload video files in {{format}} format.",
     "dataset-name-exists": "A dataset with this name already exists. Please choose a different name for your dataset.",
     "user-has-pending-datasets": "You have pending datasets that are still being processed. Please wait for them to finish before creating a new dataset."
+  },
+  "review-datasets" : {
+    "title": "Review Unofficial Datasets"
   }
 }
