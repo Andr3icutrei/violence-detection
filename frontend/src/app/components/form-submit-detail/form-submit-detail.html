@@ -2,12 +2,12 @@
   @if(success) {
     <span class="detail-message">
       <i class="fa-solid fa-check-circle success-message"></i>
-      {{ message | translate }}
+      {{ message | translate: translateParams }}
     </span>
   } @else {
     <span class="error-message">
       <i class="fa-solid fa-circle-exclamation error-message"></i>
-      {{ message | translate }}
+      {{ message | translate: translateParams }}
     </span>
   }
 </div>

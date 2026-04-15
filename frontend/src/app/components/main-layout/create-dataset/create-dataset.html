@@ -1,5 +1,5 @@
-<div class="create-dataset-overlay">
-  <div class="create-dataset-content">
+<div class="create-dataset-overlay" (click)="close()">
+  <div class="create-dataset-content" (click)="onContentClick($event)">
     <div class="create-dataset-title-container">
       <h2 class="create-dataset-title">
         {{ 'create-dataset.title' | translate }}
@@ -23,10 +23,16 @@
               type="text"
               [placeholder]="'create-dataset.dataset-name-placeholder' | translate"
               formControlName="name"/>
-            <app-control-error [control]="form.get('datasetName')!"></app-control-error>
+            <app-control-error [control]="form.get('name')!"></app-control-error>
           </div>
 
           <div class="videos-to-input-container">
+            <label
+              for="upload-videos"
+              class="label-primary required-asterisk label-upload-videos">
+              {{'create-dataset.upload-videos' | translate}}
+            </label>
+
             <div class="videos-input-container">
               <input
                 class="videos-input"
@@ -34,54 +40,28 @@
                 accept="video/mp4"
                 (change)="onFileSelected($event)"
                 multiple
-                #fileInput
               >
             </div>
 
-            <button
-              class="btn-primary select-videos-btn"
-              type="button"
-              (click)="fileInput.click()">
-              {{ 'create-dataset.select-videos' | translate }}
-            </button>
+            <div class="create-dataset-submit-container">
+              <button
+                class="btn-primary create-dataset-submit-btn"
+                type="submit"
+                [disabled]="!isFormValid()">
+                {{ 'create-dataset.create-dataset-submit' | translate }}
+              </button>
+            </div>
 
-            @if(selectedFiles.length > 0) {
-              <div class="selected-files-container">
-                <p><strong>{{ 'create-dataset.selected-files' | translate }}</strong></p>
-                <ul>
-                  @for(file of selectedFiles; track file) {
-                    <li>
-                      {{ file.name }}
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
           </div>
         </div>
 
-        @if(
-          this.form.hasError('noFilesUploaded') ||
-          this.form.hasError('tooManyFilesUploaded') ||
-          this.form.hasError('differentFilesFormat')
-          ) {
+        @if(getSubmitMessageKey()) {
           <div class="submit-errors-container">
-            @if(form.hasError('noFilesUploaded')) {
-              <app-form-submit-detail
-                [message]="'error-messages.no-files-uploaded'"
-                [success]="false">
-              </app-form-submit-detail>
-            } @else if (form.hasError('tooManyFilesUploaded')) {
-              <app-form-submit-detail
-                [message]="'error-messages.too-many-files-uploaded'"
-                [success]="false">
-              </app-form-submit-detail>
-            } @else if (form.hasError('differentFilesFormat')) {
-              <app-form-submit-detail
-                [message]="'error-messages.different-files-format'"
-                [success]="false">
-              </app-form-submit-detail>
-            }
+            <app-form-submit-detail
+              [message]="getSubmitMessageKey()!"
+              [success]="success === true"
+              [translateParams]="getSubmitTranslateParams()">
+            </app-form-submit-detail>
           </div>
         }
       </form>

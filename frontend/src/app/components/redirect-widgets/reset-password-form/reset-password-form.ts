@@ -30,7 +30,7 @@ export class ResetPasswordForm implements OnInit {
 
   isSubmitting = false;
   success: boolean | null = null;
-  submitMessage: string | null = null;
+  submitStatusKey: string | null = null;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -98,7 +98,7 @@ export class ResetPasswordForm implements OnInit {
     this.usersService.resetPassword(token, password).subscribe({
       next: (data: UserResponseDto): void => {
         this.success = true;
-        this.submitMessage = 'reset-password-form.submit-successful-message';
+        this.submitStatusKey = 'submitSuccessfulMessage';
         this.cdr.detectChanges();
 
         setTimeout(() => {
@@ -108,11 +108,11 @@ export class ResetPasswordForm implements OnInit {
       error: (err: HttpErrorResponse): void => {
         this.success = false;
         if (err.status === 400 || err.status === 401) {
-          this.submitMessage = 'reset-password-form.invalid-token';
+          this.submitStatusKey = 'resetPasswordInvalidToken';
         } else if (err.status === 404) {
-          this.submitMessage = 'reset-password-form.unexistent-user';
+          this.submitStatusKey = 'resetPasswordUnexistentUser';
         } else if (err.status === 500) {
-          this.submitMessage = 'reset-password-form.server-error';
+          this.submitStatusKey = 'resetPasswordServerError';
         }
         this.isSubmitting = false;
         this.cdr.detectChanges();
@@ -122,5 +122,19 @@ export class ResetPasswordForm implements OnInit {
         }, 7000);
       },
     });
+  }
+
+  public getSubmitMessageKey(): string | null {
+    if (!this.submitStatusKey) {
+      return null;
+    }
+
+    const key = this.toKebabCase(this.submitStatusKey);
+    const prefix = this.success === true ? 'reset-password-form' : 'error-messages';
+    return `${prefix}.${key}`;
+  }
+
+  private toKebabCase(value: string): string {
+    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 }

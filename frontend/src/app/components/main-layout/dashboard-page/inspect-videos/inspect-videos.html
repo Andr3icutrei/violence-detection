@@ -40,6 +40,6 @@
 
 @if(isCreateDatasetPopupOpen) {
   <app-create-dataset
-  >
+    (closeModal)="closeCreateDatasetModal()">
   </app-create-dataset>
 }

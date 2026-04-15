@@ -69,11 +69,6 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'inference',
-    component: InferencePage,
-    canActivate: [authGuard],
-  },
-  {
     path: 'review-datasets',
     component: ReviewDatasetsPage,
     canActivate: [authGuard],

@@ -38,7 +38,7 @@ export class RegisterForm implements OnInit {
   isConfirmPasswordVisible: boolean = false;
 
   isSubmitting: boolean = false;
-  submitMessage: string | null = null;
+  submitStatusKey: string | null = null;
   success: boolean | null = null;
 
   @Output() switch: EventEmitter<PortalForm> = new EventEmitter<PortalForm>();
@@ -121,11 +121,11 @@ export class RegisterForm implements OnInit {
     this.usersService.register(email, password).subscribe({
       next: (data: UserResponseDto): void => {
         this.success = true;
-        this.submitMessage = 'register-form.submit-successful-message';
+        this.submitStatusKey = 'submitSuccessfulMessage';
         this.cdr.detectChanges();
 
         setTimeout(() => {
-          this.submitMessage = null;
+          this.submitStatusKey = null;
           this.isSubmitting = false;
           this.cdr.detectChanges();
         }, 5000);
@@ -135,20 +135,34 @@ export class RegisterForm implements OnInit {
 
         if (err.status === 409) {
           this.form.setErrors({ accountAlreadyExists: true });
-          this.submitMessage = 'register-form.submit-account-already-exists';
+          this.submitStatusKey = 'accountAlreadyExists';
         } else if (err.status === 500) {
           this.form.setErrors({ serverError: true });
-          this.submitMessage = 'register-form.server-error';
+          this.submitStatusKey = 'serverError';
         }
         this.cdr.detectChanges();
 
         setTimeout(() => {
-          this.submitMessage = null;
+          this.submitStatusKey = null;
           this.isSubmitting = false;
           this.form.setErrors(null);
           this.cdr.detectChanges();
         }, 5000);
       },
     });
+  }
+
+  public getSubmitMessageKey(): string | null {
+    if (!this.submitStatusKey) {
+      return null;
+    }
+
+    const key = this.toKebabCase(this.submitStatusKey);
+    const prefix = this.success === true ? 'register-form' : 'error-messages';
+    return `${prefix}.${key}`;
+  }
+
+  private toKebabCase(value: string): string {
+    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 }

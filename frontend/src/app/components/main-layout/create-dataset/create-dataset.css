@@ -14,7 +14,7 @@
 }
 
 .create-dataset-content {
-  height: 70vh;
+  height: 75vh;
   width: 40vw;
   border-radius: 1rem;
   background-color: var(--color-background);
@@ -24,7 +24,7 @@
 .create-dataset-title-container {
   position: relative;
   padding: 1rem 0.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 10%;
   border-bottom: none;
 }
 
@@ -61,4 +61,59 @@
   border: 2px dashed var(--color-gray);
   border-radius: 0.5rem;
   background-color: var(--color-primary-more-faded);
+  margin-bottom: 3vh;
+}
+
+.videos-to-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.videos-input {
+  width: min(100%, 28rem);
+  padding: 0.45rem;
+  border: 1px solid var(--color-background-faded);
+  border-radius: 0.5rem;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.videos-input:hover {
+  border-color: var(--color-primary-faded);
+}
+
+.videos-input:focus-visible {
+  outline: 2px solid rgba(109, 8, 241, 0.2);
+  outline-offset: 1px;
+}
+
+.videos-input::file-selector-button {
+  margin-right: 0.75rem;
+  border: 0;
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.7rem;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.videos-input::file-selector-button:hover {
+  background-color: var(--color-primary-more-faded);
+}
+
+.create-dataset-submit-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-dataset-submit-btn {
+  width: 40%;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
 }

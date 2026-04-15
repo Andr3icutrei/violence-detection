@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Video(Base):
     __tablename__ = "videos"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, autoincrement=True)
     uid: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         primary_key=True,

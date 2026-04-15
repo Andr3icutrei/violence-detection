@@ -37,9 +37,14 @@
     "password-mismatch": "Passwords do not match.",
     "access-forbidden": "Access forbidden.",
     "server-error": "Server error.",
+    "submit-failed": "An error occurred while submitting the request. Please try again.",
+    "account-already-exists": "An account with this email already exists.",
     "invalid-credentials": "Invalid credentials.",
+    "invalid-file-format": "Invalid file format. Please upload video files in {{format}} format.",
     "account-not-verified": "Account not verified. Please check your email for verification instructions.",
     "user-not-found": "User not found. Create an account to access our services.",
+    "dataset-name-exists": "A dataset with this name already exists. Please choose a different name for your dataset.",
+    "user-has-pending-datasets": "You have pending datasets that are still being processed. Please wait for them to finish before creating a new dataset.",
     "forgot-password-inexistent-user": "No account found with this email address. Please check the email you entered or register for an account.",
     "forgot-password-server-error": "An error occurred while processing your request. Please try again later.",
     "forgot-password-error": "An error occurred while sending the password reset email. Please try again later.",
@@ -49,7 +54,8 @@
     "reset-password-server-error": "An error occurred while resetting your password. Please try again later.",
     "no-files-uploaded": "No files were uploaded. Please select at least one video file to upload.",
     "too-many-files-uploaded": "You have exceeded the maximum number of files allowed ({{max}}). Please select fewer files to upload.",
-    "different-files-format": "All uploaded files must be {{format}} format. Please ensure all selected files have the same extension."
+    "different-files-format": "All uploaded files must be {{format}} format. Please ensure all selected files have the same extension.",
+    "files-too-large": "One or more of the selected files exceed the maximum allowed size of {{max}} MB. Please select smaller files to upload."
   },
   "verify-account": {
     "verify-account-success-title": "Account Verified!",
@@ -137,6 +143,13 @@
     "title": "Create a New Unofficial Dataset",
     "name-placeholder": "Enter dataset name",
     "dataset-name": "Dataset Name",
-    "dataset-name-placeholder": "Enter dataset name"
+    "dataset-name-placeholder": "Enter dataset name",
+    "upload-videos": "Upload Videos",
+    "create-dataset-submit": "Create Dataset",
+    "submit-successful": "Dataset created successfully! Your videos have been uploaded and are being processed. You will receive an email notification once the dataset is ready.",
+    "submit-failed": "An error occurred while creating your dataset.",
+    "invalid-file-format": "Invalid file format. Please upload video files in {{format}} format.",
+    "dataset-name-exists": "A dataset with this name already exists. Please choose a different name for your dataset.",
+    "user-has-pending-datasets": "You have pending datasets that are still being processed. Please wait for them to finish before creating a new dataset."
   }
 }

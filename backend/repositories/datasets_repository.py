@@ -1,9 +1,14 @@
 from typing import List
 
+from fastapi import UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import cv2
+import tempfile
+import os
 
-from models import Dataset
+from models import Dataset, Video
+from models.dataset_status import DatasetStatus
 
 
 class DatasetsRepository:
@@ -18,3 +23,55 @@ class DatasetsRepository:
     async def get_all(self, db: AsyncSession) -> List[Dataset]:
         result = await db.execute(select(Dataset))
         return list(result.scalars().all())
+
+    async def create_unofficial_dataset(self,
+        db: AsyncSession,
+        name: str,
+        videos: List[UploadFile],
+        user_id: int
+    ) -> Dataset:
+
+        video_models = []
+        for video in videos:
+            temp_fd, temp_path = tempfile.mkstemp(suffix=".mp4")
+            try:
+
+                await video.seek(0)
+                video_bytes = await video.read()
+                with os.fdopen(temp_fd, 'wb') as f:
+                    f.write(video_bytes)
+
+                cap = cv2.VideoCapture(temp_path)
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                duration_sec = frame_count / fps if fps > 0 else 0
+                cap.release()
+
+            finally:
+                os.remove(temp_path)
+
+            video_models.append(
+                Video(
+                    name=video.filename,
+                    path=f"{name}/{video.filename}",
+                    duration=duration_sec,
+                    frame_rate=fps
+                )
+            )
+
+        dataset = Dataset(
+            name=name,
+            is_official=False,
+            status=DatasetStatus.PENDING,
+            videos=video_models,
+            created_by_user_id=user_id
+        )
+
+        db.add(dataset)
+        await db.commit()
+        await db.refresh(dataset)
+        return dataset
+
+    async def user_has_pending_datasets(self, db: AsyncSession, user_id: int) -> bool:
+        result = await db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
+        return result.scalars().first() is not None

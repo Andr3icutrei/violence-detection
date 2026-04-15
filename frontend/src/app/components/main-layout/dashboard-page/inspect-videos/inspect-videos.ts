@@ -144,7 +144,11 @@ export class InspectVideos implements OnInit, AfterViewInit {
     this.getVideosPaged();
   }
 
-  public openCreateDatasetModal() {
+  public openCreateDatasetModal(): void {
     this.isCreateDatasetPopupOpen = true;
+  }
+
+  public closeCreateDatasetModal(): void {
+    this.isCreateDatasetPopupOpen = false;
   }
 }

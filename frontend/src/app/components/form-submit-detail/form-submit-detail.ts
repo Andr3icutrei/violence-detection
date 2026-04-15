@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-form-submit-detail',
@@ -11,8 +10,5 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 export class FormSubmitDetail {
   @Input() message!: string;
   @Input() success!: boolean;
-
-  constructor(private translationService: TranslateService) {
-
-  }
+  @Input() translateParams?: Record<string, string | number>;
 }

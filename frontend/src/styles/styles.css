@@ -245,6 +245,9 @@ input[type="password"]::-ms-clear {
 
 .form-detail-container {
   margin: 0 1rem 1rem 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-error-faded);
 }
 
 .success-message {

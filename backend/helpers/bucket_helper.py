@@ -1,9 +1,11 @@
 import os
-from typing import Any
+from typing import Any, List
 
 import aiofiles
 import aioboto3
 from dotenv import load_dotenv
+from fastapi import UploadFile, HTTPException
+from starlette import status
 
 load_dotenv()
 
@@ -81,3 +83,28 @@ async def download_object_to_file(object_key: str, target_path: str, chunk_size:
                 await file_obj.write(chunk)
 
         return True
+
+async def create_unofficial_dataset_bucket(dataset_name: str, videos: List[UploadFile]) -> None:
+    if not videos:
+        return
+    for video in videos:
+        if not video.filename.lower().endswith(".mp4"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid file format for '{video.filename}'. Only .mp4 files are allowed."
+            )
+    try:
+        for video in videos:
+            object_key = f"{dataset_name}/{video.filename}"
+            await video.seek(0)
+            content = await video.read()
+            await put_object(
+                object_key=object_key,
+                body=content,
+                content_type=video.content_type
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to upload videos: {str(e)}"
+        )

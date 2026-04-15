@@ -32,7 +32,7 @@ import { FormDescription } from '../form-description/form-description';
 export class ForgotPasswordForm implements OnInit {
   form: FormGroup;
   success: boolean | null = null;
-  submitMessage: string | null = null;
+  submitStatusKey: string | null = null;
   isSubmitting: boolean = false;
 
   constructor(
@@ -56,36 +56,50 @@ export class ForgotPasswordForm implements OnInit {
     this.usersService.requestResetPassword(email!).subscribe({
       next: (data: any) => {
         this.success = true;
-        this.submitMessage = 'forgot-password-form.forgot-password-submit-message-success';
+        this.submitStatusKey = 'forgotPasswordSubmitMessageSuccess';
         this.cdr.detectChanges();
 
         setTimeout(() => {
           this.isSubmitting = false;
           this.success = null;
-          this.submitMessage = null;
+          this.submitStatusKey = null;
           this.cdr.detectChanges();
         }, 5000);
       },
       error: (err: HttpErrorResponse) => {
         this.success = false;
         if (err.status === 403) {
-          this.submitMessage = 'error-messages.forgot-password-unverified-user';
+          this.submitStatusKey = 'forgotPasswordUnverifiedUser';
         } else if (err.status === 404) {
-          this.submitMessage = 'error-messages.forgot-password-inexistent-user';
+          this.submitStatusKey = 'forgotPasswordInexistentUser';
         } else if (err.status === 500) {
-          this.submitMessage = 'error-messages.forgot-password-server-error';
+          this.submitStatusKey = 'forgotPasswordServerError';
         } else {
-          this.submitMessage = 'error-messages.forgot-password-error';
+          this.submitStatusKey = 'forgotPasswordError';
         }
         this.cdr.detectChanges();
         setTimeout(() => {
           this.isSubmitting = false;
           this.success = null;
-          this.submitMessage = null;
+          this.submitStatusKey = null;
           this.cdr.detectChanges();
         }, 5000);
       },
     });
+  }
+
+  public getSubmitMessageKey(): string | null {
+    if (!this.submitStatusKey) {
+      return null;
+    }
+
+    const key = this.toKebabCase(this.submitStatusKey);
+    const prefix = this.success === true ? 'forgot-password-form' : 'error-messages';
+    return `${prefix}.${key}`;
+  }
+
+  private toKebabCase(value: string): string {
+    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 
   public isControlRequired(controlName: string): boolean {

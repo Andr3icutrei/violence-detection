@@ -8,12 +8,16 @@ import { environment } from '../../../environments/environment.development';
   providedIn: 'root',
 })
 export class DatasetsService {
-  constructor(private httpClient: HttpClient) {
-
-  }
+  constructor(private httpClient: HttpClient) {}
 
   public getDatasets(): Observable<DatasetResponseDto[]> {
     return this.httpClient.get<DatasetResponseDto[]>(environment.apiUrl + 'datasets/get_datasets', {
+      withCredentials: true,
+    });
+  }
+
+  public createUnofficialDataset(formData: FormData): Observable<void> {
+    return this.httpClient.post<void>(`${environment.apiUrl}datasets/create_unofficial_dataset`, formData, {
       withCredentials: true,
     });
   }

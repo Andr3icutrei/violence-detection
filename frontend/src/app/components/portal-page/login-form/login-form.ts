@@ -44,6 +44,13 @@ export class LoginForm implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   isPasswordVisible: boolean = false;
 
+  private readonly submitErrorPriority: string[] = [
+    'accountNotVerified',
+    'serverError',
+    'userNotFound',
+    'invalidCredentials',
+  ];
+
   @Output() formChange = new EventEmitter<PortalForm>();
 
   private authSubscription!: Subscription;
@@ -162,6 +169,19 @@ export class LoginForm implements OnInit, OnDestroy {
         }, 5000);
       },
     });
+  }
+
+  public getSubmitMessageKey(): string | null {
+    for (const errorKey of this.submitErrorPriority) {
+      if (this.form.hasError(errorKey)) {
+        return `error-messages.${this.toKebabCase(errorKey)}`;
+      }
+    }
+    return null;
+  }
+
+  private toKebabCase(value: string): string {
+    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 
   ngOnDestroy() {
