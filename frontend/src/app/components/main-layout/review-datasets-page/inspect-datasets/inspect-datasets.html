@@ -33,7 +33,8 @@
       @for(dataset of datasetsToReview; track dataset.id; let i = $index) {
         <app-dataset-item
           [dataset]="dataset"
-          [index]="i">
+          [index]="i"
+          (closeModal)="modalClosed()">
         </app-dataset-item>
       }
     </div>

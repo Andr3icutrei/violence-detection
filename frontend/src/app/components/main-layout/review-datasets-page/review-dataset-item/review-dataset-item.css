@@ -151,7 +151,7 @@
 }
 
 .review-comment-input-group {
-  flex: 1;
+  flex: 2;
 }
 
 .input-textarea-primary {
@@ -166,6 +166,7 @@
   flex-direction: row;
   gap: 1.5rem;
   justify-content: center;
+  align-items: center;
   margin-top: 1rem;
 }
 

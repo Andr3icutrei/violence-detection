@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {TitleCasePipe} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
@@ -15,8 +15,9 @@ import { ReviewDatasetItem } from '../review-dataset-item/review-dataset-item';
 export class DatasetItem {
   @Input({ required: true }) dataset!: DatasetToReviewResponseDto;
   @Input() index!: number;
+  @Output() closeModal: EventEmitter<void> = new EventEmitter();
 
-  isDatasetReviewModalOpen = false;
+  isDatasetReviewModalOpen: boolean = false;
 
   public getDatasetStatusName(status: DatasetStatus): string {
     return DatasetStatusModel[status];
@@ -28,5 +29,6 @@ export class DatasetItem {
 
   public closeReviewDatasetItem(): void {
     this.isDatasetReviewModalOpen = false;
+    this.closeModal.emit();
   }
 }

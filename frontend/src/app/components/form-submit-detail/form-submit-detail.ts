@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './form-submit-detail.css',
 })
 export class FormSubmitDetail {
-  @Input() message!: string;
-  @Input() success!: boolean;
+  @Input({ required: true }) message!: string;
+  @Input({ required: true }) success!: boolean;
   @Input() translateParams?: Record<string, string | number>;
 }

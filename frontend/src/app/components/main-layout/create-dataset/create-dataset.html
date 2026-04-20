@@ -56,7 +56,7 @@
             <div class="submit-errors-container errors-container">
               <app-form-submit-detail
                 [message]="getSubmitMessageKey()!"
-                [success]="success === true"
+                [success]="success !== null && success"
                 [translateParams]="getSubmitTranslateParams()">
               </app-form-submit-detail>
             </div>

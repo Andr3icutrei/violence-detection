@@ -70,6 +70,10 @@ export class InspectDatasets implements OnInit {
     this.loadDatasets();
   }
 
+  public modalClosed(): void {
+    this.loadDatasets();
+  }
+
   private loadDatasets(): void {
     this.datasetsToReview = [];
     this.isLoadingDatasets = true;

@@ -248,7 +248,14 @@ input[type="password"]::-ms-clear {
   margin: 0 1rem 1rem 1rem;
   padding: 0.75rem;
   border-radius: 0.5rem;
+}
+
+.form-detail-error-container {
   background-color: var(--color-error-faded);
+}
+
+.form-detail-success-container {
+  background-color: var(--color-success-faded);
 }
 
 .success-message {

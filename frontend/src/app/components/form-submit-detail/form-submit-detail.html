@@ -1,4 +1,6 @@
-<div class="form-detail-container">
+<div class="form-detail-container"
+  [class.form-detail-success-container]="success"
+  [class.form-detail-error-container]="!success">
   @if(success) {
     <span class="detail-message">
       <i class="fa-solid fa-check-circle success-message"></i>

@@ -81,15 +81,6 @@
           </textarea>
         </div>
 
-        @if (isSubmitted) {
-          <div class="submit-message-container">
-            <app-form-submit-detail
-              [message]="submitMessage!"
-              [success]="isSubmitSuccessful">
-            </app-form-submit-detail>
-          </div>
-        }
-
         <div class="submit-btns-container">
           <button
             type="submit"
@@ -107,6 +98,15 @@
             {{ 'review-datasets.reject' | translate }}
           </button>
         </div>
+
+        @if (submitMessage) {
+          <div class="submit-message-container">
+            <app-form-submit-detail
+              [message]="submitMessage!"
+              [success]="isSubmitSuccessful">
+            </app-form-submit-detail>
+          </div>
+        }
       </form>
     </div>
   </div>
