@@ -1,5 +1,7 @@
 import uuid
-from sqlalchemy import String, ForeignKey, Integer, Boolean, Uuid
+from datetime import datetime
+
+from sqlalchemy import String, ForeignKey, Integer, Boolean, Uuid, DateTime
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from typing import TYPE_CHECKING, List
 
@@ -22,6 +24,7 @@ class Video(Base):
     is_violent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     duration: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     frame_rate: Mapped[float] = mapped_column(Integer, nullable=False)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     dataset_id: Mapped[int] = mapped_column(ForeignKey("datasets.id"), nullable=False)
     dataset: Mapped["Dataset"] = relationship(back_populates="videos")

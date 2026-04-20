@@ -1,7 +1,50 @@
-<div class="review-datasets-content">
-  <ul>
-    @for(dataset of pendingDatasets; track dataset.id) {
+<div class="review-datasets-container">
+  <div class="review-topbar-container">
+    <div class="review-datasets-searchbar-container">
+      <app-search-bar
+        (onDebouncedSearch)="debouncedSearch($event)"
+        [placeholderText]="'review-datasets.search-bar-placeholder' | translate">
+      </app-search-bar>
+    </div>
 
+    <div class="review-datasets-select-status-container">
+      <label for="select-status-label">{{ 'review-datasets.select-label' | translate }}</label>
+      <select
+        id="select-status-label"
+        class="select-status-label"
+        [value]="selectedDatasetStatus"
+        (change)="onSelectedDatasetStatusChange($event)">
+        <option [value]="null">All</option>
+        @for (status of statusOptions; track status) {
+          <option [value]="status">{{ getDatasetStatusName(status) | titlecase }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="review-datasets-content">
+    @if (!isLoadingDatasets && datasetsToReview.length === 0) {
+      <div class="videos-empty-state">
+        {{ 'review-datasets.no-datasets-found' | translate }}
+      </div>
     }
-  </ul>
+
+    <div class="dataset-rows">
+      @for(dataset of datasetsToReview; track dataset.id; let i = $index) {
+        <app-dataset-item
+          [dataset]="dataset"
+          [index]="i">
+        </app-dataset-item>
+      }
+    </div>
+  </div>
+
+  @if (datasetsToReview.length > 0) {
+    <app-paginator
+      [page]="page"
+      [pageSize]="pageSize"
+      [hasMore]="hasMoreDatasets"
+      (pageChange)="onPageChange($event)">
+    </app-paginator>
+  }
 </div>

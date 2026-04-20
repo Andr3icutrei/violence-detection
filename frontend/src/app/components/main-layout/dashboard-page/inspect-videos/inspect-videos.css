@@ -30,16 +30,6 @@
   width: 100%;
 }
 
-.videos-empty-state {
-  width: 100%;
-  border: 2px dashed var(--color-gray);
-  border-radius: 0.5rem;
-  padding: 1.5rem 1rem;
-  color: var(--color-gray);
-  text-align: center;
-  background-color: var(--color-primary-light);
-}
-
 .create-dataset-button-container {
   display: flex;
   flex: 1;

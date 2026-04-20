@@ -8,14 +8,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface PeopleTrackingVideosPeopleTrackingVideoUidPost$Params {
-  video_uid: string;
+export interface InferenceVideoVideosInferenceVideoVideoIdPost$Params {
+  video_id: number;
 }
 
-export function peopleTrackingVideosPeopleTrackingVideoUidPost(http: HttpClient, rootUrl: string, params: PeopleTrackingVideosPeopleTrackingVideoUidPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
-  const rb = new RequestBuilder(rootUrl, peopleTrackingVideosPeopleTrackingVideoUidPost.PATH, 'post');
+export function inferenceVideoVideosInferenceVideoVideoIdPost(http: HttpClient, rootUrl: string, params: InferenceVideoVideosInferenceVideoVideoIdPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  const rb = new RequestBuilder(rootUrl, inferenceVideoVideosInferenceVideoVideoIdPost.PATH, 'post');
   if (params) {
-    rb.path('video_uid', params.video_uid, {});
+    rb.path('video_id', params.video_id, {});
   }
 
   return http.request(
@@ -28,4 +28,4 @@ export function peopleTrackingVideosPeopleTrackingVideoUidPost(http: HttpClient,
   );
 }
 
-peopleTrackingVideosPeopleTrackingVideoUidPost.PATH = '/videos/people_tracking/{video_uid}';
+inferenceVideoVideosInferenceVideoVideoIdPost.PATH = '/videos/inference_video/{video_id}';

@@ -154,6 +154,31 @@
     "user-has-pending-datasets": "You have pending datasets that are still being processed. Please wait for them to finish before creating a new dataset."
   },
   "review-datasets" : {
-    "title": "Review Unofficial Datasets"
+    "title": "Review Unofficial Datasets",
+    "id": "ID",
+    "name": "Name",
+    "status": "Status",
+    "is-official": "Is Official?",
+    "videos-count": "Videos Count",
+    "user-email": "User Email",
+    "yes": "Yes",
+    "no": "No",
+    "search-bar-placeholder": "Search for datasets by name...",
+    "select-label": "Status",
+    "no-datasets-found": "No datasets were found for the current search or filter criteria.",
+    "reviewing-dataset": "Reviewing unofficial dataset",
+    "review-videos": "Review Videos",
+    "review-comment": "Review Comment",
+    "review-comment-placeholder": "Enter a review comment...",
+    "duration": "Duration",
+    "fps": "Framerate",
+    "is-violent": "Is Violent",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approval-success-message": "Dataset approved successfully! The dataset is now available in the dashboard.",
+    "rejection-success-message": "Dataset rejected successfully! The dataset will not be available in the dashboard.",
+    "permission-error-message": "You do not have permission to perform this action.",
+    "not-found-error-message": "The dataset you are trying to review does not exist.",
+    "internal-server-error-message": "An error occurred while processing your request. Please try again later."
   }
 }

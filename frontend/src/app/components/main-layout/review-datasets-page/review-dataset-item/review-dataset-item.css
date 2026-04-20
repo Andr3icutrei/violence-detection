@@ -1,0 +1,229 @@
+.review-dataset-item-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.review-dataset-item-form-container {
+  flex: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--color-background);
+  height: 90vh;
+  width: 50vw;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.review-dataset-item-title-container {
+  flex: 1;
+  position: relative;
+  padding-bottom: 1rem;
+  border-bottom: none;
+}
+
+.review-dataset-item-title-container::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 237, 243, 0.76) 0%,
+    rgb(108, 0, 243) 50%,
+    rgba(209, 8, 230, 0.73) 100%
+  );
+}
+
+.dataset-name {
+  background: linear-gradient(
+    135deg,
+    #a511c6 0%,
+    #5d10a8 50%,
+    #c78cea 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.review-dataset-item-form-content {
+  flex: max-content;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.review-dataset-item-form-content form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 1rem;
+}
+
+.review-dataset-item-form-content form .input-group:first-child {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.review-videos-input-group {
+  flex: 5;
+}
+
+.label-primary.label-review-videos {
+  flex: 1;
+}
+
+.video-review-container {
+  flex: 10;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.video-review-item-container {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-background-faded);
+}
+
+.video-container {
+  flex: 2;
+}
+
+.video-item-header {
+  margin-bottom: 0.5rem;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+.video-player-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.video-element {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+  object-fit: contain;
+  background: #000;
+  border-radius: 0.25rem;
+}
+
+.video-item-details {
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  background: var(--color-background);
+  padding: 1rem;
+  border: 1px solid var(--color-background-faded);
+  border-radius: 0.75rem;
+}
+
+.review-comment-input-group {
+  flex: 1;
+}
+
+.input-textarea-primary {
+  flex: 1;
+  resize: none;
+  padding: 0.25rem;
+}
+
+.submit-btns-container {
+  flex: min-content;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-approve {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(60, 182, 60, 0.1);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background-color: var(--color-success);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px rgba(60, 182, 60, 0.5);
+}
+
+.btn-reject {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-reject:hover:not(:disabled) {
+  background-color: var(--color-error);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.submit-message-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

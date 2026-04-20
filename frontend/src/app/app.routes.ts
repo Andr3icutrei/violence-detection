@@ -47,7 +47,12 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardPage, canActivate: [authGuard] },
       { path: 'inference', component: InferencePage, canActivate: [authGuard] },
-      { path: 'review-datasets', component: ReviewDatasetsPage, canActivate: [authGuard], },
+      {
+        path: 'review-datasets',
+        component: ReviewDatasetsPage,
+        canActivate: [authGuard],
+        data: { role: 'admin' },
+      },
     ],
   }, // data: { role: 'admin' } for admins
   {

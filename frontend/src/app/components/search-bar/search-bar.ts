@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [TranslatePipe, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.css',
 })

@@ -95,29 +95,29 @@
         </div>
 
         <div class="details-grid">
-          <div class="inference-item">
-            <span class="inferencel-item-label">{{ 'inference.name' | translate}}</span>
-            <span class="inference-item-value inference-item-video-name" [title]="videoDetails?.name || '-'">{{ videoDetails?.name || '-' }}</span>
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.name' | translate}}</span>
+            <span class="detail-item-value inference-item-video-name" [title]="videoDetails?.name || '-'">{{ videoDetails?.name || '-' }}</span>
           </div>
 
-          <div class="inference-item">
-            <span class="inferencel-item-label">{{ 'inference.dataset' | translate }}</span>
-            <span class="inference-item-value dataset-name">{{ videoDetails?.dataset?.name || '-' }}</span>
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.dataset' | translate }}</span>
+            <span class="detail-item-value dataset-name">{{ videoDetails?.dataset?.name || '-' }}</span>
           </div>
 
-          <div class="inference-item">
-            <span class="inferencel-item-label">{{ 'inference.framerate' | translate }} </span>
-            <span class="inference-item-value">{{ formatFrameRate(videoDetails?.frameRate) }}</span>
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.framerate' | translate }} </span>
+            <span class="detail-item-value">{{ formatFrameRate(videoDetails?.frameRate) }}</span>
           </div>
 
-          <div class="inference-item">
-            <span class="inferencel-item-label">{{ 'inference.length' | translate }}</span>
-            <span class="inference-item-value">{{ formatDuration(videoDetails?.duration) }}</span>
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.length' | translate }}</span>
+            <span class="detail-item-value">{{ formatDuration(videoDetails?.duration) }}</span>
           </div>
 
-          <div class="inference-item">
-            <span class="inferencel-item-label">{{ 'inference.is-violent' | translate }}</span>
-            <span class="inference-item-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.is-violent' | translate }}</span>
+            <span class="detail-item-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
               {{ videoDetails?.is_violent ? ('inference.yes' | translate) : ('inference.no' | translate) }}
             </span>
           </div>
@@ -173,26 +173,26 @@
       @if (isInferenceSubmitted) {
         @if(trackedPeople) {
           <div class="inference-results-metric-container">
-            <div class="inference-item">
-              <span class="inferencel-item-label">{{ 'inference.tracked-people' | translate }}</span>
-              <span class="inference-item-value">{{ trackedPeople }}</span>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'inference.tracked-people' | translate }}</span>
+              <span class="detail-item-value">{{ trackedPeople }}</span>
             </div>
           </div>
         } @else {
           <div class="inference-results-metric-container">
-            <div class="inference-item">
-              <span class="inferencel-item-label">{{ 'inference.predicted-label' | translate }}</span>
-              <span class="inference-item-value" [class.is-violent]="predictedLabel" [class.not-violent]="!predictedLabel">
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'inference.predicted-label' | translate }}</span>
+              <span class="detail-item-value" [class.is-violent]="predictedLabel" [class.not-violent]="!predictedLabel">
                 {{ predictedLabel ? ('inference.yes' | translate) : ('inference.no' | translate) }}
               </span>
             </div>
-            <div class="inference-item">
-              <span class="inferencel-item-label">{{ 'inference.predicted-confidence' | translate }} </span>
-              <span class="inference-item-value">{{ predictedConfidence }}</span>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'inference.predicted-confidence' | translate }} </span>
+              <span class="detail-item-value">{{ predictedConfidence }}</span>
             </div>
-            <div class="inference-item">
-              <span class="inferencel-item-label">{{ 'inference.predicted-class-probability' | translate }} </span>
-              <span class="inference-item-value">{{ predictedClassProbability }}</span>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'inference.predicted-class-probability' | translate }} </span>
+              <span class="detail-item-value">{{ predictedClassProbability }}</span>
             </div>
           </div>
         }

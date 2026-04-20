@@ -90,3 +90,77 @@ async def send_reset_password_email(to_email: str, reset_password_link: str, con
         )
 
     return message
+
+async def send_dataset_approval_mail(to_email: str, dataset_name: str, comment: str, conf = ConnectionConfig) -> MessageSchema:
+    mail_body = f"""
+    <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; background-color: #f4f7f6; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Your dataset "{dataset_name}" has been reviewed</h2>
+
+            <p style="color: #555555; font-size: 16px; line-height: 1.6;">Hi there,</p>
+            <p style="color: #555555; font-size: 16px; line-height: 1.6;">We wanted to let you know that your dataset "{dataset_name}" has been reviewed by our team. Here are the comments from the review:</p>
+
+            <div style="background-color: #ecf0f1; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">{comment}</p>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
+
+            <p style="color: #95a5a6; font-size: 12px; text-align: center;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
+        </div>
+    </div>
+    """
+    message = MessageSchema(
+        subject=f"Review Results for Your Dataset '{dataset_name}'",
+        recipients=[to_email],
+        body=mail_body,
+        subtype=MessageType.html
+    )
+
+    fm = FastMail(conf)
+
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while sending the email to {to_email}: {str(e)}"
+        )
+
+async def send_dataset_rejection_mail(to_email: str, dataset_name: str, comment: str, conf = ConnectionConfig) -> MessageSchema:
+    mail_body = f"""
+    <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; background-color: #f4f7f6; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Your dataset "{dataset_name}" has been rejected</h2>
+
+            <p style="color: #555555; font-size: 16px; line-height: 1.6;">Hi there,</p>
+            <p style="color: #555555; font-size: 16px; line-height: 1.6;">We wanted to let you know that your dataset "{dataset_name}" has been reviewed by our team and unfortunately it has been rejected. Here are the comments from the review:</p>
+
+            <div style="background-color: #ecf0f1; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">{comment}</p>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
+
+            <p style="color: #95a5a6; font-size: 12px; text-align: center;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
+        </div>
+    </div>
+    """
+    message = MessageSchema(
+        subject=f"Review Results for Your Dataset '{dataset_name}'",
+        recipients=[to_email],
+        body=mail_body,
+        subtype=MessageType.html
+    )
+
+    fm = FastMail(conf)
+
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while sending the email to {to_email}: {str(e)}"
+        )

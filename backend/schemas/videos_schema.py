@@ -32,3 +32,6 @@ class InferenceClassificationGradcamResponseDto(BaseModel):
 class PeopleTrackingResponseDto(BaseModel):
     tracked_video_url: str
 
+class ReviewVideoRequestDto(BaseModel):
+    video_id: int
+    is_violent: bool

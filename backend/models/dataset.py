@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import DateTime, func, ForeignKey, Boolean, TypeDecorator, Integer
+from sqlalchemy import DateTime, func, ForeignKey, Boolean, TypeDecorator, Integer, String
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core.database import Base
@@ -55,12 +55,11 @@ class Dataset(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(unique=True, nullable=False, index=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    deleted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     is_official: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     status: Mapped[DatasetStatus] = mapped_column(DatasetStatusIntType(), nullable=False)
+    comment: Mapped[str] = mapped_column(nullable=True)
     inference_model_id: Mapped[InferenceModel] = mapped_column(InferenceModelIntType(), nullable=True)
 
     created_by_user_id : Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)

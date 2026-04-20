@@ -6,7 +6,7 @@ import { InspectDatasets } from './inspect-datasets/inspect-datasets';
 
 @Component({
   selector: 'app-review-datasets-page',
-  imports: [TranslatePipe, InspectDatasets],
+  imports: [InspectDatasets],
   templateUrl: './review-datasets-page.html',
   styleUrl: './review-datasets-page.css',
 })

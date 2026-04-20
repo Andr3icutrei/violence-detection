@@ -108,3 +108,17 @@ async def create_unofficial_dataset_bucket(dataset_name: str, videos: List[Uploa
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to upload videos: {str(e)}"
         )
+
+async def delete_dataset_videos(dataset_name: str) -> None:
+    async with session.client(
+        service_name='s3',
+        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECRET_AWS_KEY,
+        region_name="auto"
+    ) as s3_client:
+        paginator = s3_client.get_paginator('list_objects_v2')
+        async for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix=f"{dataset_name}/"):
+            if 'Contents' in page:
+                delete_objects = [{'Key': obj['Key']} for obj in page['Contents']]
+                await s3_client.delete_objects(Bucket=BUCKET_NAME, Delete={'Objects': delete_objects})

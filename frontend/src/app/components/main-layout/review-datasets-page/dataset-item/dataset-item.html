@@ -1,0 +1,28 @@
+<div class="dataset-row" (click)="openReviewDatasetItem()">
+  <div class="dataset-id-badge">#{{ index + 1 }}</div>
+  <div class="dataset-detail">
+    <span class="detail-label">{{ 'review-datasets.name' | translate }}:</span>
+    <span class="detail-value">{{ dataset.name }}</span>
+  </div>
+  <div class="dataset-detail">
+    <span class="detail-label">{{ 'review-datasets.user-email' | translate }}:</span>
+    <span class="email-badge">{{ dataset.user.email }}</span>
+  </div>
+  <div class="dataset-detail">
+    <span class="detail-label">{{ 'review-datasets.status' | translate }}:</span>
+    <span class="status-badge status-{{ dataset.status }}">
+      {{ getDatasetStatusName(dataset.status) | titlecase }}
+    </span>
+  </div>
+  <div class="dataset-detail">
+    <span class="detail-label">{{ 'review-datasets.videos-count' | translate }}:</span>
+    <span class="detail-value">{{ dataset.videos_count ?? 0 }}</span>
+  </div>
+</div>
+
+@if(isDatasetReviewModalOpen) {
+  <app-review-dataset-item
+    [datasetId]="dataset.id"
+    (closeModal)="closeReviewDatasetItem()"
+  ></app-review-dataset-item>
+}

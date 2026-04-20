@@ -1,0 +1,113 @@
+<div class="review-dataset-item-overlay" (click)="close()">
+  <div class="review-dataset-item-form-container" (click)="$event.stopPropagation()">
+    <div class="review-dataset-item-title-container">
+      <h2>
+        {{ 'review-datasets.reviewing-dataset' | translate }}:
+        <span class="dataset-name">{{ dataset?.name }}</span>
+      </h2>
+    </div>
+
+    <div class="review-dataset-item-form-content">
+      <form [formGroup]="form">
+        <div class="input-group review-videos-input-group">
+          <label
+            for="review-videos"
+            class="label-primary required-asterisk">
+            {{ 'review-datasets.review-videos' | translate }}
+          </label>
+
+          @if (dataset?.videos) {
+            <div class="video-review-container">
+              @for (video of dataset?.videos; track video.id; let i = $index) {
+                <div class="video-review-item-container" [formGroup]="$any(videoReviews.controls[i])">
+                  <div class="video-container">
+                    <div class="video-item-header">
+                      <strong>{{ video.name }}</strong>
+                    </div>
+                    <div class="video-player-container">
+                      <video
+                        controls
+                        muted
+                        [src]="video.path"
+                        class="video-element">
+                      </video>
+                    </div>
+                  </div>
+
+                  <div class="video-item-details">
+                    <div class="detail-item">
+                      <span class="detail-item-label">{{ 'review-datasets.duration' | translate }} </span>
+                      <span class="detail-item-value">{{ video.duration }}s</span>
+                    </div>
+
+                    <div class="detail-item">
+                      <span class="detail-item-label">{{ 'review-datasets.fps' | translate }} </span>
+                      <span class="detail-item-value"> {{ video.frame_rate }} fps</span>
+                    </div>
+
+                    <div class="detail-item detail-item-last">
+                      <label class="detail-item-label required-asterisk"
+                        for="isViolent-{{ video.id }}">
+                        {{ 'review-datasets.is-violent' | translate }}
+                      </label>
+                      <input
+                        type="checkbox"
+                        [id]="'isViolent-' + video.id"
+                        [name]="'isViolent-' + video.id"
+                        class="input-checkbox-primary"
+                        formControlName="isViolent"/>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="input-group review-comment-input-group">
+          <label
+            for="reviewComment"
+            class="label-primary"
+            [class.required-asterisk]="isControlRequired('reviewComment')">
+            {{ 'review-datasets.review-comment' | translate }}
+          </label>
+          <textarea
+            id="reviewComment"
+            name="reviewComment"
+            class="input-textarea-primary"
+            rows="2"
+            formControlName="reviewComment"
+            placeholder="{{ 'review-datasets.review-comment-placeholder' | translate }}">
+          </textarea>
+        </div>
+
+        @if (isSubmitted) {
+          <div class="submit-message-container">
+            <app-form-submit-detail
+              [message]="submitMessage!"
+              [success]="isSubmitSuccessful">
+            </app-form-submit-detail>
+          </div>
+        }
+
+        <div class="submit-btns-container">
+          <button
+            type="submit"
+            class="btn-submit btn-approve"
+            [disabled]="!isFormValid()"
+            (click)="reviewDataset('ACCEPT')">
+            {{ 'review-datasets.approve' | translate }}
+          </button>
+
+          <button
+            type="submit"
+            class="btn-submit btn-reject"
+            [disabled]="!isFormValid()"
+            (click)="reviewDataset('REJECT')">
+            {{ 'review-datasets.reject' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

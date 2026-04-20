@@ -26,18 +26,23 @@ class DatasetsRepository:
         result = await db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
         return list(result.scalars().all())
 
-    async def get_all_pending(self, db: AsyncSession, search_term: str, page: int, page_size: int) -> List[Dataset]:
+    async def get_all(self, db: AsyncSession, search_term: str, page: int, page_size: int, dataset_status: DatasetStatus | None) -> List[Dataset]:
         query = (select(Dataset)
              .filter(Dataset.status == DatasetStatus.PENDING)
              .join(Dataset.created_by_user)
              .join(Dataset.videos)
-             .options(contains_eager(Dataset.created_by_user)))
-        if search_term is not None or search_term != "":
-            query = query.filter(Dataset.name.lower().contains(search_term.lower()))
+             .options(
+                 contains_eager(Dataset.created_by_user),
+                 contains_eager(Dataset.videos)
+             ))
+        if dataset_status is not None:
+            query = query.filter(Dataset.status == dataset_status)
+        if search_term:
+            query = query.filter(Dataset.name.ilike(f"%{search_term}%"))
         if page is not None and page_size is not None:
             query = query.offset(page * page_size).limit(page_size)
         result = await db.execute(query)
-        return list(result.scalars().all())
+        return list(result.scalars().unique().all())
 
     async def create_unofficial_dataset(self,
         db: AsyncSession,
@@ -90,3 +95,22 @@ class DatasetsRepository:
     async def user_has_pending_datasets(self, db: AsyncSession, user_id: int) -> bool:
         result = await db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
         return result.scalars().first() is not None
+
+    async def get_by_id_with_videos(self, db: AsyncSession, dataset_id: int) -> Dataset | None:
+        result = await db.execute(
+            select(Dataset)
+            .filter(Dataset.id == dataset_id)
+            .join(Dataset.videos)
+            .join(Dataset.created_by_user)
+            .options(
+                contains_eager(Dataset.created_by_user),
+                contains_eager(Dataset.videos)
+            )
+        )
+        return result.scalars().first()
+
+    async def save(self, db: AsyncSession, dataset: Dataset) -> Dataset:
+        db.add(dataset)
+        await db.commit()
+        await db.refresh(dataset)
+        return dataset

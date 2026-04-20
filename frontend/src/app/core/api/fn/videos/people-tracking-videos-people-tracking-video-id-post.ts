@@ -7,16 +7,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { InferenceVideoRequestDto } from '../../models/inference-video-request-dto';
 
-export interface InferenceVideoVideosInferenceVideoPost$Params {
-      body: InferenceVideoRequestDto
+export interface PeopleTrackingVideosPeopleTrackingVideoIdPost$Params {
+  video_id: number;
 }
 
-export function inferenceVideoVideosInferenceVideoPost(http: HttpClient, rootUrl: string, params: InferenceVideoVideosInferenceVideoPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
-  const rb = new RequestBuilder(rootUrl, inferenceVideoVideosInferenceVideoPost.PATH, 'post');
+export function peopleTrackingVideosPeopleTrackingVideoIdPost(http: HttpClient, rootUrl: string, params: PeopleTrackingVideosPeopleTrackingVideoIdPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  const rb = new RequestBuilder(rootUrl, peopleTrackingVideosPeopleTrackingVideoIdPost.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('video_id', params.video_id, {});
   }
 
   return http.request(
@@ -29,4 +28,4 @@ export function inferenceVideoVideosInferenceVideoPost(http: HttpClient, rootUrl
   );
 }
 
-inferenceVideoVideosInferenceVideoPost.PATH = '/videos/inference_video';
+peopleTrackingVideosPeopleTrackingVideoIdPost.PATH = '/videos/people_tracking/{video_id}';

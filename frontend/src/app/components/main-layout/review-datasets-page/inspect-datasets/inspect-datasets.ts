@@ -1,30 +1,90 @@
-import { Component, OnInit } from '@angular/core';
-import { SidebarService } from '../../../../services/sidebar/sidebar.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
+import { DatasetStatus } from '../../../../core/api/models/dataset-status';
+import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
+import { TranslatePipe } from '@ngx-translate/core';
+import {Router} from '@angular/router';
+import {DatasetStatusModel} from '../../../../models/dataset-status.model';
+import { NgIf, TitleCasePipe} from '@angular/common';
+import {DatasetItem} from '../dataset-item/dataset-item';
+import {SearchBar} from '../../../search-bar/search-bar';
+import { Paginator } from '../../../paginator/paginator';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-inspect-datasets',
-  imports: [],
+  imports: [TranslatePipe, DatasetItem, SearchBar, Paginator, ReactiveFormsModule, TitleCasePipe],
   templateUrl: './inspect-datasets.html',
   styleUrl: './inspect-datasets.css',
 })
 export class InspectDatasets implements OnInit {
-  private readonly pageSize = 10;
+  readonly pageSize: number = 10;
   searchTerm: string = '';
-  page: number = 1;
+  page: number = 0;
+  selectedDatasetStatus: DatasetStatus | null = null;
+  isLoadingDatasets: boolean = false;
+  hasMoreDatasets: boolean = false;
+
+  datasetsToReview: DatasetToReviewResponseDto[] = [];
+
+  statusOptions: DatasetStatusModel[] = Object.values(DatasetStatusModel).filter(
+    (value) => typeof value === 'number',
+  ) as DatasetStatusModel[];
 
   constructor(
     private datasetsService: DatasetsService,
-  ) {
-  }
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
-
+    this.loadDatasets();
   }
 
-  loadDatasets(): void {
-    this.datasetsService.getPendingDatasets(this.searchTerm, this.page, this.pageSize).subscribe({
+  public debouncedSearch(searchTerm: string): void {
+    this.searchTerm = searchTerm;
+    this.loadDatasets();
+  }
 
-    });
+  public onPageChange(pageNumber: number): void {
+    this.page = pageNumber;
+  }
+
+  public getDatasetStatusName(status: DatasetStatus): string {
+    return DatasetStatusModel[status];
+  }
+
+  public onSelectedDatasetStatusChange(event: Event): void {
+    const target = event.target as HTMLSelectElement | null;
+    if (!target) {
+      return;
+    }
+    const value = target.value;
+    if (!value || value === 'null') {
+      this.selectedDatasetStatus = null;
+    } else {
+      this.selectedDatasetStatus = Number(value) as unknown as DatasetStatus;
+    }
+    console.log(this.selectedDatasetStatus);
+    this.searchTerm = '';
+    this.cdr.detectChanges();
+    this.loadDatasets();
+  }
+
+  private loadDatasets(): void {
+    this.datasetsToReview = [];
+    this.isLoadingDatasets = true;
+    this.datasetsService
+      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus)
+      .subscribe({
+        next: (data: DatasetToReviewResponseDto[]): void => {
+          this.hasMoreDatasets = data.length > this.pageSize;
+          this.datasetsToReview = data;
+          this.isLoadingDatasets = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          this.isLoadingDatasets = false;
+        },
+      });
   }
 }

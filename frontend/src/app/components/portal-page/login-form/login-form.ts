@@ -127,10 +127,6 @@ export class LoginForm implements OnInit, OnDestroy {
     this.isPasswordVisible = !this.isPasswordVisible;
   }
 
-  public switchForm(form: PortalForm): void {
-    this.formChange.emit(form);
-  }
-
   public onSubmit(): void {
     const email: string = this.form.value.email!;
     const password: string = this.form.value.password!;

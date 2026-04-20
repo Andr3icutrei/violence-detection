@@ -41,14 +41,14 @@ class VideosService:
         self.inference_runtime = inference_runtime
 
     async def get_videos_paged(
-            self,
-            db: AsyncSession,
-            search_term: str | None,
-            dataset_id: int | None,
-            is_violent: bool | None = None,
-            asc: bool = True,
-            page: int = 0,
-            page_size: int = 40
+        self,
+        db: AsyncSession,
+        search_term: str | None,
+        dataset_id: int | None,
+        is_violent: bool | None = None,
+        asc: bool = True,
+        page: int = 0,
+        page_size: int = 40
     ) -> List[Video]:
         videos: Sequence[Video] = await (
             self.videos_repository.get_videos_paged(db, search_term, dataset_id, is_violent, asc, page, page_size))

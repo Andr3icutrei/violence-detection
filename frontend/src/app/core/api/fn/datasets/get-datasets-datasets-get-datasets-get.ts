@@ -7,14 +7,23 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { DatasetResponseDto } from '../../models/dataset-response-dto';
+import { DatasetStatus } from '../../models/dataset-status';
+import { DatasetToReviewResponseDto } from '../../models/dataset-to-review-response-dto';
 
 export interface GetDatasetsDatasetsGetDatasetsGet$Params {
+  search_term?: (string | null);
+  page?: number;
+  page_size?: number;
+  dataset_status?: (DatasetStatus | null);
 }
 
-export function getDatasetsDatasetsGetDatasetsGet(http: HttpClient, rootUrl: string, params?: GetDatasetsDatasetsGetDatasetsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DatasetResponseDto>>> {
+export function getDatasetsDatasetsGetDatasetsGet(http: HttpClient, rootUrl: string, params?: GetDatasetsDatasetsGetDatasetsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DatasetToReviewResponseDto>>> {
   const rb = new RequestBuilder(rootUrl, getDatasetsDatasetsGetDatasetsGet.PATH, 'get');
   if (params) {
+    rb.query('search_term', params.search_term, {});
+    rb.query('page', params.page, {});
+    rb.query('page_size', params.page_size, {});
+    rb.query('dataset_status', params.dataset_status, {});
   }
 
   return http.request(
@@ -22,7 +31,7 @@ export function getDatasetsDatasetsGetDatasetsGet(http: HttpClient, rootUrl: str
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<DatasetResponseDto>>;
+      return r as StrictHttpResponse<Array<DatasetToReviewResponseDto>>;
     })
   );
 }
