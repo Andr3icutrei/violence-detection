@@ -18,6 +18,25 @@
     <span class="detail-label">{{ 'review-datasets.videos-count' | translate }}:</span>
     <span class="detail-value">{{ dataset.videos_count ?? 0 }}</span>
   </div>
+  @if(dataset.status === DatasetStatusModel.ACCEPTED) {
+    <div class="dataset-detail">
+      <span class="detail-label">{{ 'review-datasets.actions' | translate }}:</span>
+      <div class="dataset-actions-container">
+        <button
+          type="button"
+          class="action-btn"
+          (click)="$event.stopPropagation(); openDeleteDatasetConfirmationModal()">
+          <i class="fa-regular fa-trash-can action-icon trashcan-icon"></i>
+        </button>
+        <button
+          type="button"
+          class="action-btn"
+          (click)="$event.stopPropagation(); openEditDatasetItem()">
+          <i class="fa-regular fa-pen-to-square action-icon pen-icon"></i>
+        </button>
+      </div>
+    </div>
+  }
 </div>
 
 @if(isDatasetReviewModalOpen) {
@@ -25,4 +44,22 @@
     [datasetId]="dataset.id"
     (closeModal)="closeReviewDatasetItem()"
   ></app-review-dataset-item>
+}
+
+@if(isDeleteConfirmationModalOpen) {
+  <app-confirmation-popup
+    [content]="'review-datasets.delete-dataset-confirmation'"
+    [icon]="'fa-regular fa-trash-can'"
+    [iconStyle]="'trashcan-icon'"
+    [confirmButtonStyle]="'btn-reject'"
+    (confirm)="deleteDataset()"
+    (close)="closeDeleteDatasetConfirmationModal()"
+  ></app-confirmation-popup>
+}
+
+@if(isEditDatasetItemModalOpen) {
+  <app-edit-dataset-item
+    [datasetId]="dataset.id"
+    (closeModal)="closeEditDatasetItem()">
+  </app-edit-dataset-item>
 }

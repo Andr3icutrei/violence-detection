@@ -27,6 +27,7 @@ import {
 import { InferencePage } from './components/main-layout/inference-page/inference-page';
 import { MainLayout } from './components/main-layout/main-layout';
 import { ReviewDatasetsPage } from './components/main-layout/review-datasets-page/review-datasets-page';
+import { UsersPage } from './components/main-layout/users-page/users-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'portal', pathMatch: 'full' },
@@ -53,6 +54,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { role: 'admin' },
       },
+      {
+        path: 'users',
+        component: UsersPage,
+        canActivate: [authGuard],
+        data: { role: 'admin' },
+      }
     ],
   }, // data: { role: 'admin' } for admins
   {

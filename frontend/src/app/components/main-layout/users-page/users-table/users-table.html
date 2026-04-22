@@ -1,0 +1,84 @@
+<div class="users-table-container">
+  <table class="users-table">
+      <thead class="table-header">
+        <th class="table-header-item"> {{ 'users.index' | translate }} </th>
+        <th class="table-header-item"> {{ 'users.email' | translate }} </th>
+        <th class="table-header-item"> {{ 'users.role' | translate }} </th>
+        <th class="table-header-item"> {{ 'users.status' | translate }} </th>
+        <th class="table-header-item"> {{ 'users.actions' | translate }} </th>
+      </thead>
+
+      <tbody class="table-body">
+        @for (user of users; track user.id; let i = $index) {
+          <tr class="table-row-item">
+            <td class="table-data-item">
+              {{ i + 1 }}
+            </td>
+
+            <td class="table-data-item">
+              <span class="email-badge">
+                {{ user.email }}
+                @if (user.is_admin) {
+                  <i class="fa-solid fa-crown admin-user-icon-no-background" title="Admin"></i>
+                }
+              </span>
+            </td>
+
+            <td class="table-data-item">
+              <span
+                [class.regular-user]="!user.is_admin!"
+                [class.admin-user]="user.is_admin!">
+                {{ getRoleTranslation(user.is_admin!) | translate}}
+              </span>
+            </td>
+
+            <td class="table-data-item">
+              <span
+                [class.inactive-account-user]="!user.is_active!"
+                [class.active-user]="(user.is_active! && !user.is_banned!)"
+                [class.banned-user]="(user.is_active! && user.is_banned!)">
+              {{ getStatusTranslation(user.is_active!, user.is_banned!) | translate }}
+              </span>
+            </td>
+
+            <td class="table-data-item">
+              <div class="users-actions-container">
+                <button
+                  type="button"
+                  class="action-btn"
+                  [disabled]="user.is_banned"
+                  (click)="openBanModal(user)">
+                  <i class="fa-solid fa-ban action-icon" [class.ban-icon-error]="!user.is_banned"></i>
+                </button>
+                <button
+                  type="button"
+                  class="action-btn"
+                  (click)="updateUserRole(user)">
+                  <i class="action-icon"
+                    [class.fa-regular]="user.is_admin"
+                    [class.fa-user]="user.is_admin"
+                    [class.regular-user-icon]="user.is_admin"
+                    [class.fa-solid]="!user.is_admin"
+                    [class.fa-crown]="!user.is_admin"
+                    [class.admin-user-icon]="!user.is_admin">
+                  </i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+  </table>
+</div>
+
+@if(isBanUserModalOpen && userToBan) {
+  <app-confirmation-popup
+    [content]="'users.ban-user-confirmation' | translate : {user: userToBan.email}"
+    [icon]="'fa-solid fa-ban'"
+    [iconStyle]="'ban-icon-error'"
+    [confirmButtonStyle]="'ban-confirm-btn-error'"
+    [detailLabel]="'users.ban-reason'"
+    (close)="closeBanModal()"
+    (confirmWithSubmitValue)="confirmBan($event)">
+  </app-confirmation-popup>
+}

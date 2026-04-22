@@ -16,8 +16,8 @@ class AuthService:
     def __init__(self):
         self.users_repository: UsersRepository = UsersRepository()
 
-    async def login(self, db: AsyncSession, email: str, password: str):
-        user: User | None = await self.users_repository.get_by_email(db, email)
+    async def login(self, email: str, password: str, db: AsyncSession):
+        user: User | None = await self.users_repository.get_by_email(email, db)
         if user is None:
             raise HTTPException(
                 status_code = status.HTTP_404_NOT_FOUND,
@@ -25,8 +25,19 @@ class AuthService:
             )
         if user.is_account_verified is False:
             raise HTTPException(
-                status_code = status.HTTP_403_FORBIDDEN,
-                detail = "Account not verified. Please check your email for the verification link."
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "error_code": "ACCOUNT_NOT_VERIFIED",
+                    "message": "Account not verified. Please check your email for the verification link.",
+                },
+            )
+        if user.is_banned:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "error_code": "ACCOUNT_BANNED",
+                    "message": "Account is banned. Please contact support for more information.",
+                },
             )
         if verify_password(password, user.hashed_password):
             return user
@@ -46,14 +57,22 @@ class AuthService:
         if email is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not found in token")
 
-        user: User | None = await self.users_repository.get_by_email(db, email)
+        user: User | None = await self.users_repository.get_by_email(email, db)
 
         if user is None:
             try:
-                user = await self.users_repository.create_user_google(db, email)
+                user = await self.users_repository.create_user_google(email, db)
             except Exception as e:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating user: {str(e)}")
         else:
+            if user.is_banned:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail={
+                        "error_code": "ACCOUNT_BANNED",
+                        "message": "Account is banned. Please contact support for more information.",
+                    },
+                )
             if user.auth_provider == "local":
                 try:
                     user.auth_provider = "google"
@@ -83,7 +102,7 @@ class AuthService:
         except (TypeError, ValueError):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        user: User | None = await UsersRepository().get_by_id(db, parsed_user_id)
+        user: User | None = await UsersRepository().get_by_id(parsed_user_id, db)
 
         if user is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -110,7 +129,7 @@ class AuthService:
         except (TypeError, ValueError):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        user: User | None = await UsersRepository().get_by_id(db, parsed_user_id)
+        user: User | None = await UsersRepository().get_by_id(parsed_user_id, db)
 
         if user is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

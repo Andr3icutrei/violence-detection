@@ -24,7 +24,6 @@ class Video(Base):
     is_violent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     duration: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     frame_rate: Mapped[float] = mapped_column(Integer, nullable=False)
-    deleted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     dataset_id: Mapped[int] = mapped_column(ForeignKey("datasets.id"), nullable=False)
     dataset: Mapped["Dataset"] = relationship(back_populates="videos")

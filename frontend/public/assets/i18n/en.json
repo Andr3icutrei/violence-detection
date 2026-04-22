@@ -55,7 +55,8 @@
     "no-files-uploaded": "No files were uploaded. Please select at least one video file to upload.",
     "too-many-files-uploaded": "You have exceeded the maximum number of files allowed ({{max}}). Please select fewer files to upload.",
     "different-files-format": "All uploaded files must be {{format}} format. Please ensure all selected files have the same extension.",
-    "files-too-large": "One or more of the selected files exceed the maximum allowed size of {{max}} MB. Please select smaller files to upload."
+    "files-too-large": "One or more of the selected files exceed the maximum allowed size of {{max}} MB. Please select smaller files to upload.",
+    "account-banned": "Your account has been banned. Review your email for more information."
   },
   "verify-account": {
     "verify-account-success-title": "Account Verified!",
@@ -82,7 +83,8 @@
     "subtitle": "Enter your email address below and we'll send you instructions to reset your password.",
     "forgot-password-submit-message-success": "Password reset email sent. Please check your inbox for instructions to reset your password.",
     "send-verification-email": "Send verification email",
-    "back-to-login": "Back to login"
+    "back-to-login": "Back to login",
+    "forgot-password-banned-user": "Your account has been banned. Please review your email for more information."
   },
   "reset-password-form": {
     "title": "Reset your password",
@@ -106,12 +108,14 @@
   },
   "topbar": {
     "hello": "Hello,",
-    "logout": "Logout"
+    "logout": "Logout",
+    "admin": "Admin"
   },
   "sidebar": {
     "dashboard": "Dashboard",
     "datasets": "Datasets",
-    "review-dataset": "Review Datasets"
+    "review-dataset": "Review Datasets",
+    "users": "Users"
   },
   "inference": {
     "original-video": "Original Video",
@@ -179,6 +183,41 @@
     "rejection-success-message": "Dataset rejected successfully! The dataset will not be available in the dashboard.",
     "permission-error-message": "You do not have permission to perform this action.",
     "not-found-error-message": "The dataset you are trying to review does not exist.",
-    "internal-server-error-message": "An error occurred while processing your request. Please try again later."
+    "internal-server-error-message": "An error occurred while processing your request. Please try again later.",
+    "actions": "Actions",
+    "delete-dataset-confirmation": "Are you sure you want to delete this dataset? This action cannot be undone."
+  },
+  "edit-dataset": {
+    "editing-dataset": "Editing unofficial dataset",
+    "edit-videos": "Edit Videos",
+    "duration": "Duration",
+    "fps": "Framerate",
+    "is-violent": "Is Violent",
+    "save": "Save Changes",
+    "edit-success-message": "Dataset edited successfully!",
+    "dataset-not-found-error": "The dataset you are trying to edit does not exist.",
+    "permission-error": "Official datasets cannot be edited.",
+    "videos-not-found-error": "One or more videos are missing from the edit request."
+  },
+  "confirmation-popup": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "users": {
+    "search-bar-placeholder": "Search for users by email...",
+    "no-users-found": "No users were found for the current search criteria.",
+    "index": "ID",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "admin": "Admin",
+    "regular-user": "Regular User",
+    "inactive-account-user": "Inactive Account",
+    "banned-user": "Banned User",
+    "active-user": "Active User",
+    "ban-user-confirmation": "Are you sure you want to ban {{user}}?",
+    "unban-user-confirmation": "Are you sure you want to unban this user?",
+    "ban-reason": "Ban Reason"
   }
 }

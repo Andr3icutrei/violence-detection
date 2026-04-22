@@ -37,7 +37,7 @@ async def login(
     response: Response,
     db: AsyncSession = Depends(get_db)
 ):
-    user: User = await auth_service.login(db, login_dto.email, login_dto.password)
+    user: User = await auth_service.login(login_dto.email, login_dto.password, db)
     token_payload = {
         "sub": str(user.id),
         "email": user.email,

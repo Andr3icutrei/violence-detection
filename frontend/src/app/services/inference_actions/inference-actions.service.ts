@@ -12,7 +12,10 @@ export class InferenceActionsService {
 
   }
 
-  public getInferenceActions(): Observable<InferenceActionResponseDto[]> {
-    return this.httpClient.get<InferenceActionResponseDto[]>(`${environment.apiUrl}inference_actions/get_inference_actions`, { withCredentials: true });
+  public getInferenceActions(datasetId: number): Observable<InferenceActionResponseDto[]> {
+    return this.httpClient.get<InferenceActionResponseDto[]>(
+      `${environment.apiUrl}inference_actions/get_inference_actions_for_dataset/${datasetId}`,
+      { withCredentials: true },
+    );
   }
 }

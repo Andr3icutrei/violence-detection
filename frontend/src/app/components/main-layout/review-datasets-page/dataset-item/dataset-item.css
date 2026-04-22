@@ -7,13 +7,14 @@
   background-color: var(--color-background);
   border: 1px solid var(--color-disabled);
   border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.125rem 0.25rem var(--color-shadow-faint);
+  cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .dataset-row:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.5rem var(--color-shadow-light);
 }
 
 .dataset-detail {
@@ -56,7 +57,7 @@
   font-weight: 700;
   border-radius: 50%;
   font-size: 1rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(109, 8, 241, 0.2);
+  box-shadow: 0 0.125rem 0.25rem var(--color-primary-outline);
 }
 
 .status-badge {
@@ -74,16 +75,31 @@
 }
 
 .status-10 {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--color-status-pending-bg);
+  color: var(--color-status-pending-text);
 }
 
 .status-20 {
-  background-color: #d4f5d4;
+  background-color: var(--color-status-approved-bg);
   color: var(--color-success);
 }
 
 .status-30 {
   background-color: var(--color-error-faded);
   color: var(--color-error);
+}
+
+.dataset-actions-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0.5rem auto;
+  gap: 0.5rem;
+}
+
+.dataset-action {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }

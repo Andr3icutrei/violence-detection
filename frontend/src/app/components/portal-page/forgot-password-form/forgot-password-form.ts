@@ -56,7 +56,7 @@ export class ForgotPasswordForm implements OnInit {
     this.usersService.requestResetPassword(email!).subscribe({
       next: (data: any) => {
         this.success = true;
-        this.submitStatusKey = 'forgotPasswordSubmitMessageSuccess';
+        this.submitStatusKey = 'forgot-password-submit-message-success';
         this.cdr.detectChanges();
 
         setTimeout(() => {
@@ -69,13 +69,17 @@ export class ForgotPasswordForm implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.success = false;
         if (err.status === 403) {
-          this.submitStatusKey = 'forgotPasswordUnverifiedUser';
+          if (err.error.detail.error_code === 'ACCOUNT_BANNED') {
+            this.submitStatusKey = 'forgot-password-banned-user';
+          } else {
+            this.submitStatusKey = 'forgot-password-unverified-user';
+          }
         } else if (err.status === 404) {
-          this.submitStatusKey = 'forgotPasswordInexistentUser';
+          this.submitStatusKey = 'forgot-password-inexistent-user';
         } else if (err.status === 500) {
-          this.submitStatusKey = 'forgotPasswordServerError';
+          this.submitStatusKey = 'forgot-password-server-error';
         } else {
-          this.submitStatusKey = 'forgotPasswordError';
+          this.submitStatusKey = 'forgot-password-error';
         }
         this.cdr.detectChanges();
         setTimeout(() => {
@@ -93,13 +97,9 @@ export class ForgotPasswordForm implements OnInit {
       return null;
     }
 
-    const key = this.toKebabCase(this.submitStatusKey);
+    const key = this.submitStatusKey;
     const prefix = this.success === true ? 'forgot-password-form' : 'error-messages';
     return `${prefix}.${key}`;
-  }
-
-  private toKebabCase(value: string): string {
-    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 
   public isControlRequired(controlName: string): boolean {

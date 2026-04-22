@@ -5,7 +5,7 @@
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--color-overlay-dark);
   display: flex;
   align-items: center;
   animation: fadeIn 0.3s ease-out;
@@ -28,7 +28,6 @@
 }
 
 .review-dataset-item-title-container {
-  flex: 1;
   position: relative;
   padding-bottom: 1rem;
   border-bottom: none;
@@ -44,18 +43,18 @@
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(10, 237, 243, 0.76) 0%,
-    rgb(108, 0, 243) 50%,
-    rgba(209, 8, 230, 0.73) 100%
+    var(--color-gradient-cyan) 0%,
+    var(--color-gradient-blue) 50%,
+    var(--color-gradient-magenta) 100%
   );
 }
 
 .dataset-name {
   background: linear-gradient(
     135deg,
-    #a511c6 0%,
-    #5d10a8 50%,
-    #c78cea 100%
+    var(--color-gradient-pink) 0%,
+    var(--color-gradient-purple) 50%,
+    var(--color-gradient-lilac) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -84,7 +83,7 @@
 }
 
 .review-videos-input-group {
-  flex: 5;
+  flex: 7;
 }
 
 .label-primary.label-review-videos {
@@ -101,7 +100,7 @@
   flex: 1;
   padding: 1rem;
   border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--color-shadow-faint);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -131,7 +130,7 @@
   height: auto;
   aspect-ratio: 16/9;
   object-fit: contain;
-  background: #000;
+  background: var(--color-black);
   border-radius: 0.25rem;
 }
 
@@ -168,52 +167,6 @@
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
-}
-
-.btn-approve {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background-color: rgba(60, 182, 60, 0.1);
-  color: var(--color-success);
-  border: 1px solid var(--color-success);
-  padding: 0.25rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-approve:hover:not(:disabled) {
-  background-color: var(--color-success);
-  color: var(--color-white-text);
-  box-shadow: 0 0 10px rgba(60, 182, 60, 0.5);
-}
-
-.btn-reject {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background-color: rgba(244, 67, 54, 0.1);
-  color: var(--color-error);
-  border: 1px solid var(--color-error);
-  padding: 0.25rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-reject:hover:not(:disabled) {
-  background-color: var(--color-error);
-  color: var(--color-white-text);
-  box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
 }
 
 .btn-submit:disabled {

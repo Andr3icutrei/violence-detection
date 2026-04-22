@@ -39,3 +39,6 @@ class ReviewDatasetRequestDto(BaseModel):
     is_approved: bool
     videos: List[ReviewVideoRequestDto]
     review_comment: str
+
+class EditDatasetRequestDto(BaseModel):
+    videos: List[ReviewVideoRequestDto]

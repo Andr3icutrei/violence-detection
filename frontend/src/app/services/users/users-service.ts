@@ -63,4 +63,27 @@ export class UsersService {
   public getTopbarInformation(): Observable<UserResponseDto> {
     return this.httpClient.get<UserResponseDto>(environment.apiUrl + 'users/topbar_information', { withCredentials: true });
   }
+
+  public get_all_users(searchTerm: string, page: number, pageSize: number): Observable<UserResponseDto[]> {
+    let params: HttpParams = new HttpParams()
+      .set('page', page)
+      .set('page_size', pageSize);
+    if (searchTerm !== null && searchTerm !== '') {
+      params = params.set('search_term', searchTerm);
+    }
+
+    return this.httpClient.get<UserResponseDto[]>(environment.apiUrl + 'users/get_all_users', { withCredentials: true, params: params });
+  }
+
+  public updateUserRole(userId: number, isAdmin: boolean): Observable<void> {
+    const params: HttpParams = new HttpParams().set('user_id', userId).set('is_admin', isAdmin);
+    return this.httpClient.patch<void>(environment.apiUrl + 'users/update_user_role', null, { withCredentials: true, params: params });
+  }
+
+  public banUser(userId: number, banReason: string): Observable<void> {
+    const body = {
+      ban_reason: banReason,
+    };
+    return this.httpClient.patch<void>(environment.apiUrl + `users/ban_user/${userId}`, body, { withCredentials: true });
+  }
 }

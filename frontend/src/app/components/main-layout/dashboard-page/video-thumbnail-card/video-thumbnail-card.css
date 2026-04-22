@@ -1,25 +1,26 @@
 .video-card {
   display: flex;
   flex-direction: column;
-  background-color: var(--surface-card, #ffffff);
+  background-color: var(--surface-card, var(--color-white-text));
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.375rem var(--color-shadow-light);
   transition: transform 0.2s, box-shadow 0.2s;
   width: 100%;
   max-width: 25rem;
+  cursor: pointer;
 }
 
 .video-card:hover {
   transform: translateY(-0.25rem);
-  box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.5rem 0.75rem var(--color-shadow-medium);
 }
 
 .video-preview-container {
   position: relative;
   width: 100%;
   padding-top: 56.25%; /* 16:9 Aspect Ratio */
-  background-color: #000;
+  background-color: var(--color-black);
 }
 
 .video-preview {
@@ -35,7 +36,7 @@
   position: absolute;
   bottom: 0.5rem;
   right: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--color-overlay-dark);
   color: white;
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
@@ -47,7 +48,7 @@
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  background-color: rgba(40, 167, 69, 0.9); /* Green for non-violent */
+  background-color: var(--color-badge-safe); /* Green for non-violent */
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
@@ -57,7 +58,7 @@
 }
 
 .violence-badge.is-violent {
-  background-color: rgba(220, 53, 69, 0.9); /* Red for violent */
+  background-color: var(--color-badge-danger); /* Red for violent */
 }
 
 .video-info {
@@ -71,7 +72,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-color, #333);
+  color: var(--text-color, var(--color-text-dark));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -82,7 +83,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: 0.85rem;
-  color: var(--text-secondary-color, #666);
+  color: var(--text-secondary-color, var(--color-text-muted));
 }
 
 .dataset-label {
@@ -90,8 +91,8 @@
 }
 
 .dataset-name {
-  background-color: var(--surface-ground, #f8f9fa);
+  background-color: var(--surface-ground, var(--color-surface-light));
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  border: 0.0625rem solid var(--surface-border, #dee2e6);
+  border: 0.0625rem solid var(--surface-border, var(--color-border-light));
 }

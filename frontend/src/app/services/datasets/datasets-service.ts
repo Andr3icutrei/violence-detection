@@ -38,9 +38,7 @@ export class DatasetsService {
     pageSize: number,
     status: DatasetStatus | null,
   ): Observable<DatasetToReviewResponseDto[]> {
-    let params: HttpParams = new HttpParams()
-      .set('page', page)
-      .set('page_size', pageSize);
+    let params: HttpParams = new HttpParams().set('page', page).set('page_size', pageSize);
     if (searchTerm !== '') {
       params = params.set('search_term', searchTerm);
     }
@@ -58,11 +56,17 @@ export class DatasetsService {
 
   public getDatasetWithVideos(datasetId: number): Observable<DatasetWithVideosResponseDto> {
     return this.httpClient.get<DatasetWithVideosResponseDto>(
-      environment.apiUrl + `datasets/get_dataset_videos/${datasetId}`, { withCredentials: true },
+      environment.apiUrl + `datasets/get_dataset_videos/${datasetId}`,
+      { withCredentials: true },
     );
   }
 
-  public reviewDataset(datasetId: number, isApproved: boolean, videos: { video_id: number, is_violent: boolean }[], reviewComment: string): Observable<DatasetResponseDto> {
+  public reviewDataset(
+    datasetId: number,
+    isApproved: boolean,
+    videos: { video_id: number; is_violent: boolean }[],
+    reviewComment: string,
+  ): Observable<DatasetResponseDto> {
     const body = {
       is_approved: isApproved,
       videos: videos,
@@ -73,5 +77,20 @@ export class DatasetsService {
       body,
       { withCredentials: true },
     );
+  }
+
+  public deleteDataset(datasetId: number): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${environment.apiUrl}datasets/delete_dataset/${datasetId}`,
+      { withCredentials: true },
+    );
+  }
+
+  public editDataset(datasetId: number, videos: { video_id: number; is_violent: boolean }[]): Observable<DatasetResponseDto> {
+    const body = {
+      dataset_id: datasetId,
+      videos: videos,
+    };
+    return this.httpClient.patch<DatasetResponseDto>(`${environment.apiUrl}datasets/edit_dataset/${datasetId}`, body, { withCredentials: true });
   }
 }

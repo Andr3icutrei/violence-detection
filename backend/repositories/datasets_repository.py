@@ -14,11 +14,11 @@ from models.dataset_status import DatasetStatus
 
 
 class DatasetsRepository:
-    async def get_by_name(self, db: AsyncSession, name: str) -> Dataset | None:
+    async def get_by_name(self, name: str, db: AsyncSession) -> Dataset | None:
         result = await db.execute(select(Dataset).filter(Dataset.name == name))
         return result.scalars().first()
 
-    async def get_by_id(self, db: AsyncSession, dataset_id: int) -> Dataset | None:
+    async def get_by_id(self, dataset_id: int, db: AsyncSession) -> Dataset | None:
         result = await db.execute(select(Dataset).filter(Dataset.id == dataset_id))
         return result.scalars().first()
 
@@ -26,9 +26,9 @@ class DatasetsRepository:
         result = await db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
         return list(result.scalars().all())
 
-    async def get_all(self, db: AsyncSession, search_term: str, page: int, page_size: int, dataset_status: DatasetStatus | None) -> List[Dataset]:
+    async def get_all(self, search_term: str | None, page: int, page_size: int, dataset_status: DatasetStatus | None, db: AsyncSession) -> List[Dataset]:
         query = (select(Dataset)
-             .filter(Dataset.status == DatasetStatus.PENDING)
+             .filter(Dataset.is_official == False)
              .join(Dataset.created_by_user)
              .join(Dataset.videos)
              .options(
@@ -45,10 +45,10 @@ class DatasetsRepository:
         return list(result.scalars().unique().all())
 
     async def create_unofficial_dataset(self,
-        db: AsyncSession,
         name: str,
         videos: List[UploadFile],
-        user_id: int
+        user_id: int,
+        db: AsyncSession,
     ) -> Dataset:
 
         video_models = []
@@ -92,11 +92,11 @@ class DatasetsRepository:
         await db.refresh(dataset)
         return dataset
 
-    async def user_has_pending_datasets(self, db: AsyncSession, user_id: int) -> bool:
+    async def user_has_pending_datasets(self, user_id: int, db: AsyncSession) -> bool:
         result = await db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
         return result.scalars().first() is not None
 
-    async def get_by_id_with_videos(self, db: AsyncSession, dataset_id: int) -> Dataset | None:
+    async def get_by_id_with_videos(self, dataset_id: int, db: AsyncSession) -> Dataset | None:
         result = await db.execute(
             select(Dataset)
             .filter(Dataset.id == dataset_id)
@@ -109,8 +109,12 @@ class DatasetsRepository:
         )
         return result.scalars().first()
 
-    async def save(self, db: AsyncSession, dataset: Dataset) -> Dataset:
+    async def save(self, dataset: Dataset, db: AsyncSession) -> Dataset:
         db.add(dataset)
         await db.commit()
         await db.refresh(dataset)
         return dataset
+
+    async def delete(self, dataset: Dataset, db: AsyncSession) -> None:
+        await db.delete(dataset)
+        await db.flush()

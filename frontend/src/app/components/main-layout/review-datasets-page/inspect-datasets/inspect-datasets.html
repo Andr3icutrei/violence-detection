@@ -24,7 +24,7 @@
 
   <div class="review-datasets-content">
     @if (!isLoadingDatasets && datasetsToReview.length === 0) {
-      <div class="videos-empty-state">
+      <div class="empty-state">
         {{ 'review-datasets.no-datasets-found' | translate }}
       </div>
     }
@@ -34,7 +34,7 @@
         <app-dataset-item
           [dataset]="dataset"
           [index]="i"
-          (closeModal)="modalClosed()">
+          (deleteDatasetItem)="deleteDataset(dataset.id)">
         </app-dataset-item>
       }
     </div>

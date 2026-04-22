@@ -1,0 +1,33 @@
+<div class="users-page-container">
+  <div class="users-searchbar-container">
+    <app-search-bar
+      (onDebouncedSearch)="debouncedSearch($event)"
+      [placeholderText]="'users.search-bar-placeholder' | translate"
+    ></app-search-bar>
+  </div>
+
+  <div class="users-page-content-container">
+    @if (users.length > 0) {
+      <div class="users-table-container">
+        <app-users-table
+          [users]="users"
+          (onUserChanged)="loadUsers()"
+        ></app-users-table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        {{ 'users.no-users-found' | translate }}
+      </div>
+    }
+  </div>
+
+  @if(hasMoreUsers) {
+    <app-paginator
+      [page]="page"
+      [pageSize]="pageSize"
+      [hasMore]="hasMoreUsers"
+      (pageChange)="onPageChange($event)"
+    ></app-paginator>
+  }
+</div>
+

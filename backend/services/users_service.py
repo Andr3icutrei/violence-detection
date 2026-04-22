@@ -11,15 +11,15 @@ from schemas.users_schema import CreateUserDto, UserResponseDto
 from core.security import get_password_hash
 from repositories.users_repository import UsersRepository
 from models.user import User
-from helpers.email_helper import send_registration_email, send_reset_password_email
+from helpers.email_helper import send_registration_email, send_reset_password_email, send_user_ban_email
 from helpers.jwt_helper import create_jwt_token, decode_jwt_token, decode_jwt_token_without_exp_check, decode_jwt_token_reset_password
 
 class UsersService:
     def __init__(self):
         self.users_repository = UsersRepository()
 
-    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto, conf: ConnectionConfig) -> User:
-        db_user: User | None = await self.users_repository.get_by_email(db, email=user_create_data.email)
+    async def create_user(self, user_create_data: CreateUserDto, conf: ConnectionConfig, db: AsyncSession) -> User:
+        db_user: User | None = await self.users_repository.get_by_email(user_create_data.email, db)
         if db_user:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -33,9 +33,9 @@ class UsersService:
                 detail=str(exc),
             ) from exc
         created_user: User = await self.users_repository.create_user(
-            db,
             user_create_data=user_create_data,
             hashed_password=hashed_password,
+            db=db,
         )
         email_verification_token_payload = {
             "sub": str(created_user.id),
@@ -49,8 +49,8 @@ class UsersService:
 
         return created_user
 
-    async def get_user_by_id(self, db: AsyncSession, user_id: int) -> User:
-        user_to_fetch: User | None = await self.users_repository.get_by_id(db, user_id=user_id)
+    async def get_user_by_id(self, user_id: int, db: AsyncSession) -> User:
+        user_to_fetch: User | None = await self.users_repository.get_by_id(user_id=user_id, db=db)
 
         if user_to_fetch is None:
             raise HTTPException(
@@ -60,7 +60,7 @@ class UsersService:
 
         return user_to_fetch
 
-    async def verify_account(self, db: AsyncSession, token: str) -> User:
+    async def verify_account(self, token: str, db: AsyncSession) -> User:
         decoded_jwt_token: dict | None = decode_jwt_token(token, "SECRET_JWT_EMAIL")
         if decoded_jwt_token is None:
             raise HTTPException(
@@ -77,7 +77,7 @@ class UsersService:
         email:str = decoded_jwt_token["email"]
         id:int = int(decoded_jwt_token["sub"])
 
-        user_to_verify: User | None = await self.users_repository.get_by_id(db, user_id=id)
+        user_to_verify: User | None = await self.users_repository.get_by_id(user_id=id, db=db)
 
         if user_to_verify is None:
             raise HTTPException(
@@ -107,13 +107,13 @@ class UsersService:
 
         return user_to_verify
 
-    async def resend_verification_email(self, db: AsyncSession, token: str, conf: ConnectionConfig) -> User:
+    async def resend_verification_email(self, token: str, conf: ConnectionConfig, db: AsyncSession) -> User:
         decoded_jwt_token: dict = decode_jwt_token_without_exp_check(token, "SECRET_JWT_EMAIL")
 
         email: str = decoded_jwt_token["email"]
         id: int = int(decoded_jwt_token["sub"])
 
-        user_to_verify: User | None = await self.users_repository.get_by_id(db, user_id=id)
+        user_to_verify: User | None = await self.users_repository.get_by_id(user_id=id, db=db)
 
         if user_to_verify is None:
             raise HTTPException(
@@ -143,8 +143,8 @@ class UsersService:
 
         return user_to_verify
 
-    async def send_reset_password_email(self, db: AsyncSession, email: str, conf: ConnectionConfig) -> User:
-        user: User | None = await self.users_repository.get_by_email(db, email=email)
+    async def send_reset_password_email(self, email: str, conf: ConnectionConfig, db: AsyncSession) -> User:
+        user: User | None = await self.users_repository.get_by_email(email=email, db=db)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -153,7 +153,18 @@ class UsersService:
         if user.is_account_verified is False:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Account not verified. Please check your email for the verification link."
+                detail={
+                    "error_code": "ACCOUNT_NOT_VERIFIED",
+                    "message": "Account not verified. Please check your email for the verification link.",
+                },
+            )
+        if user.is_banned:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "error_code": "ACCOUNT_BANNED",
+                    "message": "Account is banned. Please contact support for more information.",
+                },
             )
         reset_password_token_payload = {
             "sub": str(user.id),
@@ -169,7 +180,7 @@ class UsersService:
         await send_reset_password_email(user.email, reset_password_link, conf)
         return user
 
-    async def reset_password(self, db: AsyncSession, token: str, new_password: str) -> User:
+    async def reset_password(self, token: str, new_password: str, db: AsyncSession) -> User:
         try:
             unverified_payload = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
         except jwt.PyJWTError:
@@ -183,7 +194,7 @@ class UsersService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Token payload is missing the email"
             )
-        user_to_reset_password: User | None = await self.users_repository.get_by_email(db, email=email)
+        user_to_reset_password: User | None = await self.users_repository.get_by_email(email=email, db=db)
         if user_to_reset_password is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -215,7 +226,7 @@ class UsersService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Token payload is missing the email"
             )
-        user: User | None = await self.users_repository.get_by_email(db=db, email=email)
+        user: User | None = await self.users_repository.get_by_email(email=email, db=db)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -236,4 +247,65 @@ class UsersService:
                 detail=f"Error loading environment variable DEFAULT_CREDITS: {str(e)}"
             ) from e
         users: List[User] = await self.users_repository.get_all(db)
-        await self.users_repository.update_users_credits(db, users, credits_to_update)
+        await self.users_repository.update_users_credits(users, credits_to_update, db)
+
+    async def get_all_users(self,
+        search_term: str | None,
+        page: int,
+        page_size: int,
+        db: AsyncSession,
+    ) -> List[UserResponseDto]:
+        users: List[User] = await self.users_repository.get_all(db)
+
+        if search_term:
+            search_term_lower = search_term.lower()
+            users = [user for user in users if search_term_lower in user.email.lower()]
+
+        start_index = page * page_size
+        end_index = start_index + page_size
+        paginated_users = users[start_index:end_index]
+
+        return [
+            UserResponseDto(
+                id=user.id,
+                email=user.email,
+                credits=user.credits,
+                is_admin=user.is_admin,
+
+            )
+            for user in paginated_users
+        ]
+
+    async def update_user_role(self, user_id: int, is_admin: bool, db: AsyncSession) -> None:
+        user_to_update: User | None = await self.users_repository.get_by_id(user_id=user_id, db=db)
+        if user_to_update is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User to update does not exist"
+            )
+        try:
+            user_to_update.is_admin = is_admin
+            await self.users_repository.save_changes(db)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error updating user role: {str(e)}"
+            ) from e
+
+    async def ban_user(self, user_id: int, reason: str, conf: ConnectionConfig, db: AsyncSession) -> None:
+        user_to_ban: User | None = await self.users_repository.get_by_id(user_id=user_id, db=db)
+        if user_to_ban is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User to ban does not exist"
+            )
+        try:
+            user_to_ban.is_banned = True
+            user_to_ban.ban_reason = reason
+            await self.users_repository.save_changes(db)
+            await send_user_ban_email(user_to_ban.email, reason, conf=conf)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error banning user: {str(e)}"
+            ) from e

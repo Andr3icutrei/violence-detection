@@ -10,6 +10,7 @@ import {DatasetItem} from '../dataset-item/dataset-item';
 import {SearchBar} from '../../../search-bar/search-bar';
 import { Paginator } from '../../../paginator/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-inspect-datasets',
@@ -70,10 +71,6 @@ export class InspectDatasets implements OnInit {
     this.loadDatasets();
   }
 
-  public modalClosed(): void {
-    this.loadDatasets();
-  }
-
   private loadDatasets(): void {
     this.datasetsToReview = [];
     this.isLoadingDatasets = true;
@@ -88,7 +85,29 @@ export class InspectDatasets implements OnInit {
         },
         error: (error) => {
           this.isLoadingDatasets = false;
+          this.cdr.detectChanges();
         },
       });
+  }
+
+  public deleteDataset(datasetId: number) {
+    this.datasetsService.deleteDataset(datasetId).subscribe({
+      next: () => {
+        this.resetForm();
+        this.loadDatasets();
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+      }
+    })
+  }
+
+  public resetForm(): void {
+    this.searchTerm = '';
+    this.page = 0;
+    this.selectedDatasetStatus = null;
+    this.isLoadingDatasets = false;
+    this.hasMoreDatasets = false;
   }
 }

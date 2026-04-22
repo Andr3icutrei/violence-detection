@@ -16,4 +16,13 @@
     <i class="fa-solid fa-layer-group sidebar-item-icon"></i>
     <span class="sidebar-item-title">{{ 'sidebar.review-dataset' | translate }}</span>
   </div>
+
+  <div
+    class="sidebar-item"
+    [class.sidebar-item-selected]="selectedSidebarItem === 'users'"
+    (click)="goToPage('users')"
+  >
+    <i class="fa-solid fa-users sidebar-item-icon"></i>
+    <span class="sidebar-item-title">{{ 'sidebar.users' | translate }}</span>
+  </div>
 </div>

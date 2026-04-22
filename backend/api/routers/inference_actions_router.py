@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND
+from starlette.status import HTTP_200_OK
 
 from core.database import get_db
 from models import User
@@ -20,9 +20,13 @@ router = APIRouter(
 auth_service = AuthService()
 inference_actions_service = InferenceActionsService()
 
-@router.get("/get_inference_actions", response_model=List[InferenceActionResponseDto], status_code=HTTP_200_OK)
-async def get_inference_actions(user: User = Depends(auth_service.get_current_user), db: AsyncSession = Depends(get_db)):
-    result: List[InferenceAction] = await inference_actions_service.get_inference_actions(db)
+@router.get("/get_inference_actions_for_dataset/{dataset_id}", response_model=List[InferenceActionResponseDto], status_code=HTTP_200_OK)
+async def get_inference_actions_for_dataset(
+    dataset_id: int,
+    user: User = Depends(auth_service.get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    result: List[InferenceAction] = await inference_actions_service.get_inference_actions_for_dataset(dataset_id=dataset_id, db=db)
     return [
         InferenceActionResponseDto(
             id=action.id,

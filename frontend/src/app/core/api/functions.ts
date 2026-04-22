@@ -17,6 +17,8 @@ export type { GetTopbarInformationUsersTopbarInformationGet$Params as GetTopbarI
 export { getTopbarInformationUsersTopbarInformationGet as getTopbarInformationUsersTopbarInformationGet } from './fn/users/get-topbar-information-users-topbar-information-get';
 export type { GetUserUsersUserIdGet$Params as GetUserUsersUserIdGet$Params } from './fn/users/get-user-users-user-id-get';
 export { getUserUsersUserIdGet as getUserUsersUserIdGet } from './fn/users/get-user-users-user-id-get';
+export type { GetAllUsersUsersGetAllUsersGet$Params as GetAllUsersUsersGetAllUsersGet$Params } from './fn/users/get-all-users-users-get-all-users-get';
+export { getAllUsersUsersGetAllUsersGet as getAllUsersUsersGetAllUsersGet } from './fn/users/get-all-users-users-get-all-users-get';
 export type { GetVideosPagedVideosGetVideosPagedGet$Params as GetVideosPagedVideosGetVideosPagedGet$Params } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
 export { getVideosPagedVideosGetVideosPagedGet as getVideosPagedVideosGetVideosPagedGet } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
 export type { ExistsVideoVideosExistsVideoVideoUidGet$Params as ExistsVideoVideosExistsVideoVideoUidGet$Params } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
@@ -41,7 +43,13 @@ export type { GetDatasetsDatasetsGetDatasetsGet$Params as GetDatasetsDatasetsGet
 export { getDatasetsDatasetsGetDatasetsGet as getDatasetsDatasetsGetDatasetsGet } from './fn/datasets/get-datasets-datasets-get-datasets-get';
 export type { GetDatasetVideosDatasetsGetDatasetVideosDatasetIdGet$Params as GetDatasetVideosDatasetsGetDatasetVideosDatasetIdGet$Params } from './fn/datasets/get-dataset-videos-datasets-get-dataset-videos-dataset-id-get';
 export { getDatasetVideosDatasetsGetDatasetVideosDatasetIdGet as getDatasetVideosDatasetsGetDatasetVideosDatasetIdGet } from './fn/datasets/get-dataset-videos-datasets-get-dataset-videos-dataset-id-get';
-export type { GetInferenceActionsInferenceActionsGetInferenceActionsGet$Params as GetInferenceActionsInferenceActionsGetInferenceActionsGet$Params } from './fn/inference-actions/get-inference-actions-inference-actions-get-inference-actions-get';
-export { getInferenceActionsInferenceActionsGetInferenceActionsGet as getInferenceActionsInferenceActionsGetInferenceActionsGet } from './fn/inference-actions/get-inference-actions-inference-actions-get-inference-actions-get';
+export type { ReviewDatasetDatasetsReviewDatasetDatasetIdPatch$Params as ReviewDatasetDatasetsReviewDatasetDatasetIdPatch$Params } from './fn/datasets/review-dataset-datasets-review-dataset-dataset-id-patch';
+export { reviewDatasetDatasetsReviewDatasetDatasetIdPatch as reviewDatasetDatasetsReviewDatasetDatasetIdPatch } from './fn/datasets/review-dataset-datasets-review-dataset-dataset-id-patch';
+export type { DeleteDatasetDatasetsDeleteDatasetDatasetIdDelete$Params as DeleteDatasetDatasetsDeleteDatasetDatasetIdDelete$Params } from './fn/datasets/delete-dataset-datasets-delete-dataset-dataset-id-delete';
+export { deleteDatasetDatasetsDeleteDatasetDatasetIdDelete as deleteDatasetDatasetsDeleteDatasetDatasetIdDelete } from './fn/datasets/delete-dataset-datasets-delete-dataset-dataset-id-delete';
+export type { ReviewDatasetDatasetsEditDatasetDatasetIdPatch$Params as ReviewDatasetDatasetsEditDatasetDatasetIdPatch$Params } from './fn/datasets/review-dataset-datasets-edit-dataset-dataset-id-patch';
+export { reviewDatasetDatasetsEditDatasetDatasetIdPatch as reviewDatasetDatasetsEditDatasetDatasetIdPatch } from './fn/datasets/review-dataset-datasets-edit-dataset-dataset-id-patch';
+export type { GetInferenceActionsForDatasetInferenceActionsGetInferenceActionsForDatasetDatasetIdGet$Params as GetInferenceActionsForDatasetInferenceActionsGetInferenceActionsForDatasetDatasetIdGet$Params } from './fn/inference-actions/get-inference-actions-for-dataset-inference-actions-get-inference-actions-for-dataset-dataset-id-get';
+export { getInferenceActionsForDatasetInferenceActionsGetInferenceActionsForDatasetDatasetIdGet as getInferenceActionsForDatasetInferenceActionsGetInferenceActionsForDatasetDatasetIdGet } from './fn/inference-actions/get-inference-actions-for-dataset-inference-actions-get-inference-actions-for-dataset-dataset-id-get';
 export type { RootGet$Params as RootGet$Params } from './fn/operations/root-get';
 export { rootGet as rootGet } from './fn/operations/root-get';

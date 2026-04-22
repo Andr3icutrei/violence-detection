@@ -1,0 +1,129 @@
+.users-table-container {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.users-table {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 0.5fr 3fr 1.5fr 2fr 2fr;
+  border-collapse: collapse;
+}
+
+.table-header,
+.table-body,
+.table-row-item {
+  display: contents;
+}
+
+.table-header-item {
+  padding: 1rem;
+  border-bottom: 2px solid var(--color-table-border);
+  font-weight: 600;
+  text-align: left;
+}
+
+.table-data-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-table-border);
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.regular-user,
+.admin-user {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+}
+
+.regular-user {
+  background-color: var(--color-user-regular-bg);
+  color: var(--color-user-regular-text);
+  border: 1px solid var(--color-table-border);
+}
+
+.admin-user {
+  background-color: var(--color-user-admin-bg);
+  color: var(--color-user-admin-text);
+  border: 1px solid var(--color-user-admin-border);
+}
+
+.inactive-account-user,
+.active-user,
+.banned-user {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inactive-account-user {
+  background-color: var(--color-user-inactive-bg);
+  color: var(--color-user-inactive-text);
+  border: 1px solid var(--color-user-inactive-border);
+}
+
+.active-user {
+  background-color: var(--color-user-active-bg);
+  color: var(--color-user-active-text);
+  border: 1px solid var(--color-user-active-border);
+}
+
+.banned-user {
+  background-color: var(--color-user-banned-bg);
+  color: var(--color-user-banned-text);
+  border: 1px solid var(--color-user-banned-border);
+}
+
+.users-actions-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ban-icon {
+  color: var(--color-ban-icon-text);
+  background-color: var(--color-error-faded);
+}
+
+.action-btn:hover .ban-icon {
+  color: var(--color-ban-icon-hover-text);
+}
+
+.regular-user-icon {
+  color: var(--color-user-icon-text);
+  background-color: var(--color-user-icon-faded-text);
+}
+
+.admin-user-icon {
+  color: var(--color-admin-icon-text);
+  background-color: var(--color-admin-icon-faded-text);
+}
+
+.admin-user-icon-no-background {
+  color: var(--color-admin-icon-text);
+}
+
+.email-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-white-text);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+

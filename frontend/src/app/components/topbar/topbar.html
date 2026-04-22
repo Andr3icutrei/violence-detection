@@ -14,7 +14,13 @@
 
     <div class="topbar-user-details">
       <span class="topbar-user-details-info">{{ 'topbar.hello' | translate }}</span>
-      <span class="topbar-user-details-info-email no-credits">{{ email }}</span>
+      <span class="topbar-user-details-info-email no-credits">
+        {{ email }}
+        @if(isAdmin) {
+          <i class="fa-solid fa-crown crown-icon" [title]="'topbar.admin' | translate"></i>
+        }
+      </span>
+
     </div>
 
     <div class="topbar-user-actions">
@@ -26,7 +32,8 @@
         (click)="toggleDropdown()">
         <i
           class="fa-solid fa-angle-down dropdown-toggle-icon"
-          [class.dropdown-toggle-icon-open]="isDropdownOpen"></i>
+          [class.dropdown-toggle-icon-open]="isDropdownOpen">
+        </i>
       </button>
 
       <div

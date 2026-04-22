@@ -1,0 +1,42 @@
+<div class="confirmation-popup-overlay" (click)="closePopup()">
+  <div class="confirmation-popup-content" (click)="$event.stopPropagation()">
+    <div class="confirmation-popup-container">
+      <div class="confirmation-popup-icon">
+        <i [class]="icon + ' ' + iconStyle"></i>
+      </div>
+
+      <div class="confirmation-content-container">
+        <p class="confirmation-content">{{ content | translate }}</p>
+      </div>
+
+      @if (detailLabel) {
+        <div class="confirmation-input-group">
+          <label for="confirmationInput" class="label-primary required-asterisk">
+            {{ detailLabel | translate }}
+          </label>
+          <input
+            type="text"
+            id="confirmationInput"
+            class="input-text-primary confirmation-input"
+            [(ngModel)]="detailValue"/>
+        </div>
+      }
+
+      <div class="confirmation-popup-actions-container">
+        <button
+          type="button"
+          [class]="'action-btn' + ' confirmation-btn-confirm' + ` ${confirmButtonStyle}`"
+          [disabled]="detailLabel ? !detailValue : false"
+          (click)="confirmPopup()">
+          {{ 'confirmation-popup.confirm' | translate }}
+        </button>
+        <button
+          type="button"
+          class="action-btn confirmation-btn-cancel"
+          (click)="closePopup()">
+          {{ 'confirmation-popup.cancel' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

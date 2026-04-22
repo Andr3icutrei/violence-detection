@@ -22,6 +22,8 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_account_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     auth_provider: Mapped[str] = mapped_column(String(50), nullable=True)
+    is_banned: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    ban_reason: Mapped[str] = mapped_column(String(255), nullable=True)
 
     inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="user")
 

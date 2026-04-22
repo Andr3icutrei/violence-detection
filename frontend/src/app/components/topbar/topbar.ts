@@ -4,6 +4,8 @@ import { UsersService } from '../../services/users/users-service';
 import { UserResponseDto } from '../../core/api/models/user-response-dto';
 import { TopbarRefreshService } from '../../services/users/topbar-refresh.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
@@ -15,6 +17,7 @@ export class Topbar implements OnInit, OnDestroy {
   email!: string;
   credits!: number;
   emailInitials!: string;
+  isAdmin!: boolean;
   isDropdownOpen: boolean = false;
   private refreshSubscription?: Subscription;
 
@@ -22,6 +25,8 @@ export class Topbar implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private usersService: UsersService,
     private topbarRefreshService: TopbarRefreshService,
+    private authService: AuthService,
+    private router: Router,
   ) {
 
   }
@@ -44,6 +49,7 @@ export class Topbar implements OnInit, OnDestroy {
         this.email = data.email;
         this.credits = data.credits!;
         this.emailInitials = this.email.slice(0, 2).toUpperCase();
+        this.isAdmin = data.is_admin!;
         this.cdr.detectChanges();
       },
       error: (err): void => {
@@ -52,7 +58,16 @@ export class Topbar implements OnInit, OnDestroy {
     });
   }
 
-  public logoutClick() {}
+  public logoutClick(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.router.navigate(['/']);
+      }
+    })
+  }
 
   public toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;

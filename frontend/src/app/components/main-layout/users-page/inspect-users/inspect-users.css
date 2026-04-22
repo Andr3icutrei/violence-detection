@@ -1,0 +1,24 @@
+.users-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.users-searchbar-container {
+  flex: fit-content;
+}
+
+.users-table-container {
+  height: 100%;
+  margin: 0 1rem;
+}
+
+.users-empty-state {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 1.2rem;
+  color: var(--color-gray);
+}

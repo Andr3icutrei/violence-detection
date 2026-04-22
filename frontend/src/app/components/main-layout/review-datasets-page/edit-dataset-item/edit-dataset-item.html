@@ -1,0 +1,88 @@
+<div class="edit-dataset-item-overlay" (click)="close()">
+  <div class="edit-dataset-item-form-container" (click)="$event.stopPropagation()">
+    <div class="edit-dataset-item-title-container">
+      <h2>
+        {{ 'edit-dataset.editing-dataset' | translate }}:
+        <span class="dataset-name">{{ dataset?.name }}</span>
+      </h2>
+    </div>
+
+    <div class="edit-dataset-item-form-content">
+      <form [formGroup]="form">
+        <div class="input-group edit-videos-input-group">
+          <label
+            for="review-videos"
+            class="label-primary required-asterisk">
+            {{ 'edit-dataset.edit-videos' | translate }}
+          </label>
+
+          @if (dataset?.videos) {
+            <div class="video-review-container">
+              @for (video of dataset?.videos; track video.id; let i = $index) {
+                <div class="video-review-item-container" [formGroup]="$any(videoReviews.controls[i])">
+                  <div class="video-container">
+                    <div class="video-item-header">
+                      <strong>{{ video.name }}</strong>
+                    </div>
+                    <div class="video-player-container">
+                      <video
+                        controls
+                        muted
+                        [src]="video.path"
+                        class="video-element">
+                      </video>
+                    </div>
+                  </div>
+
+                  <div class="video-item-details">
+                    <div class="detail-item">
+                      <span class="detail-item-label">{{ 'edit-dataset.duration' | translate }} </span>
+                      <span class="detail-item-value">{{ video.duration }}s</span>
+                    </div>
+
+                    <div class="detail-item">
+                      <span class="detail-item-label">{{ 'edit-dataset.fps' | translate }} </span>
+                      <span class="detail-item-value"> {{ video.frame_rate }} fps</span>
+                    </div>
+
+                    <div class="detail-item detail-item-last">
+                      <label class="detail-item-label required-asterisk"
+                             for="isViolent-{{ video.id }}">
+                        {{ 'edit-dataset.is-violent' | translate }}
+                      </label>
+                      <input
+                        type="checkbox"
+                        [id]="'isViolent-' + video.id"
+                        [name]="'isViolent-' + video.id"
+                        class="input-checkbox-primary"
+                        formControlName="isViolent"/>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="submit-btns-container">
+          <button
+            type="submit"
+            class="btn-submit btn-approve btn-edit"
+            [disabled]="!isFormValid()"
+            (click)="editDataset()">
+            {{ 'edit-dataset.save' | translate }}
+          </button>
+        </div>
+
+        @if (submitMessage) {
+          <div class="submit-message-container">
+            <app-form-submit-detail
+              [message]="submitMessage!"
+              [success]="isSubmitSuccessful">
+            </app-form-submit-detail>
+          </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>

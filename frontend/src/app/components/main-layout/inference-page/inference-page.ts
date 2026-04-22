@@ -90,7 +90,7 @@ export class InferencePage implements OnInit, OnDestroy {
       },
     });
 
-    this.inferenceActionsService.getInferenceActions().subscribe({
+    this.inferenceActionsService.getInferenceActions(this.videoDetails.dataset.id).subscribe({
       next: (data: InferenceActionResponseDto[]): void => {
         this.availableInferenceActions = data.map((action) => ({
           id: action.id,
@@ -163,13 +163,10 @@ export class InferencePage implements OnInit, OnDestroy {
   public submitInference(): void {
     const selectedActionIdControl = this.inferenceForm.get(this.selectedActionControlName) as AbstractControl | null;
     const selectedActionId = Number(selectedActionIdControl?.value);
-
     if (!this.videoDetails?.id || !Number.isFinite(selectedActionId) || selectedActionId <= 0) {
       return;
     }
-
-    this.isInferenceSubmitted = false;
-
+    this.isInferenceSubmitted = true;
     this.videosService.inferenceVideo(this.videoDetails.id, selectedActionId).subscribe({
       next: (response): void => {
         if(selectedActionId === 10) {
@@ -179,7 +176,6 @@ export class InferencePage implements OnInit, OnDestroy {
         } else if(selectedActionId === 20) {
           this.trackedPeople = this.parseHeaderNumber(response.headers.get('X-Tracked-People-Count'));
         }
-
         if (response.body) {
           this.revokeInferenceVideoUrl();
           this.inferenceResultVideoUrl = URL.createObjectURL(response.body);
@@ -189,8 +185,7 @@ export class InferencePage implements OnInit, OnDestroy {
             rightVideo.load();
           }
         }
-
-        this.isInferenceSubmitted = true;
+        this.isInferenceSubmitted = false;
         this.topbarRefreshService.notifyRefresh();
         this.cdr.detectChanges();
       },
@@ -208,15 +203,12 @@ export class InferencePage implements OnInit, OnDestroy {
   public onVideoMetadataLoaded(): void {
     const leftVideo = this.leftVideoRef?.nativeElement;
     const rightVideo = this.rightVideoRef?.nativeElement;
-
     const metadataDuration =
       this.getPositiveNumber(leftVideo?.duration) ??
       this.getPositiveNumber(rightVideo?.duration) ??
       this.getPositiveNumber(this.videoDetails?.duration) ??
       0;
-
     const metadataFrameRate = this.getPositiveNumber(this.videoDetails?.frameRate) ?? 0;
-
     this.durationSeconds = metadataDuration;
     this.effectiveFrameRate = metadataFrameRate;
     this.currentTimeSeconds = this.clamp(this.currentTimeSeconds, 0, this.durationSeconds);
@@ -228,13 +220,10 @@ export class InferencePage implements OnInit, OnDestroy {
   public onPrimaryVideoTimeUpdate(): void {
     const leftVideo = this.leftVideoRef?.nativeElement;
     const rightVideo = this.rightVideoRef?.nativeElement;
-
     if (!leftVideo) {
       return;
     }
-
     this.currentTimeSeconds = leftVideo.currentTime;
-
     if (rightVideo && Math.abs(rightVideo.currentTime - leftVideo.currentTime) > 0.04) {
       rightVideo.currentTime = leftVideo.currentTime;
     }
@@ -243,11 +232,9 @@ export class InferencePage implements OnInit, OnDestroy {
   public togglePlayback(): void {
     const leftVideo = this.leftVideoRef?.nativeElement;
     const rightVideo = this.rightVideoRef?.nativeElement;
-
     if (!leftVideo || !rightVideo) {
       return;
     }
-
     if (this.isPlaying) {
       leftVideo.pause();
       rightVideo.pause();

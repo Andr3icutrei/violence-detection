@@ -32,7 +32,7 @@ html, body {
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--color-shadow-light);
 }
 
 .btn-primary:active {
@@ -90,7 +90,7 @@ html, body {
 .input-checkbox-primary {
   appearance: none;
   -webkit-appearance: none;
-  border: 0.1rem solid #d1d5db;
+  border: 0.1rem solid var(--color-checkbox-border);
   border-radius: 0.2rem;
   width: 1.25rem;
   height: 1.25rem;
@@ -130,6 +130,7 @@ html, body {
   color: var(--color-primary);
   text-decoration: underline;
   font-weight: 500;
+  cursor: pointer;
   transition: color 0.2s ease-in-out;
 }
 
@@ -167,6 +168,7 @@ html, body {
   top: 50%;
   right: 1rem;
   transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .password-input-container {
@@ -248,14 +250,7 @@ input[type="password"]::-ms-clear {
   margin: 0 1rem 1rem 1rem;
   padding: 0.75rem;
   border-radius: 0.5rem;
-}
-
-.form-detail-error-container {
   background-color: var(--color-error-faded);
-}
-
-.form-detail-success-container {
-  background-color: var(--color-success-faded);
 }
 
 .success-message {
@@ -287,7 +282,7 @@ input[type="password"]::-ms-clear {
   border: none;
   padding: 2.5rem;
   background-color: var(--color-background);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 32px var(--color-shadow-sm), 0 4px 12px var(--color-shadow-xs);
   box-sizing: border-box;
 }
 
@@ -389,7 +384,7 @@ input[type="password"]::-ms-clear {
   box-sizing: border-box;
 }
 
-.videos-empty-state {
+.empty-state {
   width: 100%;
   border: 2px dashed var(--color-gray);
   border-radius: 0.5rem;
@@ -440,4 +435,169 @@ input[type="password"]::-ms-clear {
 
 .detail-item-value.not-violent {
   color: var(--color-success);
+}
+
+.trashcan-icon {
+  color: var(--color-error);
+  background-color: var(--color-error-faded);
+  border-radius: 20%;
+  padding: 0.5rem;
+  border: none;
+}
+
+.pen-icon {
+  color: var(--color-success);
+  background-color: var(--color-success-faded);
+}
+
+.action-btn {
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border-radius: 0.5rem;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-approve {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-approve-bg-faded);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background-color: var(--color-success);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px var(--color-approve-shadow);
+}
+
+.btn-reject {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-reject-bg-faded);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-reject:hover:not(:disabled) {
+  background-color: var(--color-error);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px var(--color-reject-shadow);
+}
+
+.confirmation-btn-cancel {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-disabled-darker);
+  color: var(--color-white-text);
+  border: 1px solid var(--color-disabled);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.confirmation-btn-cancel:hover:not(:disabled) {
+  background-color: var(--color-disabled-darker);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px var(--color-disabled-darker);
+}
+
+.form-detail-error-container {
+  background-color: var(--color-error-faded);
+}
+
+.form-detail-success-container {
+  background-color: var(--color-success-faded);
+}
+
+.ban-icon-success {
+  color: var(--color-success);
+}
+
+.ban-icon-error {
+  color: var(--color-error);
+  background-color: var(--color-error-faded);
+}
+
+.ban-icon-disabled {
+  color: var(--color-disabled);
+}
+
+.ban-confirm-btn-success {
+  background-color: var(--color-success);
+  color: var(--color-white-text);
+}
+
+.ban-confirm-btn-error {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-reject-bg-faded);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.ban-confirm-btn-error:hover:not(:disabled) {
+  background-color: var(--color-error);
+  color: var(--color-white-text);
+  box-shadow: 0 0 10px var(--color-reject-shadow);
+}
+
+.ban-confirm-btn-error:disabled {
+  background-color: var(--color-disabled) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-disabled-faded) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.action-icon {
+  border-radius: 20%;
+  padding: 0.5rem;
+  border: none;
 }

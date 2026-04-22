@@ -11,8 +11,8 @@
   padding: 0 1rem;
   box-sizing: border-box;
   background-color: var(--color-background);
-  border-bottom: 1px solid rgba(109, 8, 241, 0.18);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid var(--color-topbar-border);
+  box-shadow: 0 3px 10px var(--color-shadow-xs);
   z-index: 900;
 }
 
@@ -84,9 +84,9 @@
   border-radius: 50%;
   background: linear-gradient(
     135deg,
-    #a511c6 0%,
-    #5d10a8 50%,
-    #c78cea 100%
+    var(--color-gradient-pink) 0%,
+    var(--color-gradient-purple) 50%,
+    var(--color-gradient-lilac) 100%
   );
   color: var(--color-white-text);
   font-size: 1rem;
@@ -133,11 +133,11 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.55rem;
-  border: 1px solid rgba(109, 8, 241, 0.24);
+  border: 1px solid var(--color-dropdown-border);
   border-radius: 0.95rem;
   overflow: hidden;
   background-color: var(--color-background);
-  box-shadow: 0 14px 26px rgba(27, 25, 25, 0.12);
+  box-shadow: 0 14px 26px var(--color-dropdown-shadow);
 
   opacity: 0;
   visibility: hidden;
@@ -175,7 +175,7 @@
 .dropdown-menu-divider {
   width: 100%;
   height: 1px;
-  background-color: rgba(109, 8, 241, 0.22);
+  background-color: var(--color-dropdown-divider);
   margin: 0.15rem 0 0.2rem;
 }
 
@@ -205,9 +205,9 @@
 .no-credits {
   background: linear-gradient(
     135deg,
-    #a511c6 0%,
-    #5d10a8 50%,
-    #c78cea 100%
+    var(--color-gradient-pink) 0%,
+    var(--color-gradient-purple) 50%,
+    var(--color-gradient-lilac) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -219,4 +219,8 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.crown-icon {
+  color: var(--color-crown-icon);
 }

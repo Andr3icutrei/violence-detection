@@ -125,7 +125,7 @@
   flex: 1;
   min-width: 0;
   aspect-ratio: 16 / 9;
-  background-color: #000;
+  background-color: var(--color-black);
   overflow: hidden;
 }
 
@@ -206,7 +206,7 @@
 }
 
 .dataset-badge-unofficial {
-  background: #f6f6f6;
+  background: var(--color-badge-unofficial-bg);
   border: 1px solid var(--color-background-faded);
   color: var(--color-gray);
 }
@@ -301,9 +301,9 @@
 .no-credits {
   background: linear-gradient(
     135deg,
-    #a511c6 0%,
-    #5d10a8 50%,
-    #c78cea 100%
+    var(--color-gradient-pink) 0%,
+    var(--color-gradient-purple) 50%,
+    var(--color-gradient-lilac) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;

@@ -6,6 +6,8 @@ class UserBase(BaseModel):
     credits: int = 0
     is_active: bool = True
     is_admin: bool = False
+    is_banned: bool = False
+    ban_reason: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -29,3 +31,6 @@ class TopbarInformationDto(BaseModel):
     email: EmailStr
     credits: int
     nameInitials: str
+
+class UserBanRequestDto(BaseModel):
+    ban_reason: str

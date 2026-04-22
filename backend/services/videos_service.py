@@ -42,16 +42,17 @@ class VideosService:
 
     async def get_videos_paged(
         self,
-        db: AsyncSession,
         search_term: str | None,
         dataset_id: int | None,
         is_violent: bool | None = None,
         asc: bool = True,
         page: int = 0,
-        page_size: int = 40
+        page_size: int = 40,
+        *,
+        db: AsyncSession,
     ) -> List[Video]:
         videos: Sequence[Video] = await (
-            self.videos_repository.get_videos_paged(db, search_term, dataset_id, is_violent, asc, page, page_size))
+            self.videos_repository.get_videos_paged(search_term, dataset_id, is_violent, asc, page, page_size, db=db))
 
         tasks = [get_presigned_url(video.path) for video in videos]
         presigned_urls = await asyncio.gather(*tasks)
@@ -63,23 +64,23 @@ class VideosService:
 
         return result
 
-    async def exists_video(self, db: AsyncSession, video_uid: str) -> bool:
-        video: Video = await self.videos_repository.get_by_uid(db, video_uid)
+    async def exists_video(self, video_uid: str, db: AsyncSession) -> bool:
+        video: Video = await self.videos_repository.get_by_uid(video_uid, db)
         return video is not None
 
     @staticmethod
     def _to_label(is_violent: bool) -> str:
         return "violent" if is_violent else "non-violent"
 
-    async def classify_and_gradcam_video(self, db: AsyncSession, video_id: int, current_user: User) -> InferenceVideoResult:
-        db_user = await self.users_repository.get_by_id(db, current_user.id)
+    async def classify_and_gradcam_video(self, video_id: int, current_user: User, db: AsyncSession) -> InferenceVideoResult:
+        db_user = await self.users_repository.get_by_id(current_user.id, db)
         if db_user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found."
             )
 
-        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(db, action_id=Action.CLASSIFICATION)
+        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(Action.CLASSIFICATION, db)
 
         if db_user.credits - inference_action.credits < 0:
             raise HTTPException(
@@ -87,7 +88,7 @@ class VideosService:
                 detail="Not enough credits to perform this action."
             )
 
-        video: Video = await self.videos_repository.get_by_id_for_classification(db, video_id)
+        video: Video = await self.videos_repository.get_by_id_for_classification(video_id, db)
         if video is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -123,7 +124,7 @@ class VideosService:
 
             db_user.credits = db_user.credits - inference_action.credits
             try:
-                db_user = await self.users_repository.add_user(db, db_user)
+                db_user = await self.users_repository.add_user(db_user, db)
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -141,7 +142,7 @@ class VideosService:
                 inference_history=inference_entry
             )
             try:
-                await self.inference_history_repository.add_inference_history_classification(db, inference_classification)
+                await self.inference_history_repository.add_inference_history_classification(inference_classification, db)
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -158,15 +159,15 @@ class VideosService:
             if os.path.exists(temp_video_path):
                 os.remove(temp_video_path)
 
-    async def people_tracking(self, db: AsyncSession, video_id: int, current_user: User) -> tuple[str, int]:
-        db_user = await self.users_repository.get_by_id(db, current_user.id)
+    async def people_tracking(self, video_id: int, current_user: User, db: AsyncSession) -> tuple[str, int]:
+        db_user = await self.users_repository.get_by_id(current_user.id, db)
         if db_user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found."
             )
 
-        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(db, action_id=Action.PEOPLE_TRACKING)
+        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(Action.PEOPLE_TRACKING, db)
 
         if db_user.credits -inference_action.credits < 0:
             raise HTTPException(
@@ -174,7 +175,7 @@ class VideosService:
                 detail="Not enough credits to perform this action."
             )
 
-        video: Video = await self.videos_repository.get_by_id(db, video_id)
+        video: Video = await self.videos_repository.get_by_id(video_id, db)
         if video is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -205,13 +206,13 @@ class VideosService:
             )
             db_user.credits = db_user.credits - inference_action.credits
             try:
-                db_user = await self.users_repository.add_user(db, db_user)
+                db_user = await self.users_repository.add_user(db_user, db)
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=f"Error while updating user credits: {str(e)}"
                 ) from e
-            await self.inference_history_repository.add_inference_people_tracking(db, inference_people_tracking)
+            await self.inference_history_repository.add_inference_people_tracking(inference_people_tracking, db)
 
             return video_path, people_count
         except ValueError as exc:

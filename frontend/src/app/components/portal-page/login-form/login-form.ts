@@ -49,6 +49,7 @@ export class LoginForm implements OnInit, OnDestroy {
     'serverError',
     'userNotFound',
     'invalidCredentials',
+    'accountBanned'
   ];
 
   @Output() formChange = new EventEmitter<PortalForm>();
@@ -75,7 +76,8 @@ export class LoginForm implements OnInit, OnDestroy {
         (this.form.hasError('invalidCredentials') ||
           this.form.hasError('accountNotVerified') ||
           this.form.hasError('serverError') ||
-          this.form.hasError('userNotFound'))
+          this.form.hasError('userNotFound') ||
+          this.form.hasError('accountBanned'))
       ) {
         this.form.setErrors(null);
         this.form.updateValueAndValidity({ emitEvent: false });
@@ -90,7 +92,11 @@ export class LoginForm implements OnInit, OnDestroy {
           },
           error: (err: HttpErrorResponse) => {
             if (err.status === 403) {
-              this.form.setErrors({ accountNotVerified: true });
+              if (err.error.detail.error_code === 'ACCOUNT_BANNED') {
+                this.form.setErrors({ accountBanned: true });
+              } else {
+                this.form.setErrors({ accountNotVerified: true });
+              }
             } else if (err.status === 404) {
               this.form.setErrors({ userNotFound: true });
             } else if (err.status === 500) {
@@ -150,7 +156,11 @@ export class LoginForm implements OnInit, OnDestroy {
         if (err.status === 401) {
           this.form.setErrors({ invalidCredentials: true });
         } else if (err.status === 403) {
-          this.form.setErrors({ accountNotVerified: true });
+          if (err.error.detail.error_code === 'ACCOUNT_BANNED') {
+            this.form.setErrors({ accountBanned: false });
+          } else {
+            this.form.setErrors({ accountNotVerified: true });
+          }
         } else if (err.status === 404) {
           this.form.setErrors({ userNotFound: true });
         } else if (err.status === 500) {

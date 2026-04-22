@@ -8,7 +8,8 @@ from starlette import status
 
 from core.database import get_db
 from models.dataset_status import DatasetStatus
-from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, DatasetWithVideosResponseDto, ReviewDatasetRequestDto
+from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
+    DatasetWithVideosResponseDto, ReviewDatasetRequestDto, EditDatasetRequestDto
 from services.auth_service import AuthService
 from services.datasets_service import DatasetsService
 
@@ -42,7 +43,7 @@ async def create_unofficial_dataset(
     current_user = Depends(auth_service.get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    await datasets_service.create_unofficial_dataset(db, create_dataset_dto, current_user.id)
+    await datasets_service.create_unofficial_dataset(create_dataset_dto, current_user.id, db)
 
 @router.get("/get_datasets", response_model=List[DatasetToReviewResponseDto], status_code=status.HTTP_200_OK)
 async def get_datasets(
@@ -53,7 +54,7 @@ async def get_datasets(
     current_user = Depends(auth_service.get_current_admin_user),
     db: AsyncSession = Depends(get_db)
 ):
-    return await datasets_service.get_datasets(db, search_term, page, page_size, dataset_status)
+    return await datasets_service.get_datasets(search_term, page, page_size, dataset_status, db)
 
 @router.get("/get_dataset_videos/{dataset_id}", response_model=DatasetWithVideosResponseDto, status_code=status.HTTP_200_OK)
 async def get_dataset_videos(
@@ -61,7 +62,7 @@ async def get_dataset_videos(
     current_admin_user = Depends(auth_service.get_current_admin_user),
     db: AsyncSession = Depends(get_db)
 ):
-    return await datasets_service.get_dataset_videos(db, dataset_id)
+    return await datasets_service.get_dataset_videos(dataset_id, db)
 
 @router.patch("/review_dataset/{dataset_id}", response_model=DatasetResponseDto, status_code=status.HTTP_200_OK)
 async def review_dataset(
@@ -70,5 +71,23 @@ async def review_dataset(
     current_admin_user = Depends(auth_service.get_current_admin_user),
     db: AsyncSession = Depends(get_db)
 ):
-    result = await datasets_service.review_dataset(db, dataset_id, request.is_approved, request.videos, request.review_comment, conf)
+    result = await datasets_service.review_dataset(dataset_id, request.is_approved, request.videos, request.review_comment, conf, db)
+    return result
+
+@router.delete("/delete_dataset/{dataset_id}", status_code=status.HTTP_200_OK)
+async def delete_dataset(
+    dataset_id: int,
+    current_admin_user = Depends(auth_service.get_current_admin_user),
+    db: AsyncSession = Depends(get_db)
+):
+    await datasets_service.delete_dataset(dataset_id, db)
+
+@router.patch("/edit_dataset/{dataset_id}", response_model=DatasetResponseDto, status_code=status.HTTP_200_OK)
+async def review_dataset(
+    dataset_id: int,
+    request: EditDatasetRequestDto,
+    current_admin_user=Depends(auth_service.get_current_admin_user),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await datasets_service.edit_dataset(dataset_id, request.videos, db)
     return result

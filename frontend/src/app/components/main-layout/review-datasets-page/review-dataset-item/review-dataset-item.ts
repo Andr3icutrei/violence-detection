@@ -104,6 +104,7 @@ export class ReviewDatasetItem implements OnInit {
           ? 'review-datasets.approval-success-message'
           : 'review-datasets.rejection-success-message';
         this.isSubmitSuccessful = true;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.isSubmitSuccessful = false;
@@ -114,6 +115,7 @@ export class ReviewDatasetItem implements OnInit {
         } else if (error.status === 500) {
           this.submitMessage = 'review-datasets.internal-server-error-message';
         }
+        this.cdr.detectChanges();
       },
     });
   }

@@ -11,15 +11,15 @@ from models.user import User
 from schemas.users_schema import CreateUserDto
 
 class UsersRepository:
-    async def get_by_id(self, db: AsyncSession, user_id: int) -> User | None:
+    async def get_by_id(self, user_id: int, db: AsyncSession) -> User | None:
         result = await db.execute(select(User).filter(User.id == user_id))
         return result.scalars().first()
 
-    async def get_by_email(self, db: AsyncSession, email: str) -> User | None:
+    async def get_by_email(self, email: str, db: AsyncSession) -> User | None:
         result = await db.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
-    async def create_user(self, db: AsyncSession, user_create_data: CreateUserDto, hashed_password: str) -> User:
+    async def create_user(self, user_create_data: CreateUserDto, hashed_password: str, db: AsyncSession) -> User:
         try:
             try:
                 load_dotenv()
@@ -46,7 +46,7 @@ class UsersRepository:
             await db.rollback()
             raise e
 
-    async def create_user_google(self, db: AsyncSession, email: str) -> User:
+    async def create_user_google(self, email: str, db: AsyncSession) -> User:
         try:
             try:
                 load_dotenv()
@@ -84,7 +84,7 @@ class UsersRepository:
             await db.rollback()
             raise e
 
-    async def add_user(self, db: AsyncSession, user: User) -> User:
+    async def add_user(self, user: User, db: AsyncSession) -> User:
         try:
             db.add(user)
             await db.commit()
@@ -94,7 +94,7 @@ class UsersRepository:
             await db.rollback()
             raise e
 
-    async def update_users_credits(self, db: AsyncSession, users: List[User], credits_to_update: int) -> List[User]:
+    async def update_users_credits(self, users: List[User], credits_to_update: int, db: AsyncSession) -> List[User]:
         if not users:
             return users
         stmt = (
