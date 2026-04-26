@@ -7,7 +7,8 @@ from starlette.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from api.routers import users_router, auth_router, videos_router, datasets_router, inference_actions_router
+from api.routers import users_router, auth_router, videos_router, datasets_router, inference_actions_router, \
+    inference_history_router, users_ws_router, datasets_ws_router
 from api.routers.inference_actions_router import inference_actions_service
 from core.database import get_db
 from exception_handling.exception_handler import global_exception_handler
@@ -37,10 +38,13 @@ app.include_router(videos_router.router)
 app.include_router(auth_router.router)
 app.include_router(datasets_router.router)
 app.include_router(inference_actions_router.router)
+app.include_router(inference_history_router.router)
+app.include_router(users_ws_router.router)
+app.include_router(datasets_ws_router.router)
 
 origins = [
     origin.strip()
-    for origin in get_env_variable("CORS_ALLOW_ORIGINS", "http://localhost:4200").split(",")
+    for origin in get_env_variable("CORS_ALLOW_ORIGINS", "https://localhost:4200").split(",")
     if origin.strip()
 ]
 
@@ -77,4 +81,10 @@ def root():
     return {"message": "Violence Detection API is running"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        ssl_keyfile="key.pem",
+        ssl_certfile="cert.pem"
+    )

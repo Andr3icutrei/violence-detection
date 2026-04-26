@@ -81,4 +81,6 @@
   --color-approve-shadow: rgba(60, 182, 60, 0.5);
   --color-reject-bg-faded: rgba(244, 67, 54, 0.1);
   --color-reject-shadow: rgba(244, 67, 54, 0.5);
+  --color-close-modal-btn-background: #d9c7e4;
+  --color-close-modal-btn-text: #685d6c;
 }

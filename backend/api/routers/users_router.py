@@ -10,15 +10,16 @@ from starlette.status import HTTP_200_OK
 from api.routers.auth_router import auth_service
 from core.database import get_db
 from models import User
-from schemas.users_schema import CreateUserDto, UserResponseDto, UserBanRequestDto
+from schemas.users_schema import CreateUserDto, UserResponseDto, UserBanRequestDto, UsersStatsResponseDto
 from services.users_service import UsersService
+from api.routers.users_ws_router import user_role_ws
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
-users_service = UsersService()
+users_service = UsersService(notifier=user_role_ws)
 
 load_dotenv()
 
@@ -97,3 +98,10 @@ async def ban_user(
     db: AsyncSession = Depends(get_db)
 ) -> None:
     await users_service.ban_user(user_id, user_ban_request_dto.ban_reason, conf, db)
+
+@router.get("/get_users_stats", response_model=UsersStatsResponseDto, status_code=status.HTTP_200_OK)
+async def get_users_stats(
+    db: AsyncSession = Depends(get_db),
+    current_admin_user: User = Depends(auth_service.get_current_admin_user)
+) -> UsersStatsResponseDto:
+    return await users_service.get_users_stats(db)

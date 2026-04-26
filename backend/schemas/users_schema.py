@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
-from typing import Optional
+from typing import Optional, List
+
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -34,3 +35,9 @@ class TopbarInformationDto(BaseModel):
 
 class UserBanRequestDto(BaseModel):
     ban_reason: str
+
+class UsersStatsResponseDto(BaseModel):
+    active_users: int
+    inactive_users: int
+    banned_users: int
+    most_active_users: List[UserResponseDto]

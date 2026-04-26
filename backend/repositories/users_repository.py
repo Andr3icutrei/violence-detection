@@ -106,9 +106,28 @@ class UsersRepository:
             {"b_id": user.id, "new_credits": user.credits + credits_to_update} 
             for user in users
         ]
-        await db.execute(stmt, update_data)
-        await db.commit()
-        for user in users:
-            await db.refresh(user)
+        try:
+            await db.execute(stmt, update_data)
+            await db.commit()
+            for user in users:
+                await db.refresh(user)
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e
         return users
 
+    async def count_active_users(self, db: AsyncSession) -> int:
+        result = await db.execute(select(User).filter(User.is_active == True and User.is_banned == False))
+        return result.scalars().count()
+
+    async def count_inactive_users(self, db: AsyncSession) -> int:
+        result = await db.execute(select(User).filter(User.is_active == False or User.is_banned == False))
+        return result.scalars().count()
+
+    async def count_banned_users(self, db: AsyncSession) -> int:
+        result = await db.execute(select(User).filter(User.is_banned == True))
+        return result.scalars().count()
+
+    async def get_most_active_users(self, db: AsyncSession) -> List[User]:
+        result = await db.execute(select(User).order_by(User.credits.desc()).limit(3))
+        return list(result.scalars().all())

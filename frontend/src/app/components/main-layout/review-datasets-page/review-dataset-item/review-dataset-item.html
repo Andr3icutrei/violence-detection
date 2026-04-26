@@ -5,6 +5,12 @@
         {{ 'review-datasets.reviewing-dataset' | translate }}:
         <span class="dataset-name">{{ dataset?.name }}</span>
       </h2>
+      <button
+        class="close-modal-btn"
+        type="button"
+        (click)="close()">
+        <i class="fa fa-times close-modal-icon" aria-hidden="true"></i>
+      </button>
     </div>
 
     <div class="review-dataset-item-form-content">

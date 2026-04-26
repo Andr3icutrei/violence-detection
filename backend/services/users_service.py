@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Protocol
 
 from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +7,8 @@ from fastapi_mail import ConnectionConfig
 import jwt
 
 from helpers.env_helper import get_env_variable
-from schemas.users_schema import CreateUserDto, UserResponseDto
+from notifier.user_events_notifier import UserEventsNotifier
+from schemas.users_schema import CreateUserDto, UserResponseDto, UsersStatsResponseDto
 from core.security import get_password_hash
 from repositories.users_repository import UsersRepository
 from models.user import User
@@ -15,8 +16,9 @@ from helpers.email_helper import send_registration_email, send_reset_password_em
 from helpers.jwt_helper import create_jwt_token, decode_jwt_token, decode_jwt_token_without_exp_check, decode_jwt_token_reset_password
 
 class UsersService:
-    def __init__(self):
+    def __init__(self, notifier: UserEventsNotifier | None = None):
         self.users_repository = UsersRepository()
+        self.notifier = notifier
 
     async def create_user(self, user_create_data: CreateUserDto, conf: ConnectionConfig, db: AsyncSession) -> User:
         db_user: User | None = await self.users_repository.get_by_email(user_create_data.email, db)
@@ -286,6 +288,7 @@ class UsersService:
         try:
             user_to_update.is_admin = is_admin
             await self.users_repository.save_changes(db)
+            await self.notifier.broadcast_user_updated(user_id)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -304,8 +307,30 @@ class UsersService:
             user_to_ban.ban_reason = reason
             await self.users_repository.save_changes(db)
             await send_user_ban_email(user_to_ban.email, reason, conf=conf)
+            await self.notifier.broadcast_user_updated(user_id)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error banning user: {str(e)}"
             ) from e
+
+    async def get_users_stats(self, db: AsyncSession) -> UsersStatsResponseDto:
+        active_users_count = await self.users_repository.count_active_users(db)
+        banned_users_count = await self.users_repository.count_banned_users(db)
+        inactive_users_count = await self.users_repository.count_inactive_users(db)
+        most_active_users = await self.users_repository.get_most_active_users(db)
+
+        return UsersStatsResponseDto(
+            active_users=active_users_count,
+            banned_users=banned_users_count,
+            inactive_users=inactive_users_count,
+            most_active_users=[
+                UserResponseDto(
+                    id=user.id,
+                    email=user.email,
+                    credits=user.credits,
+                    is_admin=user.is_admin
+                )
+                for user in most_active_users
+            ]
+        )

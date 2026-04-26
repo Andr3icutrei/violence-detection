@@ -3,8 +3,14 @@
     <div class="edit-dataset-item-title-container">
       <h2>
         {{ 'edit-dataset.editing-dataset' | translate }}:
-        <span class="dataset-name">{{ dataset?.name }}</span>
+        <span class="dataset-name">{{ currentDataset.name }}</span>
       </h2>
+      <button
+        class="close-modal-btn"
+        type="button"
+        (click)="close()">
+        <i class="fa fa-times close-modal-icon" aria-hidden="true"></i>
+      </button>
     </div>
 
     <div class="edit-dataset-item-form-content">
@@ -16,9 +22,9 @@
             {{ 'edit-dataset.edit-videos' | translate }}
           </label>
 
-          @if (dataset?.videos) {
+          @if (currentDataset.videos) {
             <div class="video-review-container">
-              @for (video of dataset?.videos; track video.id; let i = $index) {
+              @for (video of currentDataset.videos; track video.id; let i = $index) {
                 <div class="video-review-item-container" [formGroup]="$any(videoReviews.controls[i])">
                   <div class="video-container">
                     <div class="video-item-header">

@@ -46,10 +46,13 @@
 
 .create-dataset-title-container {
   flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 0.5rem;
   margin-bottom: 2rem;
   border-bottom: none;
-  position: relative;
 }
 
 .create-dataset-title-container::after {

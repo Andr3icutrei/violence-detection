@@ -29,6 +29,9 @@
 
 .review-dataset-item-title-container {
   position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding-bottom: 1rem;
   border-bottom: none;
 }

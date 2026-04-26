@@ -113,9 +113,9 @@
   },
   "sidebar": {
     "dashboard": "Dashboard",
-    "datasets": "Datasets",
-    "review-dataset": "Review Datasets",
-    "users": "Users"
+    "review-datasets": "Review Datasets",
+    "users": "Users",
+    "stats": "Statistics"
   },
   "inference": {
     "original-video": "Original Video",
@@ -142,7 +142,8 @@
     "predicted-label": "Predicted Label",
     "predicted-confidence": "Confidence Score",
     "predicted-class-probability": "Class Probability",
-    "tracked-people": "Tracked People"
+    "tracked-people": "Tracked People",
+    "loading-metrics": "Loading metrics..."
   },
   "create-dataset": {
     "title": "Create a New Unofficial Dataset",

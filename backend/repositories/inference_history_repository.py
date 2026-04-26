@@ -30,3 +30,27 @@ class InferenceHistoryRepository:
         await db.commit()
         await db.refresh(inference_history)
         return inference_history
+
+    async def get_classification_inference_history(self, year: int, month: int, db: AsyncSession) -> List[InferenceHistoryClassification]:
+        result = await db.execute(
+            select(InferenceHistoryClassification)
+            .join(InferenceHistoryClassification.inference_history)
+            .where(
+                InferenceHistoryClassification.inference_history.created_at.year == year,
+                InferenceHistoryClassification.inference_history.created_at.month == month
+            )
+            .order_by(InferenceHistoryClassification.inference_history.created_at.asc())
+        )
+        return list(result.scalars().all())
+
+    async def get_people_tracking_inference_history(self, year: int, month: int, db: AsyncSession) -> List[InferenceHistoryPeopleTracking]:
+        result = await db.execute(
+            select(InferenceHistoryPeopleTracking)
+            .join(InferenceHistoryPeopleTracking.inference_history)
+            .where(
+                InferenceHistoryPeopleTracking.inference_history.created_at.year == year,
+                InferenceHistoryPeopleTracking.inference_history.created_at.month == month
+            )
+            .order_by(InferenceHistoryPeopleTracking.inference_history.created_at.asc())
+        )
+        return list(result.scalars().all())

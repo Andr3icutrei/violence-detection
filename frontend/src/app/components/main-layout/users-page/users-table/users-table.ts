@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { UserResponseDto } from '../../../../core/api/models/user-response-dto';
 import { UsersService } from '../../../../services/users/users-service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ConfirmationPopup } from '../../../confirmation-popup/confirmation-popup';
+import { UserUpdatedService } from '../../../../services/user-updated/user-updated.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users-table',
@@ -18,7 +20,10 @@ export class UsersTable {
   userToBan: UserResponseDto | null = null;
   banReason: string | null = null;
 
-  constructor(private readonly usersService: UsersService) {}
+
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
   public getRoleTranslation(is_admin: boolean): string {
     return is_admin ? 'users.admin' : 'users.regular-user';
@@ -51,9 +56,7 @@ export class UsersTable {
     if (!this.userToBan) return;
     if (this.banReason) return;
 
-    this.usersService.banUser(this.userToBan.id, banReason).subscribe({
-
-    })
+    this.usersService.banUser(this.userToBan.id, banReason).subscribe({});
     this.closeBanModal();
     this.onUserChanged.emit();
   }

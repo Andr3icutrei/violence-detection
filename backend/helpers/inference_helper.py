@@ -3,6 +3,7 @@ import tempfile
 import os
 from fastapi import HTTPException
 from starlette import status
+from ultralytics.trackers.basetrack import BaseTrack
 
 from inference.slowfast.pipeline import prepare_slowfast_tensors
 from inference.slowfast.preprocess import preprocess_video_for_inference as preprocess_slowfast_video
@@ -160,6 +161,11 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     return output_path
 
 def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
+    BaseTrack.reset_id()
+    if hasattr(yolo_model, 'predictor') and yolo_model.predictor is not None:
+        if hasattr(yolo_model.predictor, 'trackers'):
+            for tracker in yolo_model.predictor.trackers:
+                tracker.reset()
     tracked_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
     tracked_video_path = tracked_temp_file.name
     tracked_temp_file.close()
@@ -210,7 +216,7 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
                 persist=True,
                 classes=[0],
                 conf=0.25,
-                tracker="bytetrack.yaml",
+                tracker="botsort.yaml",
                 verbose=False,
             )
 

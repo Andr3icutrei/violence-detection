@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SidebarService } from '../../../services/sidebar/sidebar.service';
-import { TranslatePipe } from '@ngx-translate/core';
-import { DatasetsService } from '../../../services/datasets/datasets-service';
 import { InspectDatasets } from './inspect-datasets/inspect-datasets';
 
 @Component({

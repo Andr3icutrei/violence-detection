@@ -554,6 +554,8 @@ input[type="password"]::-ms-clear {
 .ban-icon-error {
   color: var(--color-error);
   background-color: var(--color-error-faded);
+  padding: 0.5rem;
+  border-radius: 20%;
 }
 
 .ban-icon-disabled {
@@ -600,4 +602,26 @@ input[type="password"]::-ms-clear {
   border-radius: 20%;
   padding: 0.5rem;
   border: none;
+}
+
+.close-modal-btn {
+  margin-bottom: 0.1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-close-modal-btn-background);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.close-modal-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px var(--color-shadow-light);
+}
+
+.close-modal-icon {
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  color: var(--color-close-modal-btn-text);
 }

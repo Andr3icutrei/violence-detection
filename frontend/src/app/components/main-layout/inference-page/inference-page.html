@@ -170,8 +170,8 @@
         <h3 class="inference-results-title"> {{ 'inference.results-title' | translate }} </h3>
       </div>
 
-      @if (isInferenceSubmitted) {
-        @if(trackedPeople) {
+      @if (hasResults) {
+        @if(trackedPeople !== null) {
           <div class="inference-results-metric-container">
             <div class="detail-item">
               <span class="detail-item-label">{{ 'inference.tracked-people' | translate }}</span>
@@ -197,9 +197,15 @@
           </div>
         }
       } @else {
-        <div class="inference-results-no-metrics-container">
-          <span class="no-metrics-message">{{ 'inference.no-metrics' | translate }}</span>
-        </div>
+        @if(isInferenceSubmitted) {
+          <div class="inference-results-no-metrics-container">
+            <span class="no-metrics-message">{{ 'inference.loading-metrics' | translate }}</span>
+          </div>
+        } @else {
+          <div class="inference-results-no-metrics-container">
+            <span class="no-metrics-message">{{ 'inference.no-metrics' | translate }}</span>
+          </div>
+        }
       }
     </div>
   </div>
