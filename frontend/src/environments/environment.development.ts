@@ -1,5 +1,8 @@
+export const domain = 'however-euro-oriental-wise.trycloudflare.com';
+
 export const environment = {
   production: false,
   googleClientId: '335171154391-caatede46p0tjrirgv3m2tgcctnts775.apps.googleusercontent.com',
-  apiUrl: 'https://court-disciplinary-inf-pressing.trycloudflare.com/',
+  apiUrl: `https://${domain}/`,
+  wsUrl: `wss://${domain}/`,
 };

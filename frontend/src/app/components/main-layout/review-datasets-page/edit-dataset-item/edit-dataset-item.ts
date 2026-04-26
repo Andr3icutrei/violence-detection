@@ -1,16 +1,22 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {DatasetItem} from "../dataset-item/dataset-item";
-import {Paginator} from "../../../paginator/paginator";
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SearchBar } from '../../../search-bar/search-bar';
-import {TitleCasePipe} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import { DatasetWithVideosResponseDto } from '../../../../core/api/models/dataset-with-videos-response-dto';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
-import { VideoResponseDto } from '../../../../core/api/models/video-response-dto';
 import { DatasetResponseDto } from '../../../../core/api/models/dataset-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
+import { Subscription } from 'rxjs';
+import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
+import {DatasetStatusModel} from '../../../../models/dataset-status.model';
 
 @Component({
   selector: 'app-edit-dataset-item',
@@ -18,9 +24,10 @@ import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail
   templateUrl: './edit-dataset-item.html',
   styleUrl: './edit-dataset-item.css',
 })
-export class EditDatasetItem implements OnInit {
+export class EditDatasetItem implements OnInit, OnDestroy {
   @Input({ required: true }) datasetId!: number;
-  dataset?: DatasetWithVideosResponseDto;
+  originalDataset!: DatasetWithVideosResponseDto;
+  currentDataset!: DatasetWithVideosResponseDto;
   isDatasetLoading: boolean = false;
 
   @Output() closeModal: EventEmitter<void> = new EventEmitter();
@@ -31,10 +38,13 @@ export class EditDatasetItem implements OnInit {
 
   form: FormGroup;
 
+  datasetUpdatedSubscription!: Subscription;
+
   public constructor(
     private datasetsService: DatasetsService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private datasetUpdatedService: DatasetUpdatedService,
   ) {
     this.form = formBuilder.group({
       videoReviews: this.formBuilder.array([]),
@@ -42,7 +52,12 @@ export class EditDatasetItem implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadDataset();
+    this.loadCurrentDataset();
+    this.datasetUpdatedSubscription = this.datasetUpdatedService.connect().subscribe({
+      next: () => {
+        this.loadCurrentDataset();
+      },
+    });
   }
 
   get videoReviews(): FormArray {
@@ -50,23 +65,48 @@ export class EditDatasetItem implements OnInit {
   }
 
   public populateVideoReviews(): void {
-    if (!this.dataset?.videos) return;
+    if (!this.currentDataset?.videos) return;
     this.videoReviews.clear();
-    for (let i = 0; i < this.dataset?.videos.length; i++) {
+    for (let i = 0; i < this.currentDataset?.videos.length; i++) {
       const videoGroup = this.formBuilder.group({
-        id: [this.dataset.videos[i].id],
-        isViolent: [this.dataset.videos[i].is_violent, Validators.required],
+        id: [this.currentDataset.videos[i].id],
+        isViolent: [this.currentDataset.videos[i].is_violent, Validators.required],
       });
       this.videoReviews.push(videoGroup);
     }
   }
 
-  public loadDataset(): void {
+  public loadOriginalDataset(): void {
+    this.originalDataset = {
+      id: this.currentDataset.id,
+      name: this.currentDataset.name,
+      videos: [],
+      status: this.currentDataset.status,
+      is_official: this.currentDataset.is_official,
+    } as DatasetWithVideosResponseDto;
+    for(let i = 0; i < this.currentDataset?.videos.length; i++) {
+      this.originalDataset.videos.push({
+        id: this.currentDataset.videos[i].id,
+        name: this.currentDataset.videos[i].name,
+        dataset_id: 0,
+        dataset_is_official: false,
+        dataset_name: '',
+        duration: 0,
+        frame_rate: 0,
+        path: '',
+        uid: '',
+        is_violent: this.currentDataset.videos[i].is_violent
+      });
+    }
+  }
+
+  public loadCurrentDataset(): void {
     this.isDatasetLoading = true;
     this.datasetsService.getDatasetWithVideos(this.datasetId).subscribe({
       next: (dataset) => {
-        this.dataset = dataset;
+        this.currentDataset = dataset;
         this.populateVideoReviews();
+        this.loadOriginalDataset();
         this.isDatasetLoading = false;
         this.cdr.detectChanges();
       },
@@ -82,7 +122,22 @@ export class EditDatasetItem implements OnInit {
   }
 
   public isFormValid(): boolean {
-    return this.form.valid && !this.isSubmitted;
+    return this.form.valid && !this.isSubmitted && this.isFormChanged();
+  }
+
+  private isFormChanged(): boolean {
+    if (!this.originalDataset?.videos || !this.videoReviews?.controls) {
+      return false;
+    }
+    for (let i = 0; i < this.currentDataset.videos.length; i++) {
+      const originalValue = this.originalDataset.videos[i].is_violent;
+      const currentFormValue = this.videoReviews.controls[i].get('isViolent')?.value;
+
+      if (originalValue !== currentFormValue) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public editDataset(): void {
@@ -111,5 +166,10 @@ export class EditDatasetItem implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.datasetUpdatedService.disconnect();
+    this.datasetUpdatedSubscription.unsubscribe();
   }
 }

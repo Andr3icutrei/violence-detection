@@ -122,3 +122,19 @@ async def delete_dataset_videos(dataset_name: str) -> None:
             if 'Contents' in page:
                 delete_objects = [{'Key': obj['Key']} for obj in page['Contents']]
                 await s3_client.delete_objects(Bucket=BUCKET_NAME, Delete={'Objects': delete_objects})
+
+async def get_used_storage_gb() -> float:
+    total_size_bytes = 0
+    async with session.client(
+        service_name='s3',
+        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECRET_AWS_KEY,
+        region_name="auto"
+    ) as s3_client:
+        paginator = s3_client.get_paginator('list_objects_v2')
+        async for page in paginator.paginate(Bucket=BUCKET_NAME):
+            if 'Contents' in page:
+                total_size_bytes += sum(obj['Size'] for obj in page['Contents'])
+    total_size_gb = total_size_bytes / (1024 ** 3)
+    return total_size_gb

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Annotated
+from typing import List, Annotated, Protocol
 
 from fastapi import UploadFile, Form, File
 from pydantic import BaseModel
@@ -42,3 +42,11 @@ class ReviewDatasetRequestDto(BaseModel):
 
 class EditDatasetRequestDto(BaseModel):
     videos: List[ReviewVideoRequestDto]
+
+class DatasetsStatsResponseDto(BaseModel):
+    most_popular_dataset_classification: DatasetResponseDto
+    most_popular_dataset_people_tracking: DatasetResponseDto
+    official_datasets_count: int
+    unofficial_datasets_count: int
+    pending_datasets_count: int
+    storage_used_gb: float

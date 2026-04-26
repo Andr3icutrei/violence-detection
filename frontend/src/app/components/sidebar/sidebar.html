@@ -1,28 +1,12 @@
 <div class="sidebar-container">
-  <div
-    class="sidebar-item"
-    [class.sidebar-item-selected]="selectedSidebarItem === 'dashboard'"
-    (click)="goToPage('dashboard')"
-  >
-    <i class="fa-solid fa-house sidebar-item-icon"></i>
-    <span class="sidebar-item-title">{{ 'sidebar.dashboard' | translate }}</span>
-  </div>
-
-  <div
-    class="sidebar-item"
-    [class.sidebar-item-selected]="selectedSidebarItem === 'review-datasets'"
-    (click)="goToPage('review-datasets')"
-  >
-    <i class="fa-solid fa-layer-group sidebar-item-icon"></i>
-    <span class="sidebar-item-title">{{ 'sidebar.review-dataset' | translate }}</span>
-  </div>
-
-  <div
-    class="sidebar-item"
-    [class.sidebar-item-selected]="selectedSidebarItem === 'users'"
-    (click)="goToPage('users')"
-  >
-    <i class="fa-solid fa-users sidebar-item-icon"></i>
-    <span class="sidebar-item-title">{{ 'sidebar.users' | translate }}</span>
-  </div>
+  @for(menuItem of visibleMenuItemsForUser; track menuItem.id) {
+    <div
+      class="sidebar-item"
+      [class.sidebar-item-selected]="menuItem.id === selectedSidebarItem"
+      (click)="goToPage(menuItem.id)"
+    >
+      <i class="sidebar-item-icon" [class]="menuItem.icon"></i>
+      <span class="sidebar-item-title">{{ menuItem.title | translate }}</span>
+    </div>
+  }
 </div>

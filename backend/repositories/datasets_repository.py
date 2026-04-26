@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import UploadFile
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 import cv2
 import tempfile
@@ -9,8 +9,10 @@ import os
 
 from sqlalchemy.orm import contains_eager
 
-from models import Dataset, Video
+from models import Dataset, Video, InferenceHistory
 from models.dataset_status import DatasetStatus
+from models.inference_history_classification import InferenceHistoryClassification
+from models.inference_history_people_tracking import InferenceHistoryPeopleTracking
 
 
 class DatasetsRepository:
@@ -118,3 +120,37 @@ class DatasetsRepository:
     async def delete(self, dataset: Dataset, db: AsyncSession) -> None:
         await db.delete(dataset)
         await db.flush()
+
+    async def get_most_popular_dataset_classification(self, db: AsyncSession) -> Dataset | None:
+        result = await db.execute(
+            select(Dataset)
+            .join(Dataset.videos)
+            .join(Video.inference_history)
+            .join(InferenceHistory.inference_history_classification)
+            .group_by(Dataset.id)
+            .order_by(func.count(InferenceHistoryClassification.id).desc())
+        )
+        return result.scalars().first()
+
+    async def get_most_popular_dataset_people_tracking(self, db: AsyncSession) -> Dataset | None:
+        result = await db.execute(
+            select(Dataset)
+            .join(Dataset.videos)
+            .join(Video.inference_history)
+            .join(InferenceHistory.inference_history_people_tracking)
+            .group_by(Dataset.id)
+            .order_by(func.count(InferenceHistoryPeopleTracking.id).desc())
+        )
+        return result.scalars().first()
+
+    async def get_official_datasets_count(self, db: AsyncSession) -> int:
+        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == True))
+        return result.scalar_one()
+
+    async def get_unofficial_datasets_count(self, db: AsyncSession) -> int:
+        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == False))
+        return result.scalar_one()
+
+    async def get_pending_datasets_count(self, db: AsyncSession) -> int:
+        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.status == DatasetStatus.PENDING))
+        return result.scalar_one()

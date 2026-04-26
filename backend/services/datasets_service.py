@@ -6,24 +6,27 @@ from fastapi_mail import ConnectionConfig
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from helpers.bucket_helper import create_unofficial_dataset_bucket, get_presigned_url, delete_dataset_videos
+from helpers.bucket_helper import create_unofficial_dataset_bucket, get_presigned_url, delete_dataset_videos, \
+    get_used_storage_gb
 from helpers.email_helper import send_dataset_approval_mail, send_dataset_rejection_mail
 from models import Dataset, User
 from models.dataset_status import DatasetStatus
+from notifier.dataset_events_notifier import DatasetEventsNotifier
 from repositories.datasets_repository import DatasetsRepository
 from repositories.users_repository import UsersRepository
 from repositories.videos_repository import VideosRepository
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
-    DatasetWithVideosResponseDto
+    DatasetWithVideosResponseDto, DatasetsStatsResponseDto
 from schemas.users_schema import UserResponseDto
 from schemas.videos_schema import VideoResponseDto, ReviewVideoRequestDto
 
 
 class DatasetsService:
-    def __init__(self):
+    def __init__(self, notifier: DatasetEventsNotifier):
         self.datasets_repository = DatasetsRepository()
         self.users_repository = UsersRepository()
         self.videos_repository = VideosRepository()
+        self.notifier = notifier
 
     async def get_accepted_datasets(self, db: AsyncSession) -> List[DatasetResponseDto]:
         result: List[Dataset] = await self.datasets_repository.get_all_accepted(db)
@@ -198,6 +201,7 @@ class DatasetsService:
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=f"Failed to delete dataset videos or send rejection email: {str(e)}"
                 )
+        await self.notifier.broadcast_dataset_updated(dataset_id=result.id)
         return result
 
     async def _accept_dataset(self, dataset: Dataset, videos: List[ReviewVideoRequestDto], db: AsyncSession) -> Dataset:
@@ -272,4 +276,32 @@ class DatasetsService:
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Video with id {video.id} is missing in the edit request."
                 )
+        await self.notifier.broadcast_dataset_updated(dataset_id=dataset.id)
         return await self.datasets_repository.save(dataset, db)
+
+    async def get_datasets_stats(self, db: AsyncSession) -> DatasetsStatsResponseDto:
+        most_popular_dataset_classification: Dataset = await self.datasets_repository.get_most_popular_dataset_classification(db)
+        most_popular_dataset_people_tracking: Dataset = await self.datasets_repository.get_most_popular_dataset_people_tracking(db)
+        official_datasets_count: int = await self.datasets_repository.get_official_datasets_count(db)
+        unofficial_datasets_count: int = await self.datasets_repository.get_unofficial_datasets_count(db)
+        pending_datasets_count: int = await self.datasets_repository.get_pending_datasets_count(db)
+        storage_used_gb = await get_used_storage_gb()
+
+        return DatasetsStatsResponseDto(
+            most_popular_dataset_classification=DatasetResponseDto(
+                id=most_popular_dataset_classification.id,
+                name=most_popular_dataset_classification.name,
+                is_official=most_popular_dataset_classification.is_official,
+                status=most_popular_dataset_classification.status
+            ) if most_popular_dataset_classification else None,
+            most_popular_dataset_people_tracking=DatasetResponseDto(
+                id=most_popular_dataset_people_tracking.id,
+                name=most_popular_dataset_people_tracking.name,
+                is_official=most_popular_dataset_people_tracking.is_official,
+                status=most_popular_dataset_people_tracking.status
+            ) if most_popular_dataset_people_tracking else None,
+            official_datasets_count=official_datasets_count,
+            unofficial_datasets_count=unofficial_datasets_count,
+            pending_datasets_count=pending_datasets_count,
+            storage_used_gb=storage_used_gb
+        )

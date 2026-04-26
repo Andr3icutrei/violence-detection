@@ -28,6 +28,8 @@ export class DatasetItem {
   }
 
   public openReviewDatasetItem(): void {
+    if(this.dataset.status !== DatasetStatusModel.PENDING)
+      return;
     this.isDatasetReviewModalOpen = true;
   }
 

@@ -1,16 +1,17 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
 import { DatasetStatus } from '../../../../core/api/models/dataset-status';
 import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
 import { TranslatePipe } from '@ngx-translate/core';
-import {Router} from '@angular/router';
 import {DatasetStatusModel} from '../../../../models/dataset-status.model';
-import { NgIf, TitleCasePipe} from '@angular/common';
+import { TitleCasePipe} from '@angular/common';
 import {DatasetItem} from '../dataset-item/dataset-item';
 import {SearchBar} from '../../../search-bar/search-bar';
 import { Paginator } from '../../../paginator/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-inspect-datasets',
@@ -33,8 +34,8 @@ export class InspectDatasets implements OnInit {
   ) as DatasetStatusModel[];
 
   constructor(
-    private datasetsService: DatasetsService,
     private cdr: ChangeDetectorRef,
+    private datasetsService: DatasetsService,
   ) {}
 
   ngOnInit(): void {
@@ -99,8 +100,8 @@ export class InspectDatasets implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
 
   public resetForm(): void {

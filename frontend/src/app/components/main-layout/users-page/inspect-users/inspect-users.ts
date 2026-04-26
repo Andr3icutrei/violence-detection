@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Paginator } from "../../../paginator/paginator";
 import { SearchBar } from "../../../search-bar/search-bar";
 import { UsersTable } from '../users-table/users-table';
@@ -6,6 +6,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { UsersService } from '../../../../services/users/users-service';
 import { UserResponseDto } from '../../../../core/api/models/user-response-dto';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { UserUpdatedService } from '../../../../services/user-updated/user-updated.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-inspect-users',
@@ -13,7 +15,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
   templateUrl: './inspect-users.html',
   styleUrl: './inspect-users.css',
 })
-export class InspectUsers implements OnInit {
+export class InspectUsers implements OnInit, OnDestroy {
   searchTerm: string = '';
   readonly pageSize: number = 10;
   page: number = 0;
@@ -21,13 +23,21 @@ export class InspectUsers implements OnInit {
 
   users: UserResponseDto[] = [];
 
+  usersUpdatedSubscription!: Subscription;
+
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly usersService: UsersService,
+    private readonly usersUpdatedService: UserUpdatedService,
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadUsers();
+    this.usersUpdatedSubscription = this.usersUpdatedService.connect().subscribe({
+      next: () => {
+        this.loadUsers();
+      }
+    });
   }
 
   public debouncedSearch(searchTerm: string): void {
@@ -52,5 +62,10 @@ export class InspectUsers implements OnInit {
         throw new Error(`Failed to load users: ${error.message}`);
       },
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.usersUpdatedService.disconnect();
+    this.usersUpdatedSubscription.unsubscribe();
   }
 }

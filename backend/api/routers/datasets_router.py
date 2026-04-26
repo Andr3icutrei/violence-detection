@@ -6,10 +6,11 @@ from fastapi_mail import ConnectionConfig
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from api.routers.datasets_ws_router import dataset_updates_ws
 from core.database import get_db
 from models.dataset_status import DatasetStatus
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
-    DatasetWithVideosResponseDto, ReviewDatasetRequestDto, EditDatasetRequestDto
+    DatasetWithVideosResponseDto, ReviewDatasetRequestDto, EditDatasetRequestDto, DatasetsStatsResponseDto
 from services.auth_service import AuthService
 from services.datasets_service import DatasetsService
 
@@ -18,7 +19,7 @@ router = APIRouter(
     tags=["Datasets"],
 )
 
-datasets_service = DatasetsService()
+datasets_service = DatasetsService(notifier=dataset_updates_ws)
 auth_service: AuthService = AuthService()
 
 conf = ConnectionConfig(
@@ -91,3 +92,10 @@ async def review_dataset(
 ):
     result = await datasets_service.edit_dataset(dataset_id, request.videos, db)
     return result
+
+@router.get("/get_datasets_stats", response_model=DatasetsStatsResponseDto, status_code=status.HTTP_200_OK)
+async def get_datasets_stats(
+    db: AsyncSession = Depends(get_db),
+    current_admin_user = Depends(auth_service.get_current_admin_user)
+):
+    return await datasets_service.get_datasets_stats(db)

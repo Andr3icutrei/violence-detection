@@ -64,6 +64,13 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "ssl": true,
+            "sslKey": "./ssl/localhost+1-key.pem",
+            "sslCert": "./ssl/localhost+1.pem",
+            "port": 4200,
+            "host": "localhost"
+          },
           "configurations": {
             "production": {
               "buildTarget": "frontend:build:production"

@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
@@ -8,6 +16,8 @@ import {VideoResponseDto} from '../../../../core/api/models/video-response-dto';
 import { ControlError } from '../../../control-error/control-error';
 import { DatasetResponseDto } from '../../../../core/api/models/dataset-response-dto';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
+import { Subscription } from 'rxjs';
+import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
 
 @Component({
   selector: 'app-review-dataset-item',
@@ -15,7 +25,7 @@ import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail
   templateUrl: './review-dataset-item.html',
   styleUrl: './review-dataset-item.css',
 })
-export class ReviewDatasetItem implements OnInit {
+export class ReviewDatasetItem implements OnInit, OnDestroy {
   @Input({ required: true }) datasetId!: number;
   dataset?: DatasetWithVideosResponseDto;
   isDatasetLoading: boolean = false;
@@ -28,10 +38,13 @@ export class ReviewDatasetItem implements OnInit {
 
   form: FormGroup;
 
+  datasetUpdatedSubscription!: Subscription;
+
   public constructor(
     private datasetsService: DatasetsService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private datasetUpdatedService: DatasetUpdatedService,
   ) {
     this.form = formBuilder.group({
       reviewComment: ['', [Validators.required, Validators.maxLength(100)]],
@@ -41,6 +54,11 @@ export class ReviewDatasetItem implements OnInit {
 
   ngOnInit(): void {
     this.loadDataset();
+    this.datasetUpdatedSubscription = this.datasetUpdatedService.connect().subscribe({
+      next: () => {
+        this.loadDataset();
+      },
+    });
   }
 
   get videoReviews(): FormArray {
@@ -118,5 +136,10 @@ export class ReviewDatasetItem implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.datasetUpdatedService.disconnect();
+    this.datasetUpdatedSubscription.unsubscribe();
   }
 }

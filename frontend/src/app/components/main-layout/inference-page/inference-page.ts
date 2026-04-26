@@ -37,6 +37,7 @@ export class InferencePage implements OnInit, OnDestroy {
 
   inferenceForm: FormGroup;
   isInferenceSubmitted: boolean = false;
+  hasResults: boolean = false;
 
   minZoom: number = 1;
   maxZoom: number = 4;
@@ -167,14 +168,19 @@ export class InferencePage implements OnInit, OnDestroy {
       return;
     }
     this.isInferenceSubmitted = true;
+    this.hasResults = false;
     this.videosService.inferenceVideo(this.videoDetails.id, selectedActionId).subscribe({
       next: (response): void => {
         if(selectedActionId === 10) {
           this.predictedLabel = this.parseHeaderBoolean(response.headers.get('X-Predicted-Label'));
           this.predictedConfidence = this.parseHeaderNumber(response.headers.get('X-Confidence'));
           this.predictedClassProbability = this.parseHeaderNumber(response.headers.get('X-Predicted-Class-Probability'));
+          this.trackedPeople = null;
         } else if(selectedActionId === 20) {
           this.trackedPeople = this.parseHeaderNumber(response.headers.get('X-Tracked-People-Count'));
+          this.predictedLabel = null;
+          this.predictedConfidence = null;
+          this.predictedClassProbability = null;
         }
         if (response.body) {
           this.revokeInferenceVideoUrl();
@@ -185,10 +191,17 @@ export class InferencePage implements OnInit, OnDestroy {
             rightVideo.load();
           }
         }
+        this.hasResults = true;
         this.isInferenceSubmitted = false;
         this.topbarRefreshService.notifyRefresh();
         this.cdr.detectChanges();
       },
+      error: () => {
+        this.hasResults = false;
+        this.isInferenceSubmitted = false;
+        this.topbarRefreshService.notifyRefresh();
+        this.cdr.detectChanges();
+      }
     });
   }
 
