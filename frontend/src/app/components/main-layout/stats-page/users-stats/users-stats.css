@@ -1,0 +1,11 @@
+.no-credits {
+  background: linear-gradient(
+    135deg,
+    var(--color-gradient-pink) 0%,
+    var(--color-gradient-purple) 50%,
+    var(--color-gradient-lilac) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

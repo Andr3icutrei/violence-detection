@@ -24,7 +24,7 @@ class UpdateUserDto(UserBase):
 
 class UserResponseDto(UserBase):
     id: int
-
+    credits_used: Optional[int] = None
     class Config:
         from_attributes = True
 

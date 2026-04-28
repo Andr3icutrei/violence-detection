@@ -1,4 +1,4 @@
-from typing import List, Protocol
+from typing import List, Protocol, Dict
 
 from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -248,7 +248,7 @@ class UsersService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error loading environment variable DEFAULT_CREDITS: {str(e)}"
             ) from e
-        users: List[User] = await self.users_repository.get_all(db)
+        users: List[User] = await self.users_repository.get_all_exclude_banned(db)
         await self.users_repository.update_users_credits(users, credits_to_update, db)
 
     async def get_all_users(self,
@@ -257,7 +257,7 @@ class UsersService:
         page_size: int,
         db: AsyncSession,
     ) -> List[UserResponseDto]:
-        users: List[User] = await self.users_repository.get_all(db)
+        users: List[User] = await self.users_repository.get_all_exclude_banned(db)
 
         if search_term:
             search_term_lower = search_term.lower()
@@ -318,7 +318,7 @@ class UsersService:
         active_users_count = await self.users_repository.count_active_users(db)
         banned_users_count = await self.users_repository.count_banned_users(db)
         inactive_users_count = await self.users_repository.count_inactive_users(db)
-        most_active_users = await self.users_repository.get_most_active_users(db)
+        most_active_users: Dict[User, int] = await self.users_repository.get_most_active_users(db)
 
         return UsersStatsResponseDto(
             active_users=active_users_count,
@@ -329,8 +329,9 @@ class UsersService:
                     id=user.id,
                     email=user.email,
                     credits=user.credits,
-                    is_admin=user.is_admin
+                    is_admin=user.is_admin,
+                    credits_used=credits_used
                 )
-                for user in most_active_users
+                for (user, credits_used) in most_active_users.items()
             ]
         )

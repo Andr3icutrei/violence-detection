@@ -8,10 +8,10 @@
     </div>
 
     <div class="review-datasets-select-status-container">
-      <label for="select-status-label">{{ 'review-datasets.select-label' | translate }}</label>
+      <label for="select-status-label" class="select-status-label">{{ 'review-datasets.select-label' | translate }}</label>
       <select
         id="select-status-label"
-        class="select-status-label"
+        class="select-status"
         [value]="selectedDatasetStatus"
         (change)="onSelectedDatasetStatusChange($event)">
         <option [value]="null">All</option>
@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  @if (datasetsToReview.length > 0) {
+  @if (datasetsToReview.length > pageSize) {
     <app-paginator
       [page]="page"
       [pageSize]="pageSize"

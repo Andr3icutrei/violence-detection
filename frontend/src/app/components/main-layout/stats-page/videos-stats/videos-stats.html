@@ -1,0 +1,49 @@
+<div class="stats-container">
+  <div class="stats-section-container">
+    <div class="stats-section-header-container">
+      <h2> {{ 'stats.videos-header' | translate }} </h2>
+    </div>
+
+    @if (inferenceHistoryStats) {
+      <div class="stats-inference-history-charts-container">
+        <div class="chart-wrapper">
+          <h3 class="chart-title">{{ yAxisLabel }}</h3>
+          <div class="chart-inner-container">
+            <ngx-charts-line-chart
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              [timeline]="timeline"
+              [roundDomains]="true"
+              [results]="multiClassificationRuns">
+            </ngx-charts-line-chart>
+          </div>
+        </div>
+
+        <div class="chart-wrapper">
+          <h3 class="chart-title">{{ yAxisLabelPeopleTracking }}</h3>
+          <div class="chart-inner-container">
+            <ngx-charts-line-chart
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabelPeopleTracking"
+              [timeline]="timeline"
+              [roundDomains]="true"
+              [results]="multiPeopleTrackingRuns">
+            </ngx-charts-line-chart>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

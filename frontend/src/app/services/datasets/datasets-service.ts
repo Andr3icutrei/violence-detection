@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment.development';
 import { DatasetStatus } from '../../core/api/models/dataset-status';
 import { DatasetToReviewResponseDto } from '../../core/api/models/dataset-to-review-response-dto';
 import { DatasetWithVideosResponseDto } from '../../core/api/models/dataset-with-videos-response-dto';
+import { DatasetsStatsResponseDto } from '../../core/api/models/datasets-stats-response-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -86,11 +87,25 @@ export class DatasetsService {
     );
   }
 
-  public editDataset(datasetId: number, videos: { video_id: number; is_violent: boolean }[]): Observable<DatasetResponseDto> {
+  public editDataset(
+    datasetId: number,
+    videos: { video_id: number; is_violent: boolean }[],
+  ): Observable<DatasetResponseDto> {
     const body = {
       dataset_id: datasetId,
       videos: videos,
     };
-    return this.httpClient.patch<DatasetResponseDto>(`${environment.apiUrl}datasets/edit_dataset/${datasetId}`, body, { withCredentials: true });
+    return this.httpClient.patch<DatasetResponseDto>(
+      `${environment.apiUrl}datasets/edit_dataset/${datasetId}`,
+      body,
+      { withCredentials: true },
+    );
+  }
+
+  public getDatasetsStats(): Observable<DatasetsStatsResponseDto> {
+    return this.httpClient.get<DatasetsStatsResponseDto>(
+      `${environment.apiUrl}datasets/get_datasets_stats`,
+      { withCredentials: true },
+    );
   }
 }

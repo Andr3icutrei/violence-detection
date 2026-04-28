@@ -91,7 +91,7 @@ export class InferencePage implements OnInit, OnDestroy {
       },
     });
 
-    this.inferenceActionsService.getInferenceActions(this.videoDetails.dataset.id).subscribe({
+    this.inferenceActionsService.getInferenceActionsForDataset(this.videoDetails.dataset.id).subscribe({
       next: (data: InferenceActionResponseDto[]): void => {
         this.availableInferenceActions = data.map((action) => ({
           id: action.id,
@@ -171,12 +171,12 @@ export class InferencePage implements OnInit, OnDestroy {
     this.hasResults = false;
     this.videosService.inferenceVideo(this.videoDetails.id, selectedActionId).subscribe({
       next: (response): void => {
-        if(selectedActionId === 10) {
+        if (selectedActionId === 10) {
           this.predictedLabel = this.parseHeaderBoolean(response.headers.get('X-Predicted-Label'));
           this.predictedConfidence = this.parseHeaderNumber(response.headers.get('X-Confidence'));
           this.predictedClassProbability = this.parseHeaderNumber(response.headers.get('X-Predicted-Class-Probability'));
           this.trackedPeople = null;
-        } else if(selectedActionId === 20) {
+        } else if (selectedActionId === 20) {
           this.trackedPeople = this.parseHeaderNumber(response.headers.get('X-Tracked-People-Count'));
           this.predictedLabel = null;
           this.predictedConfidence = null;

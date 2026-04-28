@@ -17,7 +17,7 @@ import { ControlError } from '../../../control-error/control-error';
 import { DatasetResponseDto } from '../../../../core/api/models/dataset-response-dto';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';
-import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
+import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
 
 @Component({
   selector: 'app-review-dataset-item',

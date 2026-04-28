@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { Observable } from 'rxjs';
 import { UserResponseDto } from '../../core/api/models/user-response-dto';
+import { UsersStatsResponseDto } from '../../core/api/models/users-stats-response-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -85,5 +86,9 @@ export class UsersService {
       ban_reason: banReason,
     };
     return this.httpClient.patch<void>(environment.apiUrl + `users/ban_user/${userId}`, body, { withCredentials: true });
+  }
+
+  public getUsersStats(): Observable<UsersStatsResponseDto> {
+    return this.httpClient.get<UsersStatsResponseDto>(environment.apiUrl + 'users/get_users_stats', { withCredentials: true });
   }
 }

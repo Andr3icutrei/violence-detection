@@ -47,14 +47,14 @@
 }
 
 .regular-user {
-  background-color: var(--color-user-regular-bg);
-  color: var(--color-user-regular-text);
+  background-color: var(--color-user-icon-faded-text);
+  color: var(--color-user-icon-text);
   border: 1px solid var(--color-table-border);
 }
 
 .admin-user {
-  background-color: var(--color-user-admin-bg);
-  color: var(--color-user-admin-text);
+  background-color: var(--color-admin-icon-text);
+  color: var(--color-admin-icon-faded-text);
   border: 1px solid var(--color-user-admin-border);
 }
 

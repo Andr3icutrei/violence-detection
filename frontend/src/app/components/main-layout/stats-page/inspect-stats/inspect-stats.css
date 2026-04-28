@@ -1,0 +1,21 @@
+.inspect-stats-container {
+  display: flex;
+  flex-direction: row;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.inspect-stats-container > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.stats-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-group > * {
+  flex: 1;
+  min-width: 0;
+}

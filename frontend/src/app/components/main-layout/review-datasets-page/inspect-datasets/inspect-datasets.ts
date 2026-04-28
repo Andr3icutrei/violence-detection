@@ -10,7 +10,7 @@ import {SearchBar} from '../../../search-bar/search-bar';
 import { Paginator } from '../../../paginator/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
+import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -66,9 +66,7 @@ export class InspectDatasets implements OnInit {
     } else {
       this.selectedDatasetStatus = Number(value) as unknown as DatasetStatus;
     }
-    console.log(this.selectedDatasetStatus);
     this.searchTerm = '';
-    this.cdr.detectChanges();
     this.loadDatasets();
   }
 

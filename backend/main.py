@@ -8,7 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from api.routers import users_router, auth_router, videos_router, datasets_router, inference_actions_router, \
-    inference_history_router, users_ws_router, datasets_ws_router
+    inference_history_router, users_ws_router, datasets_ws_router, credits_router
 from api.routers.inference_actions_router import inference_actions_service
 from core.database import get_db
 from exception_handling.exception_handler import global_exception_handler
@@ -41,6 +41,7 @@ app.include_router(inference_actions_router.router)
 app.include_router(inference_history_router.router)
 app.include_router(users_ws_router.router)
 app.include_router(datasets_ws_router.router)
+app.include_router(credits_router.router)
 
 origins = [
     origin.strip()

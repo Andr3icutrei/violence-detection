@@ -4,6 +4,7 @@
 export interface UserResponseDto {
   ban_reason?: (string | null);
   credits?: number;
+  credits_used?: (number | null);
   email: string;
   id: number;
   is_active?: boolean;

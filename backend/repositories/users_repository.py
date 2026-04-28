@@ -1,12 +1,13 @@
 import os
-from typing import List
+from typing import List, Dict
 
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
-from sqlalchemy import select, update, bindparam
+from sqlalchemy import select, update, bindparam, func, or_
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models import InferenceHistory
 from models.user import User
 from schemas.users_schema import CreateUserDto
 
@@ -73,8 +74,8 @@ class UsersRepository:
             await db.rollback()
             raise e
 
-    async def get_all(self, db: AsyncSession) -> List[User]:
-        result = await db.execute(select(User))
+    async def get_all_exclude_banned(self, db: AsyncSession) -> List[User]:
+        result = await db.execute(select(User).where(User.is_banned == False))
         return list(result.scalars().all())
 
     async def save_changes(self, db: AsyncSession) -> None:
@@ -117,17 +118,38 @@ class UsersRepository:
         return users
 
     async def count_active_users(self, db: AsyncSession) -> int:
-        result = await db.execute(select(User).filter(User.is_active == True and User.is_banned == False))
-        return result.scalars().count()
+        query = select(func.count()).select_from(User).where(
+            User.is_active == True,
+            User.is_banned == False
+        )
+        result = await db.execute(query)
+        return result.scalar_one()
 
     async def count_inactive_users(self, db: AsyncSession) -> int:
-        result = await db.execute(select(User).filter(User.is_active == False or User.is_banned == False))
-        return result.scalars().count()
+        query = select(func.count()).select_from(User).where(
+            or_(
+                User.is_active == False,
+                User.is_banned == False
+            )
+        )
+        result = await db.execute(query)
+        return result.scalar_one()
 
     async def count_banned_users(self, db: AsyncSession) -> int:
-        result = await db.execute(select(User).filter(User.is_banned == True))
-        return result.scalars().count()
+        query = select(func.count()).select_from(User).where(
+            User.is_banned == True
+        )
+        result = await db.execute(query)
+        return result.scalar_one()
 
-    async def get_most_active_users(self, db: AsyncSession) -> List[User]:
-        result = await db.execute(select(User).order_by(User.credits.desc()).limit(3))
-        return list(result.scalars().all())
+    async def get_most_active_users(self, db: AsyncSession) -> Dict[User, int]:
+        credits_sum = func.coalesce(func.sum(InferenceHistory.credits_used), 0)
+        stmt = (
+            select(User, credits_sum)
+                .outerjoin(InferenceHistory, User.id == InferenceHistory.user_id)
+                .group_by(User.id)
+                .order_by(credits_sum.desc())
+                .limit(3)
+        )
+        result = await db.execute(stmt)
+        return {user: total_credits for user, total_credits in result.all()}

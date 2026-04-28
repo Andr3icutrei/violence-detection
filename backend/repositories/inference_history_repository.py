@@ -1,7 +1,8 @@
 from typing import List
 
-from sqlalchemy import select
+from sqlalchemy import select, extract
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from models import InferenceHistory
 from models.inference_history_classification import InferenceHistoryClassification
@@ -34,23 +35,25 @@ class InferenceHistoryRepository:
     async def get_classification_inference_history(self, year: int, month: int, db: AsyncSession) -> List[InferenceHistoryClassification]:
         result = await db.execute(
             select(InferenceHistoryClassification)
+            .options(joinedload(InferenceHistoryClassification.inference_history))
             .join(InferenceHistoryClassification.inference_history)
             .where(
-                InferenceHistoryClassification.inference_history.created_at.year == year,
-                InferenceHistoryClassification.inference_history.created_at.month == month
+                extract('year', InferenceHistory.created_at) == year,
+                extract('month', InferenceHistory.created_at) == month
             )
-            .order_by(InferenceHistoryClassification.inference_history.created_at.asc())
+            .order_by(InferenceHistory.created_at.asc())
         )
         return list(result.scalars().all())
 
     async def get_people_tracking_inference_history(self, year: int, month: int, db: AsyncSession) -> List[InferenceHistoryPeopleTracking]:
         result = await db.execute(
             select(InferenceHistoryPeopleTracking)
+            .options(joinedload(InferenceHistoryPeopleTracking.inference_history))
             .join(InferenceHistoryPeopleTracking.inference_history)
             .where(
-                InferenceHistoryPeopleTracking.inference_history.created_at.year == year,
-                InferenceHistoryPeopleTracking.inference_history.created_at.month == month
+                extract('year', InferenceHistory.created_at) == year,
+                extract('month', InferenceHistory.created_at) == month
             )
-            .order_by(InferenceHistoryPeopleTracking.inference_history.created_at.asc())
+            .order_by(InferenceHistory.created_at.asc())
         )
         return list(result.scalars().all())

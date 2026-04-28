@@ -6,10 +6,12 @@ import { TranslateHttpLoader, provideTranslateHttpLoader } from '@ngx-translate/
 import { routes } from './app.routes';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import { environment } from '../environments/environment.development';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideAnimationsAsync(),
     provideHttpClient(),
     provideTranslateHttpLoader({ prefix: '/assets/i18n/', suffix: '.json' }),
     provideTranslateService({

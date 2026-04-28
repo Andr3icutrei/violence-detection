@@ -1,7 +1,7 @@
 from datetime import datetime
-from sqlalchemy import DateTime, func, ForeignKey
+from sqlalchemy import DateTime, func, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from core.database import Base
 from .video import Video
@@ -14,6 +14,7 @@ class InferenceHistory(Base):
 
     id:Mapped[int] = mapped_column(primary_key=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    credits_used: Mapped[int] = mapped_column(Integer, nullable=False)
 
     video_id:Mapped[int] = mapped_column(ForeignKey("videos.id"), nullable=False)
     user_id:Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)

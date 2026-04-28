@@ -323,7 +323,7 @@
   margin-bottom: 1rem;
 }
 
-.inference-item-video-name {
+.inference-item-name {
   max-width: 11rem;
   display: inline-block;
   overflow: hidden;

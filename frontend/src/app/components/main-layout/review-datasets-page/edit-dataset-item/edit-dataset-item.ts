@@ -15,7 +15,7 @@ import { DatasetResponseDto } from '../../../../core/api/models/dataset-response
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';
-import { DatasetUpdatedService } from '../../../../services/dataset-updated/dataset-updated.service';
+import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
 import {DatasetStatusModel} from '../../../../models/dataset-status.model';
 
 @Component({

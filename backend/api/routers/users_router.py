@@ -90,7 +90,7 @@ async def update_user_role(
 ) -> None:
     await users_service.update_user_role(user_id, is_admin, db)
 
-@router.patch("/ban_user", status_code=status.HTTP_200_OK)
+@router.patch("/ban_user/{user_id}", status_code=status.HTTP_200_OK)
 async def ban_user(
     user_id: int,
     user_ban_request_dto: UserBanRequestDto,

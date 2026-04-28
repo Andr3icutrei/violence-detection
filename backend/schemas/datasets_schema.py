@@ -43,9 +43,12 @@ class ReviewDatasetRequestDto(BaseModel):
 class EditDatasetRequestDto(BaseModel):
     videos: List[ReviewVideoRequestDto]
 
+class MostPopularDatasetResponseDto(DatasetResponseDto):
+    inferences_videos_count: int
+
 class DatasetsStatsResponseDto(BaseModel):
-    most_popular_dataset_classification: DatasetResponseDto
-    most_popular_dataset_people_tracking: DatasetResponseDto
+    most_popular_dataset_classification: MostPopularDatasetResponseDto
+    most_popular_dataset_people_tracking: MostPopularDatasetResponseDto
     official_datasets_count: int
     unofficial_datasets_count: int
     pending_datasets_count: int

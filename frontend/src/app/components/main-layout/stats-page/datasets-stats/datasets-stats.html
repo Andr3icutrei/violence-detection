@@ -1,0 +1,51 @@
+<div class="stats-container">
+  <div class="stats-section-header-container">
+    <h2> {{ 'stats.datasets-header' | translate }} </h2>
+  </div>
+
+  @if (datasetsStats) {
+    <div class="stats-content-container">
+      <div class="detail-item">
+        <span class="detail-item-label">{{ 'stats.official-datasets' | translate }}</span>
+        <span class="detail-item-value inference-item-name">{{ datasetsStats.official_datasets_count }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item-label">{{ 'stats.unofficial-datasets' | translate }}</span>
+        <span class="detail-item-value inference-item-name">{{ datasetsStats.unofficial_datasets_count }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item-label">{{ 'stats.pending-datasets' | translate }}</span>
+        <span class="detail-item-value inference-item-name">{{ datasetsStats.pending_datasets_count }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item-label">{{ 'stats.storage-used' | translate }}</span>
+        <span class="detail-item-value inference-item-name">{{ datasetsStats.storage_used_gb.toFixed(1) }}GB / 10GB</span>
+      </div>
+
+      <div class="stats-content-subsection-container">
+        <div class="stats-subsection-header-container">
+          <h3> {{ 'stats.most-popular-datasets' | translate }} </h3>
+        </div>
+
+        <div class="stats-section-container">
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'stats.classification' | translate }}</span>
+            <span class="detail-item-value inference-item-name">
+                {{ datasetsStats.most_popular_dataset_classification.inferences_videos_count | i18nPlural: videoMapping }}, <span class="credits-linear-text">{{ datasetsStats.most_popular_dataset_classification.name }}</span>
+              </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'stats.people-tracking' | translate }}</span>
+            <span class="detail-item-value inference-item-name">
+                {{ datasetsStats.most_popular_dataset_people_tracking.inferences_videos_count | i18nPlural: videoMapping }}, <span class="credits-linear-text">{{ datasetsStats.most_popular_dataset_people_tracking.name }}</span>
+              </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

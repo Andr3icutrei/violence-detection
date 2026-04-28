@@ -1,0 +1,38 @@
+<div class="stats-container">
+  @if (usersStats) {
+    <div class="stats-section-container">
+      <div class="stats-section-header-container">
+        <h2> {{ 'stats.users-header' | translate }} </h2>
+      </div>
+
+      <div class="stats-content-container">
+        <div class="detail-item">
+          <span class="detail-item-label">{{ 'stats.active-users' | translate }}</span>
+          <span class="detail-item-value inference-item-name">{{ usersStats.active_users }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-item-label">{{ 'stats.inactive-users' | translate }}</span>
+          <span class="detail-item-value inference-item-name">{{ usersStats.inactive_users }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-item-label">{{ 'stats.banned-users' | translate }}</span>
+          <span class="detail-item-value inference-item-name">{{ usersStats.banned_users }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-section-container">
+      <div class="stats-section-header-container">
+        <h2> {{ 'stats.most-active-users-header' | translate }} </h2>
+      </div>
+      @for (user of usersStats.most_active_users; track user.id; let i = $index) {
+        <div class="detail-item">
+          <span class="detail-item-label">{{ i + 1 }}.</span>
+          <span class="detail-item-value inference-item-name"> {{ user.email }} <i class="fa-regular fa-gem user-credits-icon no-credits">{{ user.credits_used }}</i> </span>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -13,6 +13,7 @@ from helpers.inference_helper import run_people_tracking, run_classification_and
 
 from models import Video, InferenceHistory, User
 from models.action import Action
+from models.inference_action import InferenceAction
 from models.inference_history_classification import InferenceHistoryClassification
 from models.inference_history_people_tracking import InferenceHistoryPeopleTracking
 from models.inference_model import InferenceModel
@@ -80,7 +81,7 @@ class VideosService:
                 detail="User not found."
             )
 
-        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(Action.CLASSIFICATION, db)
+        inference_action: InferenceAction = await self.inference_actions_repository.get_inference_action_by_action_id(Action.CLASSIFICATION, db)
 
         if db_user.credits - inference_action.credits < 0:
             raise HTTPException(
@@ -134,6 +135,7 @@ class VideosService:
             inference_entry = InferenceHistory(
                 video_id=video.id,
                 user_id=current_user.id,
+                credits_used=inference_action.credits
             )
 
             inference_classification = InferenceHistoryClassification(
@@ -167,7 +169,7 @@ class VideosService:
                 detail="User not found."
             )
 
-        inference_action = await self.inference_actions_repository.get_inference_action_by_action_id(Action.PEOPLE_TRACKING, db)
+        inference_action: InferenceAction = await self.inference_actions_repository.get_inference_action_by_action_id(Action.PEOPLE_TRACKING, db)
 
         if db_user.credits -inference_action.credits < 0:
             raise HTTPException(
@@ -198,6 +200,7 @@ class VideosService:
             inference_entry = InferenceHistory(
                 video_id=video.id,
                 user_id=current_user.id,
+                credits_used=inference_action.credits
             )
 
             inference_people_tracking = InferenceHistoryPeopleTracking(

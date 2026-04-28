@@ -1,0 +1,5 @@
+.stats-page-container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10vh;
+}

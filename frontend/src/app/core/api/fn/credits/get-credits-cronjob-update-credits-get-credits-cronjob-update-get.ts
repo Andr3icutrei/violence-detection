@@ -7,16 +7,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserResponseDto } from '../../models/user-response-dto';
 
-export interface GetUserUsersUserIdGet$Params {
-  user_id: number;
+export interface GetCreditsCronjobUpdateCreditsGetCreditsCronjobUpdateGet$Params {
 }
 
-export function getUserUsersUserIdGet(http: HttpClient, rootUrl: string, params: GetUserUsersUserIdGet$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, getUserUsersUserIdGet.PATH, 'get');
+export function getCreditsCronjobUpdateCreditsGetCreditsCronjobUpdateGet(http: HttpClient, rootUrl: string, params?: GetCreditsCronjobUpdateCreditsGetCreditsCronjobUpdateGet$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  const rb = new RequestBuilder(rootUrl, getCreditsCronjobUpdateCreditsGetCreditsCronjobUpdateGet.PATH, 'get');
   if (params) {
-    rb.path('user_id', params.user_id, {});
   }
 
   return http.request(
@@ -24,9 +21,9 @@ export function getUserUsersUserIdGet(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserResponseDto>;
+      return r as StrictHttpResponse<any>;
     })
   );
 }
 
-getUserUsersUserIdGet.PATH = '/users/{user_id}';
+getCreditsCronjobUpdateCreditsGetCreditsCronjobUpdateGet.PATH = '/credits/get_credits_cronjob_update';

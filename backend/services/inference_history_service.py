@@ -14,9 +14,9 @@ class InferenceHistoryService():
     def __init__(self):
         self.inference_history_repository: InferenceHistoryRepository = InferenceHistoryRepository()
 
-    async def get_inference_history_stats(self, month: int, year: int, db: AsyncSession) -> InferenceHistoryStatsResponseDto:
-        classification_runs: List[InferenceHistoryClassification] = await self.inference_history_repository.get_classification_inference_history(month, year, db)
-        people_tracking_runs: List[InferenceHistoryPeopleTracking] = await self.inference_history_repository.get_people_tracking_inference_history(month, year, db)
+    async def get_inference_history_stats(self, year: int, month: int, db: AsyncSession) -> InferenceHistoryStatsResponseDto:
+        classification_runs: List[InferenceHistoryClassification] = await self.inference_history_repository.get_classification_inference_history(year, month, db)
+        people_tracking_runs: List[InferenceHistoryPeopleTracking] = await self.inference_history_repository.get_people_tracking_inference_history(year, month, db)
 
         return InferenceHistoryStatsResponseDto(
             classification_runs=[

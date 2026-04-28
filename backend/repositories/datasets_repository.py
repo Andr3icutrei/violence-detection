@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from fastapi import UploadFile
 from sqlalchemy import select, func
@@ -121,27 +121,29 @@ class DatasetsRepository:
         await db.delete(dataset)
         await db.flush()
 
-    async def get_most_popular_dataset_classification(self, db: AsyncSession) -> Dataset | None:
+    async def get_most_popular_dataset_classification(self, db: AsyncSession) -> Tuple[Dataset, int] | None:
+        inferences_count = func.coalesce(func.count(InferenceHistoryClassification.id), 0)
         result = await db.execute(
-            select(Dataset)
+            select(Dataset, inferences_count)
             .join(Dataset.videos)
             .join(Video.inference_history)
             .join(InferenceHistory.inference_history_classification)
             .group_by(Dataset.id)
-            .order_by(func.count(InferenceHistoryClassification.id).desc())
+            .order_by(inferences_count.desc())
         )
-        return result.scalars().first()
+        return result.first()
 
-    async def get_most_popular_dataset_people_tracking(self, db: AsyncSession) -> Dataset | None:
+    async def get_most_popular_dataset_people_tracking(self, db: AsyncSession) -> Tuple[Dataset, int] | None:
+        inferences_count = func.coalesce(func.count(InferenceHistoryPeopleTracking.id), 0)
         result = await db.execute(
-            select(Dataset)
+            select(Dataset, inferences_count)
             .join(Dataset.videos)
             .join(Video.inference_history)
             .join(InferenceHistory.inference_history_people_tracking)
             .group_by(Dataset.id)
-            .order_by(func.count(InferenceHistoryPeopleTracking.id).desc())
+            .order_by(inferences_count.desc())
         )
-        return result.scalars().first()
+        return result.first()
 
     async def get_official_datasets_count(self, db: AsyncSession) -> int:
         result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == True))

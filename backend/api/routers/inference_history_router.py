@@ -18,7 +18,7 @@ router = APIRouter(
 auth_service = AuthService()
 inference_history_service = InferenceHistoryService()
 
-@router.get("/get_inference_history_stats")
+@router.get("/get_inference_history_stats", response_model=InferenceHistoryStatsResponseDto, status_code=status.HTTP_200_OK)
 async def get_inference_history_stats(
     year: Optional[int] = None,
     month: Optional[int] = None,

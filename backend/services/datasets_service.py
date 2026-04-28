@@ -1,5 +1,5 @@
 import asyncio
-from typing import List
+from typing import List, Tuple, Optional
 
 from fastapi import HTTPException
 from fastapi_mail import ConnectionConfig
@@ -16,7 +16,7 @@ from repositories.datasets_repository import DatasetsRepository
 from repositories.users_repository import UsersRepository
 from repositories.videos_repository import VideosRepository
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
-    DatasetWithVideosResponseDto, DatasetsStatsResponseDto
+    DatasetWithVideosResponseDto, DatasetsStatsResponseDto, MostPopularDatasetResponseDto
 from schemas.users_schema import UserResponseDto
 from schemas.videos_schema import VideoResponseDto, ReviewVideoRequestDto
 
@@ -280,25 +280,27 @@ class DatasetsService:
         return await self.datasets_repository.save(dataset, db)
 
     async def get_datasets_stats(self, db: AsyncSession) -> DatasetsStatsResponseDto:
-        most_popular_dataset_classification: Dataset = await self.datasets_repository.get_most_popular_dataset_classification(db)
-        most_popular_dataset_people_tracking: Dataset = await self.datasets_repository.get_most_popular_dataset_people_tracking(db)
+        most_popular_dataset_classification, classification_videos_count = await self.datasets_repository.get_most_popular_dataset_classification(db) or (None, 0)
+        most_popular_dataset_people_tracking, people_tracking_videos_count = await self.datasets_repository.get_most_popular_dataset_people_tracking(db) or (None, 0)
         official_datasets_count: int = await self.datasets_repository.get_official_datasets_count(db)
         unofficial_datasets_count: int = await self.datasets_repository.get_unofficial_datasets_count(db)
         pending_datasets_count: int = await self.datasets_repository.get_pending_datasets_count(db)
         storage_used_gb = await get_used_storage_gb()
 
         return DatasetsStatsResponseDto(
-            most_popular_dataset_classification=DatasetResponseDto(
+            most_popular_dataset_classification=MostPopularDatasetResponseDto(
                 id=most_popular_dataset_classification.id,
                 name=most_popular_dataset_classification.name,
                 is_official=most_popular_dataset_classification.is_official,
-                status=most_popular_dataset_classification.status
+                status=most_popular_dataset_classification.status,
+                inferences_videos_count=classification_videos_count
             ) if most_popular_dataset_classification else None,
-            most_popular_dataset_people_tracking=DatasetResponseDto(
+            most_popular_dataset_people_tracking=MostPopularDatasetResponseDto(
                 id=most_popular_dataset_people_tracking.id,
                 name=most_popular_dataset_people_tracking.name,
                 is_official=most_popular_dataset_people_tracking.is_official,
-                status=most_popular_dataset_people_tracking.status
+                status=most_popular_dataset_people_tracking.status,
+                inferences_videos_count=people_tracking_videos_count
             ) if most_popular_dataset_people_tracking else None,
             official_datasets_count=official_datasets_count,
             unofficial_datasets_count=unofficial_datasets_count,

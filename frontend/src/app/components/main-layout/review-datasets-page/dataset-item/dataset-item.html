@@ -1,38 +1,61 @@
-<div class="dataset-row" (click)="openReviewDatasetItem()">
-  <div class="dataset-id-badge">#{{ index + 1 }}</div>
+<div class="dataset-row">
+  <div class="dataset-id-badge-container">
+    <div class="dataset-id-badge">#{{ index + 1 }}</div>
+  </div>
   <div class="dataset-detail">
     <span class="detail-label">{{ 'review-datasets.name' | translate }}:</span>
     <span class="detail-value">{{ dataset.name }}</span>
   </div>
+
   <div class="dataset-detail">
     <span class="detail-label">{{ 'review-datasets.user-email' | translate }}:</span>
     <span class="email-badge">{{ dataset.user.email }}</span>
   </div>
+
   <div class="dataset-detail">
     <span class="detail-label">{{ 'review-datasets.status' | translate }}:</span>
     <span class="status-badge status-{{ dataset.status }}">
       {{ getDatasetStatusName(dataset.status) | titlecase }}
     </span>
   </div>
+
   <div class="dataset-detail">
     <span class="detail-label">{{ 'review-datasets.videos-count' | translate }}:</span>
     <span class="detail-value">{{ dataset.videos_count ?? 0 }}</span>
   </div>
-  @if(dataset.status === DatasetStatusModel.ACCEPTED) {
+
+  @if(dataset.status !== DatasetStatusModel.PENDING) {
     <div class="dataset-detail">
       <span class="detail-label">{{ 'review-datasets.actions' | translate }}:</span>
       <div class="dataset-actions-container">
         <button
           type="button"
-          class="action-btn"
-          (click)="$event.stopPropagation(); openDeleteDatasetConfirmationModal()">
-          <i class="fa-regular fa-trash-can action-icon trashcan-icon"></i>
+          class="action-btn action-btn-no-padding"
+          (click)="$event.stopPropagation(); openDeleteDatasetConfirmationModal()"
+          [title]="'review-datasets.delete-dataset-title' | translate"
+          [disabled]="dataset.status === DatasetStatusModel.REJECTED">
+          <i class="fa-regular fa-trash-can action-icon trashcan-icon" [class.ban-icon-disabled]="dataset.status === DatasetStatusModel.REJECTED"></i>
         </button>
         <button
           type="button"
-          class="action-btn"
-          (click)="$event.stopPropagation(); openEditDatasetItem()">
-          <i class="fa-regular fa-pen-to-square action-icon pen-icon"></i>
+          class="action-btn action-btn-no-padding"
+          (click)="$event.stopPropagation(); openEditDatasetItem()"
+          [title]="'review-datasets.edit-dataset-title' | translate"
+          [disabled]="dataset.status === DatasetStatusModel.REJECTED">
+          <i class="fa-regular fa-pen-to-square action-icon pen-icon" [class.ban-icon-disabled]="dataset.status === DatasetStatusModel.REJECTED"></i>
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="dataset-detail">
+      <span class="detail-label">{{ 'review-datasets.actions' | translate }}:</span>
+      <div class="dataset-actions-container">
+        <button
+          type="button"
+          class="action-btn action-btn-no-padding"
+          [title]="'review-datasets.review-dataset-title' | translate"
+          (click)="$event.stopPropagation(); openReviewDatasetItem()">
+          <i class="fa-solid fa-microscope action-icon review-icon"></i>
         </button>
       </div>
     </div>
