@@ -2,12 +2,11 @@ import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from core.database import get_db
+from api.dependencies import get_inference_history_service
 from schemas.inference_history_schema import InferenceHistoryStatsResponseDto
-from services.auth_service import AuthService
+from services.auth_service import get_current_admin_user
 from services.inference_history_service import InferenceHistoryService
 
 router = APIRouter(
@@ -15,17 +14,14 @@ router = APIRouter(
     tags=["Inference history"],
 )
 
-auth_service = AuthService()
-inference_history_service = InferenceHistoryService()
-
 @router.get("/get_inference_history_stats", response_model=InferenceHistoryStatsResponseDto, status_code=status.HTTP_200_OK)
 async def get_inference_history_stats(
     year: Optional[int] = None,
     month: Optional[int] = None,
-    admin_user = Depends(auth_service.get_current_admin_user),
-    db: AsyncSession = Depends(get_db),
+    admin_user = Depends(get_current_admin_user),
+    inference_history_service: InferenceHistoryService = Depends(get_inference_history_service),
 ) -> InferenceHistoryStatsResponseDto:
     now = datetime.datetime.now()
     year = year if year is not None else now.year
     month = month if month is not None else now.month
-    return await inference_history_service.get_inference_history_stats(year, month, db)
+    return await inference_history_service.get_inference_history_stats(year, month)

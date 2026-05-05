@@ -16,7 +16,8 @@
           class="video zoomable-video"
           [src]="videoDetails?.path"
           preload="metadata"
-          muted
+          [muted]="true"
+          (volumechange)="$any($event.target).muted = true; $any($event.target).volume = 0;"
           (loadedmetadata)="onVideoMetadataLoaded()"
           (timeupdate)="onPrimaryVideoTimeUpdate()"
           (ended)="onPlaybackEnded()"
@@ -30,7 +31,8 @@
           class="video zoomable-video"
           [src]="inferenceResultVideoUrl || videoDetails?.path"
           preload="metadata"
-          muted
+          [muted]="true"
+          (volumechange)="$any($event.target).muted = true; $any($event.target).volume = 0;"
           (loadedmetadata)="onVideoMetadataLoaded()"
           (ended)="onPlaybackEnded()"
           [style.transform]="'translate(' + offsetX + 'px, ' + offsetY + 'px) scale(' + scale + ')'">

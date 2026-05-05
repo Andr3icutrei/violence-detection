@@ -1,9 +1,8 @@
 import asyncio
-from typing import List, Tuple, Optional
+from typing import List
 
 from fastapi import HTTPException
 from fastapi_mail import ConnectionConfig
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from helpers.bucket_helper import create_unofficial_dataset_bucket, get_presigned_url, delete_dataset_videos, \
@@ -22,14 +21,20 @@ from schemas.videos_schema import VideoResponseDto, ReviewVideoRequestDto
 
 
 class DatasetsService:
-    def __init__(self, notifier: DatasetEventsNotifier):
-        self.datasets_repository = DatasetsRepository()
-        self.users_repository = UsersRepository()
-        self.videos_repository = VideosRepository()
+    def __init__(
+        self,
+        datasets_repository: DatasetsRepository,
+        users_repository: UsersRepository,
+        videos_repository: VideosRepository,
+        notifier: DatasetEventsNotifier
+    ):
+        self.datasets_repository = datasets_repository
+        self.users_repository = users_repository
+        self.videos_repository = videos_repository
         self.notifier = notifier
 
-    async def get_accepted_datasets(self, db: AsyncSession) -> List[DatasetResponseDto]:
-        result: List[Dataset] = await self.datasets_repository.get_all_accepted(db)
+    async def get_accepted_datasets(self) -> List[DatasetResponseDto]:
+        result: List[Dataset] = await self.datasets_repository.get_all_accepted()
         return [
             DatasetResponseDto(
                 id=dataset.id,
@@ -45,14 +50,12 @@ class DatasetsService:
         page: int,
         page_size: int,
         dataset_status: DatasetStatus | None,
-        db: AsyncSession,
     ) -> List[DatasetToReviewResponseDto]:
         result: List[Dataset] = await self.datasets_repository.get_all(
             search_term=search_term,
             page=page,
             page_size=page_size,
             dataset_status=dataset_status,
-            db=db,
         )
         return [
             DatasetToReviewResponseDto(
@@ -69,8 +72,8 @@ class DatasetsService:
             ) for dataset in result
         ]
 
-    async def create_unofficial_dataset(self, create_dataset_dto: CreateDatasetRequestDto, user_id: int, db: AsyncSession) -> None:
-        already_existing_dataset: Dataset | None = await self.datasets_repository.get_by_name(create_dataset_dto.name, db)
+    async def create_unofficial_dataset(self, create_dataset_dto: CreateDatasetRequestDto, user_id: int) -> None:
+        already_existing_dataset: Dataset | None = await self.datasets_repository.get_by_name(create_dataset_dto.name)
         if already_existing_dataset is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -79,14 +82,14 @@ class DatasetsService:
                     "message": f"Dataset with name '{create_dataset_dto.name}' already exists."
                 }
             )
-        user: User = await self.users_repository.get_by_id(user_id, db)
+        user: User = await self.users_repository.get_by_id(user_id)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found."
             )
         try:
-            user_has_pending_datasets: bool = await self.datasets_repository.user_has_pending_datasets(user_id, db)
+            user_has_pending_datasets: bool = await self.datasets_repository.user_has_pending_datasets(user_id)
             if user_has_pending_datasets:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
@@ -108,7 +111,6 @@ class DatasetsService:
                 create_dataset_dto.name,
                 create_dataset_dto.videos,
                 user_id,
-                db,
             )
         except Exception as e:
             raise HTTPException(
@@ -116,8 +118,8 @@ class DatasetsService:
                 detail=f"Failed to create dataset: {str(e)}"
             )
 
-    async def get_dataset_videos(self, dataset_id: int, db: AsyncSession) -> DatasetWithVideosResponseDto:
-        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id, db)
+    async def get_dataset_videos(self, dataset_id: int) -> DatasetWithVideosResponseDto:
+        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
         if dataset is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -162,9 +164,8 @@ class DatasetsService:
         videos: List[ReviewVideoRequestDto],
         review_comment: str,
         conf: ConnectionConfig,
-        db: AsyncSession,
     ) -> Dataset:
-        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id, db)
+        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
         if dataset is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -183,7 +184,7 @@ class DatasetsService:
         dataset.comment = review_comment
         result = None
         if is_approved:
-            result = await self._accept_dataset(dataset, videos, db)
+            result = await self._accept_dataset(dataset, videos)
             try:
                 await send_dataset_approval_mail(dataset.created_by_user.email, dataset.name, review_comment, conf)
             except Exception as e:
@@ -192,7 +193,7 @@ class DatasetsService:
                     detail=f"Failed to send approval email: {str(e)}"
                 )
         else:
-            result = await self._reject_dataset(dataset, videos, db)
+            result = await self._reject_dataset(dataset, videos)
             try:
                 await delete_dataset_videos(dataset.name)
                 await send_dataset_rejection_mail(dataset.created_by_user.email, dataset.name, review_comment, conf)
@@ -204,7 +205,7 @@ class DatasetsService:
         await self.notifier.broadcast_dataset_updated(dataset_id=result.id)
         return result
 
-    async def _accept_dataset(self, dataset: Dataset, videos: List[ReviewVideoRequestDto], db: AsyncSession) -> Dataset:
+    async def _accept_dataset(self, dataset: Dataset, videos: List[ReviewVideoRequestDto]) -> Dataset:
         for video in dataset.videos:
             review_video_dto = next((v for v in videos if v.video_id == video.id), None)
             if review_video_dto is not None:
@@ -215,23 +216,23 @@ class DatasetsService:
                     detail=f"Video with id {video.id} is missing in the review request."
                 )
         dataset.status = DatasetStatus.ACCEPTED
-        return await self.datasets_repository.save(dataset, db)
+        return await self.datasets_repository.save(dataset)
 
-    async def _reject_dataset(self, dataset: Dataset, videos: List[ReviewVideoRequestDto], db: AsyncSession) -> Dataset:
+    async def _reject_dataset(self, dataset: Dataset, videos: List[ReviewVideoRequestDto]) -> Dataset:
         dataset.status = DatasetStatus.REJECTED
         for video in dataset.videos:
             review_video_dto = next((v for v in videos if v.video_id == video.id), None)
             if review_video_dto is not None:
-                await self.videos_repository.delete(video, db)
+                await self.videos_repository.delete(video)
             else:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Video with id {video.id} is missing in the review request."
                 )
-        return await self.datasets_repository.save(dataset, db)
+        return await self.datasets_repository.save(dataset)
 
-    async def delete_dataset(self, dataset_id: int, db: AsyncSession) -> None:
-        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id, db)
+    async def delete_dataset(self, dataset_id: int) -> None:
+        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
         if dataset is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -245,17 +246,16 @@ class DatasetsService:
         try:
             await delete_dataset_videos(dataset.name)
             for video in dataset.videos:
-                await self.videos_repository.delete(video, db)
-            await self.datasets_repository.delete(dataset, db)
-            await db.commit()
+                await self.videos_repository.delete(video)
+            await self.datasets_repository.delete(dataset)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to delete dataset videos or dataset record: {str(e)}"
             )
 
-    async def edit_dataset(self, dataset_id: int, videos: List[ReviewVideoRequestDto], db: AsyncSession) -> Dataset:
-        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id, db)
+    async def edit_dataset(self, dataset_id: int, videos: List[ReviewVideoRequestDto]) -> Dataset:
+        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
         if dataset is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -270,21 +270,21 @@ class DatasetsService:
             review_video_dto = next((v for v in videos if v.video_id == video.id), None)
             if review_video_dto is not None:
                 video.is_violent = review_video_dto.is_violent
-                await self.videos_repository.save(video, db)
+                await self.videos_repository.save(video)
             else:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Video with id {video.id} is missing in the edit request."
                 )
         await self.notifier.broadcast_dataset_updated(dataset_id=dataset.id)
-        return await self.datasets_repository.save(dataset, db)
+        return await self.datasets_repository.save(dataset)
 
-    async def get_datasets_stats(self, db: AsyncSession) -> DatasetsStatsResponseDto:
-        most_popular_dataset_classification, classification_videos_count = await self.datasets_repository.get_most_popular_dataset_classification(db) or (None, 0)
-        most_popular_dataset_people_tracking, people_tracking_videos_count = await self.datasets_repository.get_most_popular_dataset_people_tracking(db) or (None, 0)
-        official_datasets_count: int = await self.datasets_repository.get_official_datasets_count(db)
-        unofficial_datasets_count: int = await self.datasets_repository.get_unofficial_datasets_count(db)
-        pending_datasets_count: int = await self.datasets_repository.get_pending_datasets_count(db)
+    async def get_datasets_stats(self) -> DatasetsStatsResponseDto:
+        most_popular_dataset_classification, classification_videos_count = await self.datasets_repository.get_most_popular_dataset_classification() or (None, 0)
+        most_popular_dataset_people_tracking, people_tracking_videos_count = await self.datasets_repository.get_most_popular_dataset_people_tracking() or (None, 0)
+        official_datasets_count: int = await self.datasets_repository.get_official_datasets_count()
+        unofficial_datasets_count: int = await self.datasets_repository.get_unofficial_datasets_count()
+        pending_datasets_count: int = await self.datasets_repository.get_pending_datasets_count()
         storage_used_gb = await get_used_storage_gb()
 
         return DatasetsStatsResponseDto(

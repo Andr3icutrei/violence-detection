@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status
+from fastapi.params import Depends
 from starlette.websockets import WebSocketState
 
 router = APIRouter(prefix="/users_ws", tags=["WebSocket"])
@@ -40,10 +41,13 @@ class UserUpdatedWs:
         for connection in disconnected:
             await self.disconnect(connection)
 
-user_role_ws = UserUpdatedWs()
+_user_role_ws = UserUpdatedWs()
+
+def get_users_updated() -> UserUpdatedWs:
+    return _user_role_ws
 
 @router.websocket("/user-updated")
-async def user_role_updates_socket(websocket: WebSocket):
+async def user_role_updates_socket(websocket: WebSocket, user_role_ws: UserUpdatedWs = Depends(get_users_updated)):
     await user_role_ws.connect(websocket)
     try:
         while True:

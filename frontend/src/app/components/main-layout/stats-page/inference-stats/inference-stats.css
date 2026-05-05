@@ -59,3 +59,16 @@ ngx-charts-line-chart {
 ::ng-deep .ngx-charts .line-series path {
   stroke-width: 3px;
 }
+
+.date-selector-container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.selected-date-text {
+  font-weight: bold;
+}

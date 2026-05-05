@@ -172,12 +172,17 @@ export class InferencePage implements OnInit, OnDestroy {
     this.videosService.inferenceVideo(this.videoDetails.id, selectedActionId).subscribe({
       next: (response): void => {
         if (selectedActionId === 10) {
-          this.predictedLabel = this.parseHeaderBoolean(response.headers.get('X-Predicted-Label'));
+          const predictedLabel = this.parseHeaderNumber(response.headers.get('X-Predicted-Label'));
+          this.predictedLabel = predictedLabel === 1;
           this.predictedConfidence = this.parseHeaderNumber(response.headers.get('X-Confidence'));
-          this.predictedClassProbability = this.parseHeaderNumber(response.headers.get('X-Predicted-Class-Probability'));
+          this.predictedClassProbability = this.parseHeaderNumber(
+            response.headers.get('X-Predicted-Class-Probability'),
+          );
           this.trackedPeople = null;
         } else if (selectedActionId === 20) {
-          this.trackedPeople = this.parseHeaderNumber(response.headers.get('X-Tracked-People-Count'));
+          this.trackedPeople = this.parseHeaderNumber(
+            response.headers.get('X-Tracked-People-Count'),
+          );
           this.predictedLabel = null;
           this.predictedConfidence = null;
           this.predictedClassProbability = null;
@@ -201,7 +206,7 @@ export class InferencePage implements OnInit, OnDestroy {
         this.isInferenceSubmitted = false;
         this.topbarRefreshService.notifyRefresh();
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 

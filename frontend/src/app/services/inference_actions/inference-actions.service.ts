@@ -20,19 +20,27 @@ export class InferenceActionsService {
   }
 
   public getInferenceActionsStats(): Observable<InferenceActionResponseDto[]> {
-    return this.httpClient.get<InferenceActionResponseDto[]>(`${environment.apiUrl}inference_actions/get_inference_actions_stats`, { withCredentials: true });
+    return this.httpClient.get<InferenceActionResponseDto[]>(
+      `${environment.apiUrl}inference_actions/get_inference_actions_stats`,
+      { withCredentials: true },
+    );
   }
 
-  public updateCreditsForAction(inferenceActionId: number, newCredits: number): Observable<void> {
-    const params = new HttpParams()
-      .set('credits', newCredits)
-      .set('inferenceActionId', inferenceActionId);
+  public updateCreditsForAction(actions: { id: number; newCredits: number }[]): Observable<void> {
+    if (actions === null || actions.length === 0) {
+      throw new Error('No actions provided for updating credits.');
+    }
+    const body = {
+      actions: actions.map((action) => ({
+        id: action.id,
+        new_credits: action.newCredits,
+      })),
+    };
     return this.httpClient.patch<void>(
-      `${environment.apiUrl}inference_actions/${inferenceActionId}`,
-      null,
+      `${environment.apiUrl}inference_actions/update_credits_inference_actions`,
+      body,
       {
         withCredentials: true,
-        params: params,
       },
     );
   }

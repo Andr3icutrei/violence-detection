@@ -740,3 +740,45 @@ input[type="password"]::-ms-clear {
   -webkit-text-fill-color: transparent;
   font-size: 1rem;
 }
+
+.stats-form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.inference-action-row-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inference-action-row-label-container {
+  flex: 0 0 60%;
+  text-align: left;
+
+}
+
+.inference-action-row-input-container {
+  flex: 0 0 20%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.inference-action-credits-input {
+  width: 100%;
+  padding: 0.5rem 0.5rem;
+  border: 0.14rem solid lightgray;
+  box-shadow: 0.1rem solid var(--color-placeholder);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+}

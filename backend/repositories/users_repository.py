@@ -12,15 +12,18 @@ from models.user import User
 from schemas.users_schema import CreateUserDto
 
 class UsersRepository:
-    async def get_by_id(self, user_id: int, db: AsyncSession) -> User | None:
-        result = await db.execute(select(User).filter(User.id == user_id))
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_by_id(self, user_id: int) -> User | None:
+        result = await self.db.execute(select(User).filter(User.id == user_id))
         return result.scalars().first()
 
-    async def get_by_email(self, email: str, db: AsyncSession) -> User | None:
-        result = await db.execute(select(User).filter(User.email == email))
+    async def get_by_email(self, email: str) -> User | None:
+        result = await self.db.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
-    async def create_user(self, user_create_data: CreateUserDto, hashed_password: str, db: AsyncSession) -> User:
+    async def create_user(self, user_create_data: CreateUserDto, hashed_password: str) -> User:
         try:
             try:
                 load_dotenv()
@@ -39,15 +42,15 @@ class UsersRepository:
                 is_admin=user_create_data.is_admin,
                 auth_provider="local"
             )
-            db.add(user)
-            await db.commit()
-            await db.refresh(user)
+            self.db.add(user)
+            await self.db.commit()
+            await self.db.refresh(user)
             return user
         except SQLAlchemyError as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
 
-    async def create_user_google(self, email: str, db: AsyncSession) -> User:
+    async def create_user_google(self, email: str) -> User:
         try:
             try:
                 load_dotenv()
@@ -66,36 +69,45 @@ class UsersRepository:
                 is_admin=False,
                 auth_provider="google"
             )
-            db.add(user)
-            await db.commit()
-            await db.refresh(user)
+            self.db.add(user)
+            await self.db.commit()
+            await self.db.refresh(user)
             return user
         except SQLAlchemyError as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
 
-    async def get_all_exclude_banned(self, db: AsyncSession) -> List[User]:
-        result = await db.execute(select(User).where(User.is_banned == False))
+    async def get_all_exclude_banned(self) -> List[User]:
+        result = await self.db.execute(select(User).where(User.is_banned == False))
         return list(result.scalars().all())
 
-    async def save_changes(self, db: AsyncSession) -> None:
+    async def get_users_paged(self, search_term: str | None, page: int, page_size: int) -> List[User]:
+        query = select(User).where(User.is_banned == False)
+        if search_term:
+            query = query.where(User.email.ilike(f"%{search_term}%"))
+        query = query.offset(page * page_size).limit(page_size)
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def save_changes(self, user: User) -> None:
         try:
-            await db.commit()
+            await self.db.commit()
+            await self.db.refresh(user)
         except SQLAlchemyError as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
 
-    async def add_user(self, user: User, db: AsyncSession) -> User:
+    async def add_user(self, user: User) -> User:
         try:
-            db.add(user)
-            await db.commit()
-            await db.refresh(user)
+            self.db.add(user)
+            await self.db.commit()
+            await self.db.refresh(user)
             return user
         except SQLAlchemyError as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
 
-    async def update_users_credits(self, users: List[User], credits_to_update: int, db: AsyncSession) -> List[User]:
+    async def update_users_credits(self, users: List[User], credits_to_update: int) -> List[User]:
         if not users:
             return users
         stmt = (
@@ -108,41 +120,41 @@ class UsersRepository:
             for user in users
         ]
         try:
-            await db.execute(stmt, update_data)
-            await db.commit()
+            await self.db.execute(stmt, update_data)
+            await self.db.commit()
             for user in users:
-                await db.refresh(user)
+                await self.db.refresh(user)
         except SQLAlchemyError as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
         return users
 
-    async def count_active_users(self, db: AsyncSession) -> int:
+    async def count_active_users(self) -> int:
         query = select(func.count()).select_from(User).where(
             User.is_active == True,
             User.is_banned == False
         )
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return result.scalar_one()
 
-    async def count_inactive_users(self, db: AsyncSession) -> int:
+    async def count_inactive_users(self) -> int:
         query = select(func.count()).select_from(User).where(
             or_(
                 User.is_active == False,
                 User.is_banned == False
             )
         )
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return result.scalar_one()
 
-    async def count_banned_users(self, db: AsyncSession) -> int:
+    async def count_banned_users(self) -> int:
         query = select(func.count()).select_from(User).where(
             User.is_banned == True
         )
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return result.scalar_one()
 
-    async def get_most_active_users(self, db: AsyncSession) -> Dict[User, int]:
+    async def get_most_active_users(self) -> Dict[User, int]:
         credits_sum = func.coalesce(func.sum(InferenceHistory.credits_used), 0)
         stmt = (
             select(User, credits_sum)
@@ -151,5 +163,5 @@ class UsersRepository:
                 .order_by(credits_sum.desc())
                 .limit(3)
         )
-        result = await db.execute(stmt)
+        result = await self.db.execute(stmt)
         return {user: total_credits for user, total_credits in result.all()}

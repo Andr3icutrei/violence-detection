@@ -1,10 +1,9 @@
 from google.auth.transport import requests
 from fastapi import Depends, HTTPException, status
 from google.oauth2 import id_token
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.dependencies import get_token_from_cookie
-from core.database import get_db
+from api.dependencies.token_from_cookie import get_token_from_cookie
+from api.dependencies.users_repository import get_users_repository
 from helpers.env_helper import get_env_variable
 from helpers.jwt_helper import decode_jwt_token
 from models.user import User
@@ -13,17 +12,17 @@ from core.security import verify_password
 from schemas.auth_schema import TokenSchema
 
 class AuthService:
-    def __init__(self):
-        self.users_repository: UsersRepository = UsersRepository()
+    def __init__(self, users_repository: UsersRepository):
+        self.users_repository: UsersRepository = users_repository
 
-    async def login(self, email: str, password: str, db: AsyncSession):
-        user: User | None = await self.users_repository.get_by_email(email, db)
+    async def login(self, email: str, password: str):
+        user: User | None = await self.users_repository.get_by_email(email)
         if user is None:
             raise HTTPException(
                 status_code = status.HTTP_404_NOT_FOUND,
                 detail = f"User with email {email} not found."
             )
-        if user.is_account_verified is False:
+        if not user.is_account_verified:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail={
@@ -47,7 +46,7 @@ class AuthService:
                 detail = "Incorrect password."
             )
 
-    async def login_google(self, data: TokenSchema, db: AsyncSession):
+    async def login_google(self, data: TokenSchema):
         try:
             id_info = id_token.verify_oauth2_token(data.tokenId, requests.Request(), get_env_variable("GOOGLE_AUTH_CLIENT_ID"))
             email = id_info.get("email")
@@ -57,11 +56,11 @@ class AuthService:
         if email is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not found in token")
 
-        user: User | None = await self.users_repository.get_by_email(email, db)
+        user: User | None = await self.users_repository.get_by_email(email)
 
         if user is None:
             try:
-                user = await self.users_repository.create_user_google(email, db)
+                user = await self.users_repository.create_user_google(email)
             except Exception as e:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating user: {str(e)}")
         else:
@@ -76,65 +75,64 @@ class AuthService:
             if user.auth_provider == "local":
                 try:
                     user.auth_provider = "google"
-                    await self.users_repository.save_changes(db)
-                    await db.refresh(user)
+                    await self.users_repository.save_changes(user)
                 except Exception as e:
                     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error updating user authentication provider: {str(e)}")
         return user
 
-    @staticmethod
-    async def get_current_user(
-        token: str = Depends(get_token_from_cookie),
-        db: AsyncSession = Depends(get_db),
-    ) -> User:
-        decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
 
-        if decoded_token is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
+async def get_current_user(
+    token: str = Depends(get_token_from_cookie),
+    users_repository: UsersRepository = Depends(get_users_repository)
+) -> User:
+    decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
 
-        user_id = decoded_token.get("sub")
+    if decoded_token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
 
-        if user_id is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    user_id = decoded_token.get("sub")
 
-        try:
-            parsed_user_id = int(user_id)
-        except (TypeError, ValueError):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    if user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        user: User | None = await UsersRepository().get_by_id(parsed_user_id, db)
+    try:
+        parsed_user_id = int(user_id)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    user: User | None = await users_repository.get_by_id(parsed_user_id)
 
-        return user
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    @staticmethod
-    async def get_current_admin_user(
-        token: str = Depends(get_token_from_cookie),
-        db: AsyncSession = Depends(get_db),
-    ) -> User:
-        decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
+    return user
 
-        if decoded_token is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
 
-        user_id = decoded_token.get("sub")
+async def get_current_admin_user(
+    token: str = Depends(get_token_from_cookie),
+    users_repository: UsersRepository = Depends(get_users_repository)
+) -> User:
+    decoded_token = decode_jwt_token(token, "SECRET_JWT_KEY")
 
-        if user_id is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    if decoded_token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
 
-        try:
-            parsed_user_id = int(user_id)
-        except (TypeError, ValueError):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    user_id = decoded_token.get("sub")
 
-        user: User | None = await UsersRepository().get_by_id(parsed_user_id, db)
+    if user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    try:
+        parsed_user_id = int(user_id)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-        if user.is_admin is False:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User does not have admin privileges")
+    user: User | None = await users_repository.get_by_id(parsed_user_id)
 
-        return user
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    if not user.is_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User does not have admin privileges")
+
+    return user

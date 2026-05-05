@@ -227,9 +227,9 @@
   },
   "stats": {
     "users-header": "Users Overview",
-    "videos-header": "Videos Overview",
+    "inference-header": "Inference Overview",
     "datasets-header": "Datasets Overview",
-    "credits-header": "Credits",
+    "credits-header": "Credits Manipulation",
     "active-users": "Active Users",
     "banned-users": "Banned Users",
     "inactive-users": "Inactive Users",
@@ -241,6 +241,9 @@
     "most-popular-datasets": "Most Popular Datasets",
     "classification": "Classification",
     "people-tracking": "People Tracking",
-    "videos": "Videos"
+    "videos": "Videos",
+    "per-action-credits": "Credits per Inference Action",
+    "save": "Save Changes",
+    "update-credits": "Credits for user creation/daily credits"
   }
 }

@@ -1,16 +1,13 @@
 from typing import List
 
-from fastapi import APIRouter
-from fastapi.params import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from core.database import get_db
+from api.dependencies import get_inference_actions_service
 from models import User
-from models.action import Action
 from models.inference_action import InferenceAction
-from schemas.inference_actions_schema import InferenceActionResponseDto
-from services.auth_service import AuthService
+from schemas.inference_actions_schema import InferenceActionResponseDto, PatchInferenceActionRequestDto
+from services.auth_service import get_current_user, get_current_admin_user
 from services.inference_actions_service import InferenceActionsService
 
 router = APIRouter(
@@ -18,16 +15,13 @@ router = APIRouter(
     tags=["Inference Actions"],
 )
 
-auth_service = AuthService()
-inference_actions_service = InferenceActionsService()
-
 @router.get("/get_inference_actions_for_dataset/{dataset_id}", response_model=List[InferenceActionResponseDto], status_code=status.HTTP_200_OK)
 async def get_inference_actions_for_dataset(
     dataset_id: int,
-    user: User = Depends(auth_service.get_current_user),
-    db: AsyncSession = Depends(get_db)
+    user: User = Depends(get_current_user),
+    inference_actions_service: InferenceActionsService = Depends(get_inference_actions_service),
 ):
-    result: List[InferenceAction] = await inference_actions_service.get_inference_actions_for_dataset(dataset_id=dataset_id, db=db)
+    result: List[InferenceAction] = await inference_actions_service.get_inference_actions_for_dataset(dataset_id=dataset_id)
     return [
         InferenceActionResponseDto(
             id=action.id,
@@ -39,10 +33,10 @@ async def get_inference_actions_for_dataset(
 
 @router.get("/get_inference_actions_stats", response_model=List[InferenceActionResponseDto], status_code=status.HTTP_200_OK)
 async def get_inference_actions_stats(
-    user: User = Depends(auth_service.get_current_user),
-    db: AsyncSession = Depends(get_db)
+    user: User = Depends(get_current_user),
+    inference_actions_service: InferenceActionsService = Depends(get_inference_actions_service),
 ):
-    result: List[InferenceAction] = await inference_actions_service.get_inference_actions_stats(db=db)
+    result: List[InferenceAction] = await inference_actions_service.get_inference_actions_stats()
     return [
         InferenceActionResponseDto(
             id=action.id,
@@ -52,17 +46,10 @@ async def get_inference_actions_stats(
         ) for action in result
     ]
 
-@router.patch("/update_credits_for_action", response_model=InferenceActionResponseDto, status_code=status.HTTP_200_OK)
+@router.patch("/update_credits_inference_actions",  status_code=status.HTTP_200_OK)
 async def update_credits_for_action(
-    action_id: Action,
-    credits: int,
-    current_admin_user = Depends(auth_service.get_current_admin_user),
-    db: AsyncSession = Depends(get_db)
+    actions_to_patch: PatchInferenceActionRequestDto,
+    current_admin_user = Depends(get_current_admin_user),
+    inference_actions_service: InferenceActionsService = Depends(get_inference_actions_service),
 ):
-    inference_action_updated: InferenceAction = await inference_actions_service.update_credits_for_action(action_id, credits, db)
-    return InferenceActionResponseDto(
-        id=inference_action_updated.id,
-        name=inference_action_updated.action_id.name.replace("_", " ").title(),
-        action_id=inference_action_updated.action_id,
-        credits=inference_action_updated.credits,
-    )
+    await inference_actions_service.update_credits_for_action(actions_to_patch)

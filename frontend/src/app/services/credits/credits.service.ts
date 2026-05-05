@@ -15,10 +15,11 @@ export class CreditsService {
     });
   }
 
-  public patch_credits_cronjob_update(newCredits: number): Observable<void> {
+  public patchCreditsCronjobUpdate(newCredits: number): Observable<void> {
     const params = new HttpParams().set('new_credits', newCredits);
     return this.httpClient.patch<void>(
-      `${environment.apiUrl}credits/patch_credits_cronjob_update-update`,
+      `${environment.apiUrl}credits/patch_credits_cronjob_update`,
+      null,
       { withCredentials: true, params: params },
     );
   }

@@ -12,6 +12,9 @@ from models.inference_history_people_tracking import InferenceHistoryPeopleTrack
 
 
 class VideosRepository:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
     async def get_videos_paged(
             self,
             search_term: str | None,
@@ -20,8 +23,6 @@ class VideosRepository:
             asc: bool | None = None,
             page: int = 0,
             page_size: int = 40,
-            *,
-            db: AsyncSession,
     ) -> Sequence[Video]:
         query = select(Video).join(Video.dataset).options(contains_eager(Video.dataset))
 
@@ -55,41 +56,41 @@ class VideosRepository:
         query = query.order_by(Video.name.asc() if asc else Video.name.desc())
         query = query.offset(page * page_size).limit(page_size)
 
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return result.scalars().all()
 
-    async def get_by_uid(self, video_uid: str | int, db: AsyncSession) -> Video | None:
+    async def get_by_uid(self, video_uid: str | int) -> Video | None:
         try:
             parsed_uid = uuid.UUID(str(video_uid))
         except ValueError:
             return None
 
-        result = await db.execute(select(Video).filter(Video.uid == parsed_uid))
+        result = await self.db.execute(select(Video).filter(Video.uid == parsed_uid))
         return result.scalars().first()
 
-    async def get_by_id(self, video_id: int, db: AsyncSession) -> Video | None:
-        result = await db.execute(select(Video).filter(Video.id == video_id))
+    async def get_by_id(self, video_id: int) -> Video | None:
+        result = await self.db.execute(select(Video).filter(Video.id == video_id))
         return result.scalars().first()
 
-    async def get_by_id_for_classification(self, video_id: int, db: AsyncSession) -> Video | None:
+    async def get_by_id_for_classification(self, video_id: int) -> Video | None:
         query = select(Video).join(Video.dataset).options(contains_eager(Video.dataset)).filter(Video.id == video_id)
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def delete(self, video: Video, db: AsyncSession) -> None:
-        history_result = await db.execute(select(InferenceHistory.id).where(InferenceHistory.video_id == video.id))
+    async def delete(self, video: Video) -> None:
+        history_result = await self.db.execute(select(InferenceHistory.id).where(InferenceHistory.video_id == video.id))
         history_ids = history_result.scalars().all()
 
         if history_ids:
-            await db.execute(delete(InferenceHistoryClassification).where(InferenceHistoryClassification.inference_history_id.in_(history_ids)))
-            await db.execute(delete(InferenceHistoryPeopleTracking).where(InferenceHistoryPeopleTracking.inference_history_id.in_(history_ids)))
-            await db.execute(delete(InferenceHistory).where(InferenceHistory.id.in_(history_ids)))
+            await self.db.execute(delete(InferenceHistoryClassification).where(InferenceHistoryClassification.inference_history_id.in_(history_ids)))
+            await self.db.execute(delete(InferenceHistoryPeopleTracking).where(InferenceHistoryPeopleTracking.inference_history_id.in_(history_ids)))
+            await self.db.execute(delete(InferenceHistory).where(InferenceHistory.id.in_(history_ids)))
 
-        await db.delete(video)
-        await db.flush()
+        await self.db.delete(video)
+        await self.db.flush()
 
-    async def save(self, video: Video, db: AsyncSession) -> Video:
-        db.add(video)
-        await db.commit()
-        await db.refresh(video)
+    async def save(self, video: Video) -> Video:
+        self.db.add(video)
+        await self.db.commit()
+        await self.db.refresh(video)
         return video

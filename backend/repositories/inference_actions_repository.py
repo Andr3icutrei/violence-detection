@@ -8,20 +8,27 @@ from models.inference_action import InferenceAction
 
 
 class InferenceActionsRepository:
-    async def get_inference_actions(self, db: AsyncSession) -> List[InferenceAction]:
-        result = await db.execute(select(InferenceAction))
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_inference_actions(self) -> List[InferenceAction]:
+        result = await self.db.execute(select(InferenceAction).order_by(InferenceAction.id))
         return list(result.scalars().all())
 
-    async def get_inference_action_by_action_id(self, action_id: Action, db: AsyncSession) -> InferenceAction | None:
-        result = await db.execute(select(InferenceAction).filter(InferenceAction.action_id == action_id))
+    async def get_inference_action_by_action_id(self, action_id: Action) -> InferenceAction | None:
+        result = await self.db.execute(select(InferenceAction).filter(InferenceAction.action_id == action_id))
         return result.scalars().first()
 
-    async def update_inference_action(self, inference_action: InferenceAction, db: AsyncSession) -> InferenceAction:
+    async def update_inference_action(self, inference_action: InferenceAction) -> InferenceAction:
         try:
-            db.add(inference_action)
-            await db.commit()
-            await db.refresh(inference_action)
+            self.db.add(inference_action)
+            await self.db.commit()
+            await self.db.refresh(inference_action)
             return inference_action
         except Exception:
-            await db.rollback()
+            await self.db.rollback()
             raise
+
+    async def get_inference_action_by_id(self, id: int) -> InferenceAction | None:
+        result = await self.db.execute(select(InferenceAction).filter(InferenceAction.id == id))
+        return result.scalars().first()

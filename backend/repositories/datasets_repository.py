@@ -16,19 +16,22 @@ from models.inference_history_people_tracking import InferenceHistoryPeopleTrack
 
 
 class DatasetsRepository:
-    async def get_by_name(self, name: str, db: AsyncSession) -> Dataset | None:
-        result = await db.execute(select(Dataset).filter(Dataset.name == name))
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_by_name(self, name: str) -> Dataset | None:
+        result = await self.db.execute(select(Dataset).filter(Dataset.name == name))
         return result.scalars().first()
 
-    async def get_by_id(self, dataset_id: int, db: AsyncSession) -> Dataset | None:
-        result = await db.execute(select(Dataset).filter(Dataset.id == dataset_id))
+    async def get_by_id(self, dataset_id: int) -> Dataset | None:
+        result = await self.db.execute(select(Dataset).filter(Dataset.id == dataset_id))
         return result.scalars().first()
 
-    async def get_all_accepted(self, db: AsyncSession) -> List[Dataset]:
-        result = await db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
+    async def get_all_accepted(self) -> List[Dataset]:
+        result = await self.db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
         return list(result.scalars().all())
 
-    async def get_all(self, search_term: str | None, page: int, page_size: int, dataset_status: DatasetStatus | None, db: AsyncSession) -> List[Dataset]:
+    async def get_all(self, search_term: str | None, page: int, page_size: int, dataset_status: DatasetStatus | None) -> List[Dataset]:
         query = (select(Dataset)
              .filter(Dataset.is_official == False)
              .join(Dataset.created_by_user)
@@ -43,14 +46,13 @@ class DatasetsRepository:
             query = query.filter(Dataset.name.ilike(f"%{search_term}%"))
         if page is not None and page_size is not None:
             query = query.offset(page * page_size).limit(page_size)
-        result = await db.execute(query)
+        result = await self.db.execute(query)
         return list(result.scalars().unique().all())
 
     async def create_unofficial_dataset(self,
         name: str,
         videos: List[UploadFile],
         user_id: int,
-        db: AsyncSession,
     ) -> Dataset:
 
         video_models = []
@@ -89,17 +91,17 @@ class DatasetsRepository:
             created_by_user_id=user_id
         )
 
-        db.add(dataset)
-        await db.commit()
-        await db.refresh(dataset)
+        self.db.add(dataset)
+        await self.db.commit()
+        await self.db.refresh(dataset)
         return dataset
 
-    async def user_has_pending_datasets(self, user_id: int, db: AsyncSession) -> bool:
-        result = await db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
+    async def user_has_pending_datasets(self, user_id: int) -> bool:
+        result = await self.db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
         return result.scalars().first() is not None
 
-    async def get_by_id_with_videos(self, dataset_id: int, db: AsyncSession) -> Dataset | None:
-        result = await db.execute(
+    async def get_by_id_with_videos(self, dataset_id: int) -> Dataset | None:
+        result = await self.db.execute(
             select(Dataset)
             .filter(Dataset.id == dataset_id)
             .join(Dataset.videos)
@@ -111,19 +113,20 @@ class DatasetsRepository:
         )
         return result.scalars().first()
 
-    async def save(self, dataset: Dataset, db: AsyncSession) -> Dataset:
-        db.add(dataset)
-        await db.commit()
-        await db.refresh(dataset)
+    async def save(self, dataset: Dataset) -> Dataset:
+        self.db.add(dataset)
+        await self.db.commit()
+        await self.db.refresh(dataset)
         return dataset
 
-    async def delete(self, dataset: Dataset, db: AsyncSession) -> None:
-        await db.delete(dataset)
-        await db.flush()
+    async def delete(self, dataset: Dataset) -> None:
+        await self.db.delete(dataset)
+        await self.db.flush()
+        await self.db.commit()
 
-    async def get_most_popular_dataset_classification(self, db: AsyncSession) -> Tuple[Dataset, int] | None:
+    async def get_most_popular_dataset_classification(self) -> Tuple[Dataset, int] | None:
         inferences_count = func.coalesce(func.count(InferenceHistoryClassification.id), 0)
-        result = await db.execute(
+        result = await self.db.execute(
             select(Dataset, inferences_count)
             .join(Dataset.videos)
             .join(Video.inference_history)
@@ -133,9 +136,9 @@ class DatasetsRepository:
         )
         return result.first()
 
-    async def get_most_popular_dataset_people_tracking(self, db: AsyncSession) -> Tuple[Dataset, int] | None:
+    async def get_most_popular_dataset_people_tracking(self) -> Tuple[Dataset, int] | None:
         inferences_count = func.coalesce(func.count(InferenceHistoryPeopleTracking.id), 0)
-        result = await db.execute(
+        result = await self.db.execute(
             select(Dataset, inferences_count)
             .join(Dataset.videos)
             .join(Video.inference_history)
@@ -145,14 +148,14 @@ class DatasetsRepository:
         )
         return result.first()
 
-    async def get_official_datasets_count(self, db: AsyncSession) -> int:
-        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == True))
+    async def get_official_datasets_count(self) -> int:
+        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == True))
         return result.scalar_one()
 
-    async def get_unofficial_datasets_count(self, db: AsyncSession) -> int:
-        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == False))
+    async def get_unofficial_datasets_count(self) -> int:
+        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == False))
         return result.scalar_one()
 
-    async def get_pending_datasets_count(self, db: AsyncSession) -> int:
-        result = await db.execute(select(func.count(Dataset.id)).filter(Dataset.status == DatasetStatus.PENDING))
+    async def get_pending_datasets_count(self) -> int:
+        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.status == DatasetStatus.PENDING))
         return result.scalar_one()

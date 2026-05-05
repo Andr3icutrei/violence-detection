@@ -3,29 +3,31 @@ from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
+from fastapi.params import Depends
 from starlette.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from api.dependencies import get_users_service
 from api.routers import users_router, auth_router, videos_router, datasets_router, inference_actions_router, \
     inference_history_router, users_ws_router, datasets_ws_router, credits_router
-from api.routers.inference_actions_router import inference_actions_service
-from core.database import get_db
 from exception_handling.exception_handler import global_exception_handler
 from helpers.env_helper import get_env_variable
 from services.inference_runtime import load_inference_runtime
 from services.users_service import UsersService
-from services.videos_service import VideosService
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     inference_runtime = load_inference_runtime()
     app.state.inference_runtime = inference_runtime
-    app.state.videos_service = VideosService(inference_runtime)
+
+    trigger = CronTrigger(hour=0, minute=0)
+    scheduler.add_job(cron_wrapper, trigger=trigger)
+    scheduler.start()
+
     try:
         yield
     finally:
+        scheduler.shutdown()
         app.state.videos_service = None
         app.state.inference_runtime = None
 
@@ -65,17 +67,8 @@ app.add_middleware(
 
 app.add_exception_handler(Exception, global_exception_handler)
 
-async def cron_wrapper():
-    from core.database import SessionLocal
-    async with SessionLocal() as db:
-        users_service = UsersService()
-        await users_service.update_all_users_credits(db)
-
-@app.on_event("startup")
-async def schedule_jobs():
-    trigger = CronTrigger(hour=0, minute=0)
-    scheduler.add_job(cron_wrapper, trigger=trigger)
-    scheduler.start()
+async def cron_wrapper(users_service: UsersService = Depends(get_users_service)):
+    await users_service.update_all_users_credits()
 
 @app.get("/")
 def root():

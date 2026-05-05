@@ -1,0 +1,43 @@
+<div class="stats-content-subsection-container">
+  <div class="stats-subsection-header-container">
+    <h3> {{ 'stats.per-action-credits' | translate }} </h3>
+  </div>
+
+  <div class="stats-section-container">
+    <div class="stats-form-container">
+      @if (inferenceActionsOriginal) {
+        <form [formGroup]="form" (ngSubmit)="modifyInferenceActionsCredits()">
+          <div formArrayName="inferenceActions" class="stats-form">
+            @for(inferenceActionControl of inferenceActionsArray.controls; track inferenceActionControl; let i = $index) {
+              <div class="detail-item">
+                <div [formGroupName]="i" class="inference-action-row-container">
+                  <div class="inference-action-row-label-container">
+                    <span class="detail-item-label">{{ inferenceActionControl.value.name }} ({{ inferenceActionsOriginal[i].credits }} credits)</span>
+                  </div>
+
+                  <div class="inference-action-row-input-container">
+                    <input
+                      type="number"
+                      min="0"
+                      class="input-text-primary inference-action-credits-input"
+                      formControlName="credits"/>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="submit-btn-container">
+            <button
+              type="submit"
+              class="btn-primary submit-btn"
+              [disabled]="form.invalid">
+              {{ 'stats.save' | translate }}
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+</div>
+

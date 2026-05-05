@@ -1,4 +1,4 @@
-export const domain = 'alleged-variable-metro-handbags.trycloudflare.com';
+export const domain = 'jobs-bow-turned-record.trycloudflare.com';
 
 export const environment = {
   production: false,

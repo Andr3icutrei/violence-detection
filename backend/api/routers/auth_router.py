@@ -1,22 +1,19 @@
 from typing import Literal, cast
 
-from fastapi import APIRouter, status, Depends, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, status, Depends, Response, Request
 
-from core.database import get_db
+from api.dependencies import get_auth_service
 from helpers.env_helper import get_env_variable
 from helpers.jwt_helper import create_jwt_token
 from models.user import User
 from schemas.auth_schema import LoginRequestDto, LogoutResponseDto, TokenSchema
 from schemas.users_schema import UserResponseDto
-from services.auth_service import AuthService
+from services.auth_service import AuthService, get_current_user
 
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
-
-auth_service: AuthService = AuthService()
 
 ACCESS_TOKEN_COOKIE = "access_token"
 ACCESS_TOKEN_MAX_AGE_SECONDS = 3600
@@ -30,14 +27,13 @@ ACCESS_TOKEN_COOKIE_SECURE = get_env_variable("ACCESS_TOKEN_COOKIE_SECURE", "tru
 ACCESS_TOKEN_COOKIE_DOMAIN = get_env_variable("ACCESS_TOKEN_COOKIE_DOMAIN", "").strip() or None
 
 
-
 @router.post("/login", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED)
 async def login(
     login_dto: LoginRequestDto,
     response: Response,
-    db: AsyncSession = Depends(get_db)
+    auth_service: AuthService = Depends(get_auth_service)
 ):
-    user: User = await auth_service.login(login_dto.email, login_dto.password, db)
+    user: User = await auth_service.login(login_dto.email, login_dto.password)
     token_payload = {
         "sub": str(user.id),
         "email": user.email,
@@ -58,8 +54,12 @@ async def login(
 
 
 @router.post("/google-login", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
-async def login_google(data: TokenSchema, response: Response, db: AsyncSession = Depends(get_db)):
-    user: User = await auth_service.login_google(data, db)
+async def login_google(
+    data: TokenSchema, 
+    response: Response, 
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    user: User = await auth_service.login_google(data)
     token_payload = {
         "sub": str(user.id),
         "email": user.email,
@@ -82,7 +82,7 @@ async def login_google(data: TokenSchema, response: Response, db: AsyncSession =
 @router.post("/logout", response_model=LogoutResponseDto, status_code=status.HTTP_200_OK)
 async def logout(
     response: Response,
-    user: User = Depends(auth_service.get_current_user)
+    user: User = Depends(get_current_user)
 ):
     response.delete_cookie(
         key=ACCESS_TOKEN_COOKIE,
@@ -93,9 +93,8 @@ async def logout(
     )
     return {"message": "Logout successful."}
 
-
 @router.get("/me", response_model=UserResponseDto, status_code=status.HTTP_200_OK)
 async def get_current_logged_user(
-    user: User = Depends(auth_service.get_current_user)
+    user: User = Depends(get_current_user)
 ):
     return user

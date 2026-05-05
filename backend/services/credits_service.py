@@ -6,7 +6,7 @@ from fastapi import HTTPException
 
 class CreditsService:
     async def get_credits_cronjob_update(self) -> int:
-        load_dotenv()
+        load_dotenv(override=True)
         credits_cronjob_update: int | None = int(os.getenv("DEFAULT_CREDITS"))
         if credits_cronjob_update is None:
             raise HTTPException(

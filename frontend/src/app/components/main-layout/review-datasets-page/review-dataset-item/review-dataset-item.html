@@ -33,7 +33,8 @@
                     <div class="video-player-container">
                       <video
                         controls
-                        muted
+                        [muted]="true"
+                        (volumechange)="$any($event.target).muted = true; $any($event.target).volume = 0;"
                         [src]="video.path"
                         class="video-element">
                       </video>

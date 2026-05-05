@@ -9,3 +9,10 @@ class InferenceActionResponseDto(BaseModel):
     name: str
     action_id: Action
     credits: int
+
+class UpdateInferenceActionRequestDto(BaseModel):
+    id: int
+    new_credits: int
+
+class PatchInferenceActionRequestDto(BaseModel):
+    actions: List[UpdateInferenceActionRequestDto]

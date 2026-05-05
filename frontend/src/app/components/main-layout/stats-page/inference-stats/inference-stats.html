@@ -1,7 +1,7 @@
 <div class="stats-container">
   <div class="stats-section-container">
     <div class="stats-section-header-container">
-      <h2> {{ 'stats.videos-header' | translate }} </h2>
+      <h2> {{ 'stats.inference-header' | translate }} </h2>
     </div>
 
     @if (inferenceHistoryStats) {
@@ -43,6 +43,27 @@
             </ngx-charts-line-chart>
           </div>
         </div>
+      </div>
+
+      <div class="date-selector-container">
+        <button
+          type="button"
+          class="btn-primary date-selector-button"
+          (click)="selectPreviousMonth()">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <span class="selected-date-text">
+          {{ selectedDate | date: 'MMMM yyyy' }}
+        </span>
+
+        <button
+          type="button"
+          class="btn-primary date-selector-button"
+          (click)="selectNextMonth()"
+          [disabled]="isSelectNextMonthDisabled()">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
       </div>
     }
   </div>

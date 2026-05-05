@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from starlette import status
 from starlette.websockets import WebSocket, WebSocketState, WebSocketDisconnect
 
@@ -40,10 +40,13 @@ class DatasetUpdatedWs:
         for connection in disconnected:
             await self.disconnect(connection)
 
-dataset_updates_ws = DatasetUpdatedWs()
+_dataset_updated_ws: DatasetUpdatedWs = DatasetUpdatedWs()
+
+def get_datasets_updated() -> DatasetUpdatedWs:
+    return _dataset_updated_ws
 
 @router.websocket("/dataset_updated")
-async def dataset_updated(websocket: WebSocket):
+async def dataset_updated(websocket: WebSocket, dataset_updates_ws: DatasetUpdatedWs = Depends(get_datasets_updated)):
     await dataset_updates_ws.connect(websocket)
     try:
         while True:
