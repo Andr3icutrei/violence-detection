@@ -1,2 +1,0 @@
-from api.dependencies.inference_runtime import get_inference_runtime
-

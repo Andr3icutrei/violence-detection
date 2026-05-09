@@ -1,0 +1,31 @@
+import uuid
+
+from sqlalchemy import String, ForeignKey, Integer, Boolean, Uuid, text
+from sqlalchemy.orm import mapped_column, Mapped, relationship
+from typing import TYPE_CHECKING, List
+
+from core.database import Base
+
+if TYPE_CHECKING:
+    from .inference_history import InferenceHistory
+    from .dataset import Dataset
+
+class Video(Base):
+    __tablename__ = "videos"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, autoincrement=True)
+    uid: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
+        unique=True,
+        server_default=text("gen_random_uuid()")
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    path: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_violent: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    frame_rate: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    dataset_id: Mapped[int] = mapped_column(ForeignKey("datasets.id"), nullable=False)
+    dataset: Mapped["Dataset"] = relationship(back_populates="videos")
+
+    inference_history: Mapped[List["InferenceHistory"]] = relationship(back_populates="video")

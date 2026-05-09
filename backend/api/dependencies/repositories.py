@@ -1,6 +1,0 @@
-from api.dependencies.datasets_repository import get_datasets_repository
-from api.dependencies.inference_actions_repository import get_inference_actions_repository
-from api.dependencies.inference_history_repository import get_inference_history_repository
-from api.dependencies.users_repository import get_users_repository
-from api.dependencies.videos_repository import get_videos_repository
-

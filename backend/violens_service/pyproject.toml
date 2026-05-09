@@ -1,0 +1,30 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aioboto3>=15.5.0",
+    "aiofiles>=25.1.0",
+    "apscheduler>=3.11.2",
+    "asyncpg>=0.31.0",
+    "cv>=1.0.0",
+    "dotenv>=0.9.9",
+    "fastapi>=0.136.1",
+    "fastapi-mail>=1.6.4",
+    "google>=3.0.0",
+    "google-auth>=2.51.0",
+    "jwt>=1.4.0",
+    "opencv-python>=4.13.0.92",
+    "passlib>=1.7.4",
+    "protobuf>=7.34.1",
+    "pydantic[email]>=2.13.4",
+    "pyjwt>=2.12.1",
+    "python-multipart>=0.0.27",
+    "pytorchvideo>=0.1.5",
+    "requests>=2.33.1",
+    "sqlalchemy>=2.0.49",
+    "ultralytics>=8.4.47",
+    "uvicorn>=0.46.0",
+]

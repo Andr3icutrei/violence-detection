@@ -1,0 +1,17 @@
+[project]
+name = "classification-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aioboto3>=15.5.0",
+    "aiofiles>=25.1.0",
+    "dotenv>=0.9.9",
+    "fastapi>=0.136.1",
+    "opencv-python>=4.13.0.92",
+    "pytorchvideo>=0.1.5",
+    "starlette>=1.0.0",
+    "ultralytics>=8.4.48",
+    "uvicorn>=0.46.0",
+]
