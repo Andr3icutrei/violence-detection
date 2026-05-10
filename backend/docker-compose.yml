@@ -1,0 +1,54 @@
+services:
+  violens-service:
+    build:
+      context: .
+      dockerfile: ./violens_service/Dockerfile
+    container_name: violens_service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./violens_service/.env
+    environment:
+      - ENVIRONMENT=production
+      - PYTHONPATH=/code/app
+    networks:
+      - violens_net
+    working_dir: /code/app
+
+  classification-service:
+    build:
+      context: .
+      dockerfile: ./classification_service/Dockerfile
+    container_name: classification_service
+    restart: unless-stopped
+    env_file:
+      - ./classification_service/.env
+    environment:
+      - ENVIRONMENT=production
+      - PYTHONPATH=/code/app
+    networks:
+      - violens_net
+    volumes:
+      - ./inference/slowfast/slowfast_violence_ai4risk.pth:/code/app/inference/slowfast/slowfast_violence_ai4risk.pth
+      - ./inference/resnet3d/r3d18_violence_mix.pth:/code/app/inference/resnet3d/r3d18_violence_mix.pth
+    working_dir: /code/app
+
+  people-tracking-service:
+    build:
+      context: .
+      dockerfile: ./people_tracking_service/Dockerfile
+    container_name: people_tracking_service
+    restart: unless-stopped
+    env_file:
+      - ./people_tracking_service/.env
+    environment:
+      - ENVIRONMENT=production
+      - PYTHONPATH=/code/app
+    networks:
+      - violens_net
+    working_dir: /code/app
+
+networks:
+  violens_net:
+    driver: bridge

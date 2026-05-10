@@ -133,45 +133,64 @@ class VideosService:
         try:
             classification_url: str = get_env_variable("CLASSIFICATION_SERVICE_URL")
             async with httpx.AsyncClient(verify=False) as client:
-                response = await client.get(
-                    f"{classification_url}/classification/classify_video_gradcam",
+                async with client.stream(
+                    "GET",
+                    f"{classification_url}/classification/classify_video_gradcam_stream",
                     params={"video_path": video.path, "inference_model": inference_model.value},
                     timeout=500.0,
-                )
-                if response.status_code != 200:
-                    raise HTTPException(status_code=response.status_code, detail=response.text)
-                response.raise_for_status()
-                data = response.json()
-                overlay_video_path = data["video_path"]
+                ) as response:
+                    if response.status_code != 200:
+                        detail = (await response.aread()).decode("utf-8", errors="ignore")
+                        raise HTTPException(status_code=response.status_code, detail=detail)
 
-                await self._deduct_credits(db_user, inference_action)
+                    content_type = (response.headers.get("content-type") or "").lower()
+                    suffix = ".avi" if "x-msvideo" in content_type or "video/avi" in content_type else ".mp4"
+                    overlay_temp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+                    overlay_video_path = overlay_temp.name
+                    overlay_temp.close()
 
-                inference_entry = InferenceHistory(
-                    video_id=video.id,
-                    user_id=current_user.id,
-                    credits_used=inference_action.credits
+                    with open(overlay_video_path, "wb") as output_file:
+                        async for chunk in response.aiter_bytes():
+                            output_file.write(chunk)
+
+                    predicted_label = response.headers.get("X-Predicted-Label")
+                    confidence_header = response.headers.get("X-Confidence")
+                    probability_header = response.headers.get("X-Predicted-Class-Probability")
+
+            if not predicted_label or confidence_header is None or probability_header is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Classification response headers are missing.",
                 )
-                inference_classification = InferenceHistoryClassification(
-                    ground_truth=video.is_violent,
-                    prediction=int(data["predicted_label"]),
-                    inference_history=inference_entry
+
+            await self._deduct_credits(db_user, inference_action)
+
+            inference_entry = InferenceHistory(
+                video_id=video.id,
+                user_id=current_user.id,
+                credits_used=inference_action.credits
+            )
+            inference_classification = InferenceHistoryClassification(
+                ground_truth=video.is_violent,
+                prediction=int(predicted_label),
+                inference_history=inference_entry
+            )
+            try:
+                await self.inference_history_repository.add_inference_history_classification(
+                    inference_classification
                 )
-                try:
-                    await self.inference_history_repository.add_inference_history_classification(
-                        inference_classification
-                    )
-                except Exception as e:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail=f"Error while adding an inference history classification entry: {str(e)}"
-                    ) from e
-                should_cleanup = False
-                return InferenceVideoResult(
-                    video_path=overlay_video_path,
-                    predicted_label=data["predicted_label"],
-                    confidence=data["confidence"],
-                    predicted_class_probability=data["predicted_class_probability"],
-                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error while adding an inference history classification entry: {str(e)}"
+                ) from e
+            should_cleanup = False
+            return InferenceVideoResult(
+                video_path=overlay_video_path,
+                predicted_label=predicted_label,
+                confidence=float(confidence_header),
+                predicted_class_probability=float(probability_header),
+            )
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -193,39 +212,56 @@ class VideosService:
         people_tracking_url = get_env_variable("PEOPLE_TRACKING_SERVICE_URL")
         try:
             async with httpx.AsyncClient(verify=False) as client:
-                response = await client.get(
-                    f"{people_tracking_url}/people_tracking",
+                async with client.stream(
+                    "GET",
+                    f"{people_tracking_url}/people_tracking/stream",
                     params={"video_path": video.path},
                     timeout=500.0
-                )
-                if response.status_code != 200:
-                    raise HTTPException(status_code=response.status_code, detail=response.text)
-                response.raise_for_status()
-                data = response.json()
-                output_video_path = data["video_path"]
+                ) as response:
+                    if response.status_code != 200:
+                        detail = (await response.aread()).decode("utf-8", errors="ignore")
+                        raise HTTPException(status_code=response.status_code, detail=detail)
 
-                await self._deduct_credits(db_user, inference_action)
+                    content_type = (response.headers.get("content-type") or "").lower()
+                    suffix = ".avi" if "x-msvideo" in content_type or "video/avi" in content_type else ".mp4"
+                    tracked_temp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+                    output_video_path = tracked_temp.name
+                    tracked_temp.close()
 
-                inference_entry = InferenceHistory(
-                    video_id=video.id,
-                    user_id=current_user.id,
-                    credits_used=inference_action.credits
+                    with open(output_video_path, "wb") as output_file:
+                        async for chunk in response.aiter_bytes():
+                            output_file.write(chunk)
+
+                    tracked_header = response.headers.get("X-Tracked-People-Count")
+
+            if tracked_header is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="People tracking response headers are missing.",
                 )
-                inference_classification = InferenceHistoryPeopleTracking(
-                    people_tracked=int(data["people_tracked"]),
-                    inference_history=inference_entry
+
+            await self._deduct_credits(db_user, inference_action)
+
+            inference_entry = InferenceHistory(
+                video_id=video.id,
+                user_id=current_user.id,
+                credits_used=inference_action.credits
+            )
+            inference_classification = InferenceHistoryPeopleTracking(
+                people_tracked=int(tracked_header),
+                inference_history=inference_entry
+            )
+            try:
+                await self.inference_history_repository.add_inference_history_classification(
+                    inference_classification
                 )
-                try:
-                    await self.inference_history_repository.add_inference_history_classification(
-                        inference_classification
-                    )
-                except Exception as e:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail=f"Error while adding an inference history classification entry: {str(e)}"
-                    ) from e
-                should_cleanup = False
-                return output_video_path, data["people_tracked"]
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error while adding an inference history classification entry: {str(e)}"
+                ) from e
+            should_cleanup = False
+            return output_video_path, int(tracked_header)
         except ValueError as exc:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

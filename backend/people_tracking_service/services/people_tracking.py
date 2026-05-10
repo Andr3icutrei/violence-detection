@@ -16,7 +16,9 @@ class PeopleTrackingService:
     def __init__(self, inference_runtime: InferenceRuntime = Depends(get_inference_runtime)):
         self.inference_runtime = inference_runtime
 
-    async def people_tracking(self, video_path: str) -> tuple[str, int]:
+    async def people_tracking(self, video_path: str) -> tuple[str, int, str]:
+        temp_video_path = ""
+        overlay_video_path = ""
         try:
             temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
             temp_video_path = temp_video_file.name
@@ -31,10 +33,11 @@ class PeopleTrackingService:
                 temp_video_path,
                 self.inference_runtime.yolo_model
             )
-            return overlay_video_path, people_tracked
+            return overlay_video_path, people_tracked, temp_video_path
         except Exception as e:
-            if os.path.exists(video_path):
-                os.remove(video_path)
+            for path in (overlay_video_path, temp_video_path):
+                if path and os.path.exists(path):
+                    os.remove(path)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"An error occurred during people tracking: {str(e)}"

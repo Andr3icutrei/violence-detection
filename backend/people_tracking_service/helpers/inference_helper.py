@@ -7,6 +7,42 @@ from starlette import status
 from ultralytics.trackers.basetrack import BaseTrack
 
 
+def _create_temp_writer(fps: float, size: tuple[int, int]) -> tuple[str, cv2.VideoWriter]:
+    # Prefer software-friendly AVI codecs; allow override via env.
+    forced_codec = os.getenv("VIDEO_OUTPUT_CODEC")
+    forced_ext = os.getenv("VIDEO_OUTPUT_EXT")
+    if forced_codec:
+        suffix = forced_ext if forced_ext and forced_ext.startswith(".") else ".avi"
+        output = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+        output_path = output.name
+        output.close()
+        writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*forced_codec), fps, size)
+        return output_path, writer
+
+    candidates = [
+        ("mp4v", ".mp4"),
+        ("vp80", ".webm"),
+        ("avc1", ".mp4"),
+        ("MJPG", ".avi"),
+        ("XVID", ".avi"),
+    ]
+    for codec, suffix in candidates:
+        output = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+        output_path = output.name
+        output.close()
+        writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*codec), fps, size)
+        if writer.isOpened():
+            return output_path, writer
+        writer.release()
+        if os.path.exists(output_path):
+            os.remove(output_path)
+
+    output = tempfile.NamedTemporaryFile(delete=False, suffix=".avi")
+    output_path = output.name
+    output.close()
+    return output_path, cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"MJPG"), fps, size)
+
+
 def write_overlay_video(overlays: list, source_video_path: str) -> str:
     if not overlays:
         raise ValueError("No Grad-CAM overlays were produced for this video.")
@@ -25,12 +61,9 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     total_source_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     height, width = first_frame.shape[:2]
-    output = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-    output_path = output.name
-    output.close()
 
     output_fps = fps if fps > 0 else 24.0
-    writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"avc1"), output_fps, (width, height))
+    output_path, writer = _create_temp_writer(output_fps, (width, height))
     if not writer.isOpened():
         raise ValueError("Could not initialize video writer for Grad-CAM output.")
 
@@ -99,14 +132,12 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
         if hasattr(yolo_model.predictor, 'trackers'):
             for tracker in yolo_model.predictor.trackers:
                 tracker.reset()
-    tracked_temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-    tracked_video_path = tracked_temp_file.name
-    tracked_temp_file.close()
 
     cap = cv2.VideoCapture(temp_video_path)
     writer = None
     final_output_path = ""
     tracked_ids = set()
+    tracked_video_path = ""
     try:
         if not cap.isOpened():
             raise HTTPException(
@@ -126,9 +157,7 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
                 detail="Invalid video dimensions for tracking output."
             )
 
-        writer = cv2.VideoWriter(
-            tracked_video_path,
-            cv2.VideoWriter_fourcc(*"avc1"),
+        tracked_video_path, writer = _create_temp_writer(
             fps,
             (width, height),
         )
@@ -200,5 +229,5 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
         cap.release()
         if writer is not None:
             writer.release()
-        if os.path.exists(tracked_video_path) and tracked_video_path != final_output_path:
+        if tracked_video_path and os.path.exists(tracked_video_path) and tracked_video_path != final_output_path:
             os.remove(tracked_video_path)

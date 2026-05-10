@@ -30,6 +30,12 @@ def _format_score(value: float | str) -> str:
             detail="Invalid score value returned by classification service.",
         ) from exc
 
+def _media_type_for_path(file_path: str) -> str:
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext == ".avi":
+        return "video/x-msvideo"
+    return "video/mp4"
+
 @router.get("/get_videos_paged", response_model=List[VideoResponseDto], status_code=HTTP_200_OK)
 async def get_videos_paged(
     current_user: User = Depends(get_current_user),
@@ -84,8 +90,8 @@ async def inference_video(
 
     return FileResponse(
         path=inference_result.video_path,
-        media_type="video/mp4",
-        filename="gradcam_output.mp4",
+        media_type=_media_type_for_path(inference_result.video_path),
+        filename=f"gradcam_output{os.path.splitext(inference_result.video_path)[1]}",
         headers={
             "X-Predicted-Label": str(inference_result.predicted_label),
             "X-Confidence": formatted_conf,
@@ -105,8 +111,8 @@ async def people_tracking(
         background_tasks.add_task(_cleanup_temp_file, processed_video_path)
         return FileResponse(
             path=processed_video_path,
-            media_type="video/mp4",
-            filename="people_tracking_output.mp4",
+            media_type=_media_type_for_path(processed_video_path),
+            filename=f"people_tracking_output{os.path.splitext(processed_video_path)[1]}",
             headers={
                 "X-Tracked-People-Count": str(tracked_count),
             },
