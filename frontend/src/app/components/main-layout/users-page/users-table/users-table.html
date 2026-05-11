@@ -12,7 +12,9 @@
         @for (user of users; track user.id; let i = $index) {
           <tr class="table-row-item">
             <td class="table-data-item">
-              {{ i + 1 }}
+              <div class="dataset-id-badge-container">
+                <div class="dataset-id-badge">#{{ i + 1 }}</div>
+              </div>
             </td>
 
             <td class="table-data-item">

@@ -69,7 +69,11 @@ def run_classification_and_gradcam(
             detail=f"Failed to build Grad-CAM video output: {exc}",
         )
 
+
 def write_overlay_video(overlays: list, source_video_path: str) -> str:
+    import subprocess
+    import numpy as np
+
     if not overlays:
         raise ValueError("No Grad-CAM overlays were produced for this video.")
 
@@ -87,9 +91,8 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     total_source_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     height, width = first_frame.shape[:2]
-    
+
     def _create_temp_writer(fps: float, size: tuple[int, int]) -> tuple[str, cv2.VideoWriter]:
-        # Prefer software-friendly AVI codecs; allow override via env.
         forced_codec = os.getenv("VIDEO_OUTPUT_CODEC")
         forced_ext = os.getenv("VIDEO_OUTPUT_EXT")
         if forced_codec:
@@ -102,18 +105,34 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
 
         candidates = [
             ("mp4v", ".mp4"),
-            ("vp80", ".webm"),
-            ("avc1", ".mp4"),
             ("MJPG", ".avi"),
             ("XVID", ".avi"),
+            ("avc1", ".mp4"),
         ]
         for codec, suffix in candidates:
             output = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
             output_path = output.name
             output.close()
             writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*codec), fps, size)
+
+            if not writer.isOpened():
+                writer.release()
+                if os.path.exists(output_path):
+                    os.remove(output_path)
+                continue
+
+            probe_frame = np.zeros((size[1], size[0], 3), dtype=np.uint8)
+            writer.write(probe_frame)
+
+            writer.release()
+            if os.path.exists(output_path) and os.path.getsize(output_path) == 0:
+                os.remove(output_path)
+                continue
+
+            writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*codec), fps, size)
             if writer.isOpened():
                 return output_path, writer
+
             writer.release()
             if os.path.exists(output_path):
                 os.remove(output_path)
@@ -124,6 +143,10 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
         return output_path, cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"MJPG"), fps, size)
 
     output_fps = fps if fps > 0 else 24.0
+    print(f"DEBUG: S-a deschis video-ul. FPS={fps}, Frame-uri totale={total_source_frames}", flush=True)
+    ret, test_frame = cap.read()
+    print(f"DEBUG: Primul frame a putut fi citit? {ret}", flush=True)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     output_path, writer = _create_temp_writer(output_fps, (width, height))
     if not writer.isOpened():
         raise ValueError("Could not initialize video writer for Grad-CAM output.")
@@ -132,27 +155,28 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
         total_source_frames = len(overlays)
 
     num_overlays = len(overlays)
-    
-    # Pre-process overlays
+
     processed_overlays = []
     for frame in overlays:
         if frame is None:
             processed_overlays.append(None)
             continue
-        
-        if frame.ndim == 2:
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-        elif frame.shape[2] == 4:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
-            
-        if frame.dtype != "uint8":
-            frame = frame.clip(0, 255).astype("uint8")
-            
-        if frame.shape[0] != height or frame.shape[1] != width:
+
+        frame = np.ascontiguousarray(frame)
+        if frame.dtype != np.uint8:
+            frame = np.clip(frame * (255.0 if frame.max() <= 1.0 else 1.0), 0, 255).astype(np.uint8)
+
+        if frame.shape[:2] != (height, width):
             frame = cv2.resize(frame, (width, height))
-            
-        bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        processed_overlays.append(bgr_frame)
+
+        if frame.ndim == 2:
+            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+        elif frame.shape[2] == 4:
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
+        elif frame.shape[2] == 3:
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+        processed_overlays.append(frame)
 
     written_frames = 0
     frame_idx = 0
@@ -184,4 +208,19 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
         raise ValueError("Grad-CAM output file is empty after encoding.")
 
-    return output_path
+    final_output_path = output_path + "_h264.mp4"
+
+    try:
+        subprocess.run([
+            "ffmpeg", "-y", "-i", output_path,
+            "-vcodec", "libx264", "-crf", "23", "-preset", "fast",
+            "-pix_fmt", "yuv420p", final_output_path
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        return final_output_path
+
+    except Exception as e:
+        print(f"Eroare la conversia ffmpeg: {e}", flush=True)
+        return output_path

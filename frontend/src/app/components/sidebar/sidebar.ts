@@ -1,10 +1,9 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MainLayoutPage } from '../main-layout/main-layout-page.type';
-import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SidebarService } from '../../services/sidebar/sidebar.service';
 import { Subscription } from 'rxjs';
-import { MainLayout } from '../main-layout/main-layout';
 import { AuthService } from '../../services/auth/auth-service';
 import { UserResponseDto } from '../../core/api/models/user-response-dto';
 
@@ -23,6 +22,12 @@ export const menuItems: SidebarMenuItem[] = [
     icon: 'fa-solid fa-house',
   },
   {
+    id: 'datasets',
+    roles: ['admin', 'user'],
+    title: 'sidebar.datasets',
+    icon: 'fa-solid fa-layer-group'
+  },
+  {
     id: 'users',
     roles: ['admin'],
     title: 'sidebar.users',
@@ -32,7 +37,7 @@ export const menuItems: SidebarMenuItem[] = [
     id: 'review-datasets',
     roles: ['admin'],
     title: 'sidebar.review-datasets',
-    icon: 'fa-solid fa-layer-group',
+    icon: 'fa-solid fa-microscope',
   },
   {
     id: 'stats',

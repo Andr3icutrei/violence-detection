@@ -119,7 +119,7 @@
 
           <div class="detail-item">
             <span class="detail-item-label">{{ 'inference.is-violent' | translate }}</span>
-            <span class="detail-item-value" [class.is-violent]="videoDetails?.is_violent" [class.not-violent]="!videoDetails?.is_violent">
+            <span class="detail-item-value" [class.is-violent]="videoDetails?.is_violent" [class.non-violent]="!videoDetails?.is_violent">
               {{ videoDetails?.is_violent ? ('inference.yes' | translate) : ('inference.no' | translate) }}
             </span>
           </div>
@@ -184,7 +184,7 @@
           <div class="inference-results-metric-container">
             <div class="detail-item">
               <span class="detail-item-label">{{ 'inference.predicted-label' | translate }}</span>
-              <span class="detail-item-value" [class.is-violent]="predictedLabel" [class.not-violent]="!predictedLabel">
+              <span class="detail-item-value" [class.is-violent]="predictedLabel" [class.non-violent]="!predictedLabel">
                 {{ predictedLabel ? ('inference.yes' | translate) : ('inference.no' | translate) }}
               </span>
             </div>

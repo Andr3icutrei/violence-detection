@@ -1,12 +1,9 @@
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y \
-    libgl1 \
-    libglib2.0-0 \
+    ffmpeg \
     libsm6 \
-    libxrender1 \
     libxext6 \
-    libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code/app

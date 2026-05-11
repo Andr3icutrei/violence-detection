@@ -18,9 +18,11 @@ export type { InferenceHistoryStatsResponseDto } from './models/inference-histor
 export type { LoginRequestDto } from './models/login-request-dto';
 export type { LogoutResponseDto } from './models/logout-response-dto';
 export type { MostPopularDatasetResponseDto } from './models/most-popular-dataset-response-dto';
+export type { PatchInferenceActionRequestDto } from './models/patch-inference-action-request-dto';
 export type { ReviewDatasetRequestDto } from './models/review-dataset-request-dto';
 export type { ReviewVideoRequestDto } from './models/review-video-request-dto';
 export type { TokenSchema } from './models/token-schema';
+export type { UpdateInferenceActionRequestDto } from './models/update-inference-action-request-dto';
 export type { UserBanRequestDto } from './models/user-ban-request-dto';
 export type { UserResponseDto } from './models/user-response-dto';
 export type { UsersStatsResponseDto } from './models/users-stats-response-dto';

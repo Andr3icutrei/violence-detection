@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
 import { DatasetStatus } from '../../../../core/api/models/dataset-status';
 import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
@@ -10,8 +10,6 @@ import {SearchBar} from '../../../search-bar/search-bar';
 import { Paginator } from '../../../paginator/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-inspect-datasets',
@@ -74,7 +72,7 @@ export class InspectDatasets implements OnInit {
     this.datasetsToReview = [];
     this.isLoadingDatasets = true;
     this.datasetsService
-      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus)
+      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus, false)
       .subscribe({
         next: (data: DatasetToReviewResponseDto[]): void => {
           this.hasMoreDatasets = data.length > this.pageSize;

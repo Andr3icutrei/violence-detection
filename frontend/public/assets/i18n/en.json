@@ -115,7 +115,8 @@
     "dashboard": "Dashboard",
     "review-datasets": "Review Datasets",
     "users": "Users",
-    "stats": "Statistics"
+    "stats": "Statistics",
+    "datasets": "Datasets"
   },
   "inference": {
     "original-video": "Original Video",
@@ -245,5 +246,17 @@
     "per-action-credits": "Credits per Inference Action",
     "save": "Save Changes",
     "update-credits": "Credits for user creation/daily credits"
+  },
+  "datasets": {
+    "official-datasets": "Official Datasets",
+    "unofficial-datasets": "Unofficial Datasets",
+    "search-bar-placeholder": "Search for datasets by name...",
+    "no-datasets-found": "No datasets were found for the current search criteria.",
+    "name": "Name",
+    "status": "Status",
+    "videos-count": "Videos Count",
+    "violent-videos": "Violent",
+    "non-violent-videos": "Non-Violent",
+    "requested-by": "Requested By"
   }
 }

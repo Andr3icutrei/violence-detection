@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject, tap } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { catchError } from 'rxjs/operators';

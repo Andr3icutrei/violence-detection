@@ -7,7 +7,9 @@ export interface DatasetToReviewResponseDto {
   id: number;
   is_official: boolean;
   name: string;
+  non_violent_videos_count?: number;
   status: DatasetStatus;
   user: UserResponseDto;
   videos_count?: number;
+  violent_videos_count?: number;
 }

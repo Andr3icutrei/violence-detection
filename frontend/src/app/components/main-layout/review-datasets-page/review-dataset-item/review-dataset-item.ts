@@ -8,12 +8,10 @@ import {
   Output,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
 import { DatasetWithVideosResponseDto } from '../../../../core/api/models/dataset-with-videos-response-dto';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {VideoResponseDto} from '../../../../core/api/models/video-response-dto';
-import { ControlError } from '../../../control-error/control-error';
 import { DatasetResponseDto } from '../../../../core/api/models/dataset-response-dto';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -8,11 +8,9 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from '@angular/forms';
 import { InferenceActionResponseDto } from '../../../../../core/api/models/inference-action-response-dto';
 import { InferenceActionsService } from '../../../../../services/inference_actions/inference-actions.service';
-import { UpperCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 

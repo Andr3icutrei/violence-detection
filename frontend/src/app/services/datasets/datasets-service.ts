@@ -38,6 +38,7 @@ export class DatasetsService {
     page: number,
     pageSize: number,
     status: DatasetStatus | null,
+    isOfficial?: boolean,
   ): Observable<DatasetToReviewResponseDto[]> {
     let params: HttpParams = new HttpParams().set('page', page).set('page_size', pageSize);
     if (searchTerm !== '') {
@@ -45,6 +46,9 @@ export class DatasetsService {
     }
     if (status !== null) {
       params = params.set('dataset_status', status);
+    }
+    if (isOfficial !== undefined && isOfficial !== null) {
+      params = params.set('is_official', isOfficial);
     }
     return this.httpClient.get<DatasetToReviewResponseDto[]>(
       environment.apiUrl + 'datasets/get_datasets',

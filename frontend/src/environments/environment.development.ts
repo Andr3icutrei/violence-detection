@@ -1,4 +1,4 @@
-export const domain = 'jobs-bow-turned-record.trycloudflare.com';
+export const domain = 'sublime-certainly-requesting-toxic.trycloudflare.com';
 
 export const environment = {
   production: false,

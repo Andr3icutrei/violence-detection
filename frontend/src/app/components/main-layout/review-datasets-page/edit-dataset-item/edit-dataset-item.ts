@@ -16,7 +16,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';
 import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
-import {DatasetStatusModel} from '../../../../models/dataset-status.model';
 
 @Component({
   selector: 'app-edit-dataset-item',

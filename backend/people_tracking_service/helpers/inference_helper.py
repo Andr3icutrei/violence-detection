@@ -19,20 +19,41 @@ def _create_temp_writer(fps: float, size: tuple[int, int]) -> tuple[str, cv2.Vid
         writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*forced_codec), fps, size)
         return output_path, writer
 
+    import numpy as np
+
     candidates = [
         ("mp4v", ".mp4"),
-        ("vp80", ".webm"),
-        ("avc1", ".mp4"),
         ("MJPG", ".avi"),
         ("XVID", ".avi"),
+        ("avc1", ".mp4"),
     ]
     for codec, suffix in candidates:
         output = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
         output_path = output.name
         output.close()
         writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*codec), fps, size)
+        
+        if not writer.isOpened():
+            writer.release()
+            if os.path.exists(output_path):
+                os.remove(output_path)
+            continue
+            
+        # Probe write to ensure internal encoder works
+        probe_frame = np.zeros((size[1], size[0], 3), dtype=np.uint8)
+        writer.write(probe_frame)
+        
+        # Test if it flushed properly or check file size. Python cv2.VideoWriter.write returns None usually,
+        # but re-opening allows checking if file was created successfully.
+        writer.release()
+        if os.path.exists(output_path) and os.path.getsize(output_path) == 0:
+            os.remove(output_path)
+            continue
+            
+        writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*codec), fps, size)
         if writer.isOpened():
             return output_path, writer
+            
         writer.release()
         if os.path.exists(output_path):
             os.remove(output_path)
@@ -72,6 +93,8 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
 
     num_overlays = len(overlays)
     
+    import numpy as np
+    
     # Pre-process overlays
     processed_overlays = []
     for frame in overlays:
@@ -79,19 +102,22 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
             processed_overlays.append(None)
             continue
         
-        if frame.ndim == 2:
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-        elif frame.shape[2] == 4:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
+        frame = np.ascontiguousarray(frame)
+        if frame.dtype != np.uint8:
+            frame = np.clip(frame * (255.0 if frame.max() <= 1.0 else 1.0), 0, 255).astype(np.uint8)
             
-        if frame.dtype != "uint8":
-            frame = frame.clip(0, 255).astype("uint8")
-            
-        if frame.shape[0] != height or frame.shape[1] != width:
+        if frame.shape[:2] != (height, width):
             frame = cv2.resize(frame, (width, height))
             
-        bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        processed_overlays.append(bgr_frame)
+        if frame.ndim == 2:
+            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+        elif frame.shape[2] == 4:
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
+        elif frame.shape[2] == 3:
+            # Assume matplotlib RBG -> BGR conversion
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+        processed_overlays.append(frame)
 
     written_frames = 0
     frame_idx = 0
@@ -127,6 +153,8 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
 
 
 def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
+    import subprocess
+
     BaseTrack.reset_id()
     if hasattr(yolo_model, 'predictor') and yolo_model.predictor is not None:
         if hasattr(yolo_model.predictor, 'trackers'):
@@ -138,6 +166,7 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
     final_output_path = ""
     tracked_ids = set()
     tracked_video_path = ""
+
     try:
         if not cap.isOpened():
             raise HTTPException(
@@ -223,8 +252,24 @@ def run_people_tracking(temp_video_path: str, yolo_model) -> tuple[str, int]:
                 detail="Tracking output video file is missing or empty.",
             )
 
-        final_output_path = tracked_video_path
-        return tracked_video_path, len(tracked_ids)
+        h264_output_path = tracked_video_path + "_h264.mp4"
+
+        try:
+            subprocess.run([
+                "ffmpeg", "-y", "-i", tracked_video_path,
+                "-vcodec", "libx264", "-crf", "23", "-preset", "fast",
+                "-pix_fmt", "yuv420p", h264_output_path
+            ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+            if os.path.exists(tracked_video_path):
+                os.remove(tracked_video_path)
+
+            final_output_path = h264_output_path
+        except Exception:
+            final_output_path = tracked_video_path
+
+        return final_output_path, len(tracked_ids)
+
     finally:
         cap.release()
         if writer is not None:

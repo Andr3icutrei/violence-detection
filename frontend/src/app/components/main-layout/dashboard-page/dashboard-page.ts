@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Topbar } from '../../topbar/topbar';
 import { InspectVideos } from './inspect-videos/inspect-videos';
 import { SidebarService } from '../../../services/sidebar/sidebar.service';
 

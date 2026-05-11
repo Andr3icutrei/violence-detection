@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, OnInit, Output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   FormBuilder,
@@ -11,6 +11,7 @@ import { ControlError } from '../../control-error/control-error';
 import { DatasetsService } from '../../../services/datasets/datasets-service';
 import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
 import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-create-dataset',
@@ -43,6 +44,7 @@ export class CreateDataset implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private datasetService: DatasetsService,
+    private destroyRef: DestroyRef,
   ) {
     this.form = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
@@ -50,22 +52,24 @@ export class CreateDataset implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.valueChanges.subscribe(() => {
-      if (
-        this.form.dirty &&
-        (this.form.hasError('noFilesUploaded') ||
-          this.form.hasError('tooManyFilesUploaded') ||
-          this.form.hasError('differentFilesFormat') ||
-          this.form.hasError('filesTooLarge'))
-      ) {
-        this.submitStatusKey = null;
-        this.submitMessageTranslateParams = {};
-        this.success = null;
-        this.form.setErrors(null);
-        this.form.updateValueAndValidity({ emitEvent: false });
-        this.cdr.detectChanges();
-      }
-    });
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (
+          this.form.dirty &&
+          (this.form.hasError('noFilesUploaded') ||
+            this.form.hasError('tooManyFilesUploaded') ||
+            this.form.hasError('differentFilesFormat') ||
+            this.form.hasError('filesTooLarge'))
+        ) {
+          this.submitStatusKey = null;
+          this.submitMessageTranslateParams = {};
+          this.success = null;
+          this.form.setErrors(null);
+          this.form.updateValueAndValidity({ emitEvent: false });
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   public isControlRequired(controlName: string): boolean {

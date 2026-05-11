@@ -45,7 +45,7 @@ export class VideosService {
 
     if (selectedActionId === 10) {
       return this.httpClient.post(
-        `${environment.apiUrl}videos/inference_video/${videoId}`,
+        `${environment.apiUrl}videos/classify_video_gradcam/${videoId}`,
         null,
         responseOptions,
       );

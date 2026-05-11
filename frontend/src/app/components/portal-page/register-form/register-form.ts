@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,13 +11,13 @@ import {
 import { ControlError } from '../../control-error/control-error';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalForm } from '../portal-form.type';
-import { AuthService } from '../../../services/auth/auth-service';
 import { UsersService } from '../../../services/users/users-service';
 import { UserResponseDto } from '../../../core/api/models/user-response-dto';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
 import { FormDescription } from '../form-description/form-description';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register-form',
@@ -48,6 +48,7 @@ export class RegisterForm implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private usersService: UsersService,
+    private destroyRef: DestroyRef,
   ) {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -60,15 +61,17 @@ export class RegisterForm implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.form.valueChanges.subscribe(() => {
-      if (
-        this.form.dirty &&
-        (this.form.hasError('serverError') || this.form.hasError('accountAlreadyExists'))
-      ) {
-        this.form.setErrors(null);
-        this.form.updateValueAndValidity({ emitEvent: false });
-      }
-    });
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (
+          this.form.dirty &&
+          (this.form.hasError('serverError') || this.form.hasError('accountAlreadyExists'))
+        ) {
+          this.form.setErrors(null);
+          this.form.updateValueAndValidity({ emitEvent: false });
+        }
+      });
   }
 
   private confirmPasswordValidator(): ValidatorFn {

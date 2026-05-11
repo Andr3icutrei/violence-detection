@@ -1,11 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router, RouterLink} from '@angular/router';
+import { RouterLink} from '@angular/router';
 import { UsersService } from '../../../services/users/users-service';
 import {ControlError} from "../../control-error/control-error";
 import {FormSubmitDetail} from "../../form-submit-detail/form-submit-detail";
-import { GoogleSigninButtonDirective } from '@abacritt/angularx-social-login';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,

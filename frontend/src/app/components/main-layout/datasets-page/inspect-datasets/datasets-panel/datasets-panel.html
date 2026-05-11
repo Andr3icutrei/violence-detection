@@ -1,0 +1,55 @@
+<div class="datasets-panel-container">
+  <div class="datasets-panel-title-container">
+    <h2>{{ (isOfficial ? 'datasets.official-datasets' : 'datasets.unofficial-datasets') | translate }}</h2>  </div>
+
+  <div class="datasets-panel-searchbar-container">
+    <app-search-bar
+      [placeholderText]="'datasets.search-bar-placeholder' | translate"
+      (onDebouncedSearch)="debouncedSearch($event)"
+    ></app-search-bar>
+  </div>
+
+  @if(availableDatasets.length !== 0) {
+    <div class="datasets-panel-content-container">
+      @for (dataset of availableDatasets; track dataset.id; let i = $index) {
+        <div class="dataset-panel-item-container">
+          <div class="dataset-id-badge-container">
+            <div class="dataset-id-badge">#{{ i + 1 }}</div>
+          </div>
+          <div class="dataset-detail">
+            <span class="detail-label">{{ 'datasets.name' | translate }}:</span>
+            <span class="detail-value">{{ dataset.name }}</span>
+          </div>
+          <div class="dataset-detail">
+            <span class="detail-label">{{ 'datasets.videos-count' | translate }}:</span>
+            <span class="detail-value">
+            <span class="detail-item-value is-violent"> {{ dataset.violent_videos_count }} {{ 'datasets.violent-videos' | translate }} </span> /
+            <span class="detail-item-value non-violent"> {{ dataset.non_violent_videos_count }} {{ 'datasets.non-violent-videos' | translate }} </span>
+          </span>
+          </div>
+          <div class="dataset-detail">
+            <span class="detail-label">{{ 'datasets.requested-by' | translate }}:</span>
+            <span class="email-badge">{{ dataset.user.email }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state-dataset-panel-container">
+      <div class="empty-state-dataset-panel">
+        {{ 'datasets.no-datasets-found' | translate }}
+      </div>
+    </div>
+  }
+
+  @if (hasMore) {
+    <div class="datasets-panel-paginator-container">
+      <app-paginator
+        [page]="page"
+        [pageSize]="pageSize"
+        [hasMore]="hasMore"
+        (pageChange)="onPageChange($event)"
+      ></app-paginator>
+    </div>
+  }
+</div>

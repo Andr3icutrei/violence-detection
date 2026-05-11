@@ -51,4 +51,3 @@ services:
 
 networks:
   violens_net:
-    driver: bridge

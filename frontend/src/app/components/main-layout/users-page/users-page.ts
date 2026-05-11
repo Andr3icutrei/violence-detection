@@ -1,8 +1,4 @@
 import { Component } from '@angular/core';
-import { UsersTable } from './users-table/users-table';
-import { Paginator } from '../../paginator/paginator';
-import { SearchBar } from '../../search-bar/search-bar';
-import { TranslatePipe } from '@ngx-translate/core';
 import { InspectUsers } from './inspect-users/inspect-users';
 
 @Component({

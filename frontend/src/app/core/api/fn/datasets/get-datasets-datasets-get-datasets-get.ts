@@ -15,6 +15,7 @@ export interface GetDatasetsDatasetsGetDatasetsGet$Params {
   page?: number;
   page_size?: number;
   dataset_status?: (DatasetStatus | null);
+  is_official?: (boolean | null);
 }
 
 export function getDatasetsDatasetsGetDatasetsGet(http: HttpClient, rootUrl: string, params?: GetDatasetsDatasetsGetDatasetsGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<DatasetToReviewResponseDto>>> {
@@ -24,6 +25,7 @@ export function getDatasetsDatasetsGetDatasetsGet(http: HttpClient, rootUrl: str
     rb.query('page', params.page, {});
     rb.query('page_size', params.page_size, {});
     rb.query('dataset_status', params.dataset_status, {});
+    rb.query('is_official', params.is_official, {});
   }
 
   return http.request(

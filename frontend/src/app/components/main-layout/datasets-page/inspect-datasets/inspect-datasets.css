@@ -1,0 +1,12 @@
+.inspect-datasets-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.datasets-panel-container {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 1rem;
+}

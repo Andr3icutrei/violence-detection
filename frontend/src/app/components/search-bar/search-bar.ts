@@ -1,8 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, DestroyRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { required } from '@angular/forms/signals';
 import { debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-search-bar',
@@ -16,6 +15,8 @@ export class SearchBar implements OnInit {
   @Output() onDebouncedSearch: EventEmitter<string> = new EventEmitter();
   private currentSearchTerm: string = '';
 
+  constructor(private destroyRef: DestroyRef) {}
+
   ngOnInit(): void {
     this.searchControl = new FormControl('', { updateOn: 'change' });
     this.searchControl.valueChanges
@@ -26,7 +27,9 @@ export class SearchBar implements OnInit {
           this.currentSearchTerm = searchTerm || '';
           this.onDebouncedSearch.emit(this.currentSearchTerm);
           return of([]);
-        })
-      ).subscribe();
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }

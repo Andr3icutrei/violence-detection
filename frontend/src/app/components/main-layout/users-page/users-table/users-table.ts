@@ -1,10 +1,8 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserResponseDto } from '../../../../core/api/models/user-response-dto';
 import { UsersService } from '../../../../services/users/users-service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ConfirmationPopup } from '../../../confirmation-popup/confirmation-popup';
-import { UserUpdatedService } from '../../../../services/user-updated/user-updated.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users-table',

@@ -1,8 +1,8 @@
 import {
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
-  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -11,15 +11,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import {
   GoogleSigninButtonModule,
   SocialAuthService,
-  SocialUser,
 } from '@abacritt/angularx-social-login';
-import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlError } from '../../control-error/control-error';
 import { FormDescription } from '../form-description/form-description';
 import { PortalForm } from '../portal-form.type';
 import { AuthService } from '../../../services/auth/auth-service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { LoginRequestDto } from '../../../core/api/models/login-request-dto';
 import { Router, RouterLink } from '@angular/router';
 import { UserResponseDto } from '../../../core/api/models/user-response-dto';
 import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
@@ -39,7 +37,7 @@ import { FormSubmitDetail } from '../../form-submit-detail/form-submit-detail';
   templateUrl: './login-form.html',
   styleUrl: './login-form.css',
 })
-export class LoginForm implements OnInit, OnDestroy {
+export class LoginForm implements OnInit {
   form: FormGroup;
   isSubmitted: boolean = false;
   isPasswordVisible: boolean = false;
@@ -54,14 +52,13 @@ export class LoginForm implements OnInit, OnDestroy {
 
   @Output() formChange = new EventEmitter<PortalForm>();
 
-  private authSubscription!: Subscription;
-
   constructor(
     private fb: FormBuilder,
     private socialAuthService: SocialAuthService,
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private destroyRef: DestroyRef,
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -70,51 +67,55 @@ export class LoginForm implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.form.valueChanges.subscribe(() => {
-      if (
-        this.form.dirty &&
-        (this.form.hasError('invalidCredentials') ||
-          this.form.hasError('accountNotVerified') ||
-          this.form.hasError('serverError') ||
-          this.form.hasError('userNotFound') ||
-          this.form.hasError('accountBanned'))
-      ) {
-        this.form.setErrors(null);
-        this.form.updateValueAndValidity({ emitEvent: false });
-      }
-    });
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (
+          this.form.dirty &&
+          (this.form.hasError('invalidCredentials') ||
+            this.form.hasError('accountNotVerified') ||
+            this.form.hasError('serverError') ||
+            this.form.hasError('userNotFound') ||
+            this.form.hasError('accountBanned'))
+        ) {
+          this.form.setErrors(null);
+          this.form.updateValueAndValidity({ emitEvent: false });
+        }
+      });
 
-    this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
-      if (user && user.idToken) {
-        this.authService.loginWithGoogle(user.idToken).subscribe({
-          next: () => {
-            this.router.navigate(['dashboard']);
-          },
-          error: (err: HttpErrorResponse) => {
-            if (err.status === 403) {
-              if (err.error.detail.error_code === 'ACCOUNT_BANNED') {
-                this.form.setErrors({ accountBanned: true });
+    this.socialAuthService.authState
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        if (user && user.idToken) {
+          this.authService.loginWithGoogle(user.idToken).subscribe({
+            next: () => {
+              this.router.navigate(['dashboard']);
+            },
+            error: (err: HttpErrorResponse) => {
+              if (err.status === 403) {
+                if (err.error.detail.error_code === 'ACCOUNT_BANNED') {
+                  this.form.setErrors({ accountBanned: true });
+                } else {
+                  this.form.setErrors({ accountNotVerified: true });
+                }
+              } else if (err.status === 404) {
+                this.form.setErrors({ userNotFound: true });
+              } else if (err.status === 500) {
+                this.form.setErrors({ serverError: true });
               } else {
-                this.form.setErrors({ accountNotVerified: true });
+                this.form.setErrors({ invalidCredentials: true });
               }
-            } else if (err.status === 404) {
-              this.form.setErrors({ userNotFound: true });
-            } else if (err.status === 500) {
-              this.form.setErrors({ serverError: true });
-            } else {
-              this.form.setErrors({ invalidCredentials: true });
-            }
-            this.cdr.detectChanges();
-            setTimeout(() => {
-              this.isSubmitted = false;
-              this.form.setErrors(null);
-              this.form.updateValueAndValidity({ emitEvent: false });
               this.cdr.detectChanges();
-            }, 5000);
-          },
-        });
-      }
-    });
+              setTimeout(() => {
+                this.isSubmitted = false;
+                this.form.setErrors(null);
+                this.form.updateValueAndValidity({ emitEvent: false });
+                this.cdr.detectChanges();
+              }, 5000);
+            },
+          });
+        }
+      });
   }
 
   public isControlRequired(controlName: string): boolean {
@@ -188,11 +189,5 @@ export class LoginForm implements OnInit, OnDestroy {
 
   private toKebabCase(value: string): string {
     return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-  }
-
-  ngOnDestroy() {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
   }
 }

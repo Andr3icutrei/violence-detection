@@ -5,7 +5,7 @@ import { UsersTable } from '../users-table/users-table';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UsersService } from '../../../../services/users/users-service';
 import { UserResponseDto } from '../../../../core/api/models/user-response-dto';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { UserUpdatedService } from '../../../../services/user-updated/user-updated.service';
 import { Subscription } from 'rxjs';
 
