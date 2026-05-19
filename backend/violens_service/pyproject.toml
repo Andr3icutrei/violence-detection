@@ -16,6 +16,7 @@ dependencies = [
     "google>=3.0.0",
     "google-auth>=2.51.0",
     "opencv-python>=4.13.0.92",
+    "onnx>=1.16.0",
     "passlib>=1.7.4",
     "protobuf>=7.34.1",
     "pydantic[email]>=2.13.4",

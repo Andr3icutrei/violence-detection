@@ -1,7 +1,5 @@
 from typing import List
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from models.inference_history_classification import InferenceHistoryClassification
 from models.inference_history_people_tracking import InferenceHistoryPeopleTracking
 from repositories.inference_history_repository import InferenceHistoryRepository

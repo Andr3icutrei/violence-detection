@@ -15,6 +15,13 @@
 
     <div class="edit-dataset-item-form-content">
       <form [formGroup]="form">
+        @if (getInferenceModelLabel()) {
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'edit-dataset.inference-model' | translate }} </span>
+            <span class="detail-item-value">{{ getInferenceModelLabel() }}</span>
+          </div>
+        }
+
         <div class="input-group edit-videos-input-group">
           <label
             for="review-videos"

@@ -25,14 +25,16 @@ class DatasetToReviewResponseDto(DatasetResponseDto):
 class CreateDatasetRequestDto:
     name: str
     videos: list[UploadFile]
+    inference_model: UploadFile | None
 
     @classmethod
     def as_form(
         cls,
         name: Annotated[str, Form(...)],
         videos: Annotated[list[UploadFile], File(...)],
+        inference_model: Annotated[UploadFile | None, File()] = None,
     ) -> "CreateDatasetRequestDto":
-        return cls(name=name, videos=videos)
+        return cls(name=name, videos=videos, inference_model=inference_model)
 
 class DatasetWithVideosResponseDto(DatasetResponseDto):
     videos: List[VideoResponseDto]

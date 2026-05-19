@@ -23,9 +23,12 @@ export class CreateDataset implements OnInit {
   form: FormGroup;
 
   selectedFiles: File[] = [];
+  selectedInferenceModel: File | null = null;
   readonly maxFilesToUpload: number = 20;
   readonly maxTotalUploadSizeBytes: number = 20 * 1024 * 1024;
   readonly maxUploadSizeMb: number = 20;
+  readonly maxInferenceModelSizeBytes: number = 500 * 1024 * 1024;
+  readonly maxInferenceModelSizeMb: number = 500;
 
   isSubmitted: boolean = false;
   submitStatusKey: string | null = null;
@@ -38,6 +41,8 @@ export class CreateDataset implements OnInit {
     'tooManyFilesUploaded',
     'differentFilesFormat',
     'filesTooLarge',
+    'modelInvalidFormat',
+    'modelTooLarge',
   ];
 
   constructor(
@@ -60,7 +65,9 @@ export class CreateDataset implements OnInit {
           (this.form.hasError('noFilesUploaded') ||
             this.form.hasError('tooManyFilesUploaded') ||
             this.form.hasError('differentFilesFormat') ||
-            this.form.hasError('filesTooLarge'))
+            this.form.hasError('filesTooLarge') ||
+            this.form.hasError('modelInvalidFormat') ||
+            this.form.hasError('modelTooLarge'))
         ) {
           this.submitStatusKey = null;
           this.submitMessageTranslateParams = {};
@@ -114,6 +121,69 @@ export class CreateDataset implements OnInit {
     }
 
     this.selectedFiles = filesArray;
+  }
+
+  public onModelFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedInferenceModel = null;
+    this.submitStatusKey = null;
+    this.success = null;
+    this.submitMessageTranslateParams = {};
+    this.clearModelErrors();
+
+    if (!input.files || input.files.length <= 0) {
+      return;
+    }
+
+    const modelFile = input.files[0];
+    if (!this.isOnnxFile(modelFile)) {
+      this.setModelInvalidFormat(input);
+      return;
+    }
+
+    if (modelFile.size > this.maxInferenceModelSizeBytes) {
+      this.setModelTooLarge(input);
+      return;
+    }
+
+    this.selectedInferenceModel = modelFile;
+  }
+
+  private isOnnxFile(file: File): boolean {
+    return file.name.toLowerCase().endsWith('.onnx');
+  }
+
+  private setModelInvalidFormat(input: HTMLInputElement): void {
+    this.setFormErrorKey('modelInvalidFormat');
+    this.resetModelSelection(input);
+  }
+
+  private setModelTooLarge(input: HTMLInputElement): void {
+    this.setFormErrorKey('modelTooLarge');
+    this.resetModelSelection(input);
+  }
+
+  private resetModelSelection(inputElement: HTMLInputElement): void {
+    this.selectedInferenceModel = null;
+    inputElement.value = '';
+  }
+
+  private setFormErrorKey(errorKey: string): void {
+    const errors = { ...(this.form.errors ?? {}) } as Record<string, boolean>;
+    errors[errorKey] = true;
+    this.form.setErrors(errors);
+    this.cdr.detectChanges();
+  }
+
+  private clearModelErrors(): void {
+    if (!this.form.errors) {
+      return;
+    }
+    const errors = { ...(this.form.errors as Record<string, boolean>) };
+    delete errors['modelInvalidFormat'];
+    delete errors['modelTooLarge'];
+    this.form.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    this.form.updateValueAndValidity({ emitEvent: false });
   }
 
   private isMp4File(file: File): boolean {
@@ -182,6 +252,12 @@ export class CreateDataset implements OnInit {
     if (errorKey === 'filesTooLarge') {
       return { max: this.maxUploadSizeMb };
     }
+    if (errorKey === 'modelInvalidFormat') {
+      return { format: '.onnx' };
+    }
+    if (errorKey === 'modelTooLarge') {
+      return { max: this.maxInferenceModelSizeMb };
+    }
 
     return this.submitMessageTranslateParams;
   }
@@ -237,6 +313,10 @@ export class CreateDataset implements OnInit {
 
     for (const file of this.selectedFiles) {
       formData.append('videos', file, file.name);
+    }
+
+    if (this.selectedInferenceModel) {
+      formData.append('inference_model', this.selectedInferenceModel, this.selectedInferenceModel.name);
     }
 
     this.datasetService.createUnofficialDataset(formData).subscribe({

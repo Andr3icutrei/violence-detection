@@ -27,8 +27,8 @@ export type { GetVideosPagedVideosGetVideosPagedGet$Params as GetVideosPagedVide
 export { getVideosPagedVideosGetVideosPagedGet as getVideosPagedVideosGetVideosPagedGet } from './fn/videos/get-videos-paged-videos-get-videos-paged-get';
 export type { ExistsVideoVideosExistsVideoVideoUidGet$Params as ExistsVideoVideosExistsVideoVideoUidGet$Params } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
 export { existsVideoVideosExistsVideoVideoUidGet as existsVideoVideosExistsVideoVideoUidGet } from './fn/videos/exists-video-videos-exists-video-video-uid-get';
-export type { InferenceVideoVideosInferenceVideoVideoIdPost$Params as InferenceVideoVideosInferenceVideoVideoIdPost$Params } from './fn/videos/inference-video-videos-inference-video-video-id-post';
-export { inferenceVideoVideosInferenceVideoVideoIdPost as inferenceVideoVideosInferenceVideoVideoIdPost } from './fn/videos/inference-video-videos-inference-video-video-id-post';
+export type { InferenceVideoVideosClassifyVideoGradcamVideoIdPost$Params as InferenceVideoVideosClassifyVideoGradcamVideoIdPost$Params } from './fn/videos/inference-video-videos-classify-video-gradcam-video-id-post';
+export { inferenceVideoVideosClassifyVideoGradcamVideoIdPost as inferenceVideoVideosClassifyVideoGradcamVideoIdPost } from './fn/videos/inference-video-videos-classify-video-gradcam-video-id-post';
 export type { PeopleTrackingVideosPeopleTrackingVideoIdPost$Params as PeopleTrackingVideosPeopleTrackingVideoIdPost$Params } from './fn/videos/people-tracking-videos-people-tracking-video-id-post';
 export { peopleTrackingVideosPeopleTrackingVideoIdPost as peopleTrackingVideosPeopleTrackingVideoIdPost } from './fn/videos/people-tracking-videos-people-tracking-video-id-post';
 export type { LoginAuthLoginPost$Params as LoginAuthLoginPost$Params } from './fn/authentication/login-auth-login-post';

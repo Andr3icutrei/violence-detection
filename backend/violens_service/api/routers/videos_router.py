@@ -1,7 +1,6 @@
 from typing import List
 import os
 
-from shared_models import InferenceModel
 from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import FileResponse

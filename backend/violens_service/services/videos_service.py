@@ -6,7 +6,6 @@ from typing import List, Sequence
 
 import httpx
 from fastapi import HTTPException
-from shared_models import InferenceModel
 from starlette import status
 
 from helpers.bucket_helper import get_presigned_url
@@ -18,10 +17,10 @@ from models.inference_action import InferenceAction
 from models.inference_history_classification import InferenceHistoryClassification
 from models.inference_history_people_tracking import InferenceHistoryPeopleTracking
 from repositories.inference_actions_repository import InferenceActionsRepository
-
 from repositories.inference_history_repository import InferenceHistoryRepository
 from repositories.users_repository import UsersRepository
 from repositories.videos_repository import VideosRepository
+from repositories.inference_models_repository import InferenceModelsRepository
 
 @dataclass
 class InferenceVideoResult:
@@ -37,11 +36,13 @@ class VideosService:
         inference_history_repository: InferenceHistoryRepository,
         users_repository: UsersRepository,
         inference_actions_repository: InferenceActionsRepository,
+        inference_models_repository: InferenceModelsRepository,
     ):
         self.videos_repository = videos_repository
         self.inference_history_repository = inference_history_repository
         self.users_repository = users_repository
         self.inference_actions_repository = inference_actions_repository
+        self.inference_models_repository = inference_models_repository
 
     async def get_videos_paged(
         self,
@@ -122,13 +123,17 @@ class VideosService:
         await self._ensure_credits(db_user, inference_action)
         video = await self._get_video_or_404(video_id, for_classification=True)
 
-        try:
-            inference_model = InferenceModel(video.dataset.inference_model_id)
-        except ValueError as exc:
+        if not video.dataset.inference_model_id:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Invalid inference model configured for this video's dataset."
-            ) from exc
+                detail="No inference model configured for this video's dataset."
+            )
+        model_record = await self.inference_models_repository.get_by_id(video.dataset.inference_model_id)
+        if model_record is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Inference model record not found for this video's dataset."
+            )
 
         try:
             classification_url: str = get_env_variable("CLASSIFICATION_SERVICE_URL")
@@ -136,7 +141,7 @@ class VideosService:
                 async with client.stream(
                     "GET",
                     f"{classification_url}/classification/classify_video_gradcam_stream",
-                    params={"video_path": video.path, "inference_model": inference_model.value},
+                    params={"video_path": video.path, "inference_model_path": model_record.path},
                     timeout=500.0,
                 ) as response:
                     if response.status_code != 200:

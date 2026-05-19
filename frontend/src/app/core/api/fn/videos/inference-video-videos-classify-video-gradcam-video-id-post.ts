@@ -8,12 +8,12 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface InferenceVideoVideosInferenceVideoVideoIdPost$Params {
+export interface InferenceVideoVideosClassifyVideoGradcamVideoIdPost$Params {
   video_id: number;
 }
 
-export function inferenceVideoVideosInferenceVideoVideoIdPost(http: HttpClient, rootUrl: string, params: InferenceVideoVideosInferenceVideoVideoIdPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
-  const rb = new RequestBuilder(rootUrl, inferenceVideoVideosInferenceVideoVideoIdPost.PATH, 'post');
+export function inferenceVideoVideosClassifyVideoGradcamVideoIdPost(http: HttpClient, rootUrl: string, params: InferenceVideoVideosClassifyVideoGradcamVideoIdPost$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  const rb = new RequestBuilder(rootUrl, inferenceVideoVideosClassifyVideoGradcamVideoIdPost.PATH, 'post');
   if (params) {
     rb.path('video_id', params.video_id, {});
   }
@@ -28,4 +28,4 @@ export function inferenceVideoVideosInferenceVideoVideoIdPost(http: HttpClient, 
   );
 }
 
-inferenceVideoVideosInferenceVideoVideoIdPost.PATH = '/videos/inference_video/{video_id}';
+inferenceVideoVideosClassifyVideoGradcamVideoIdPost.PATH = '/videos/classify_video_gradcam/{video_id}';

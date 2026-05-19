@@ -8,7 +8,7 @@ load_dotenv()
 
 ACCOUNT_ID = os.getenv("ACCOUNT_ID")
 ACCESS_KEY = os.getenv("ACCESS_KEY")
-BUCKET_NAME = os.getenv("BUCKET_NAME")
+BUCKET_NAME_DATASETS = os.getenv("BUCKET_NAME_DATASETS")
 SECRET_AWS_KEY = os.getenv("SECRET_AWS_KEY")
 
 session = aioboto3.Session()
@@ -22,7 +22,7 @@ async def download_object_to_file(object_key: str, target_path: str, chunk_size:
         region_name="auto"
     ) as s3_client:
         try:
-            response = await s3_client.get_object(Bucket=BUCKET_NAME, Key=object_key)
+            response = await s3_client.get_object(Bucket=BUCKET_NAME_DATASETS, Key=object_key)
         except Exception:
             return False
 

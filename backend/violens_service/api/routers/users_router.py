@@ -2,7 +2,6 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi_mail import ConnectionConfig
-from sqlalchemy.ext.asyncio import AsyncSession
 import os
 from dotenv import load_dotenv
 from starlette.status import HTTP_200_OK

@@ -2,7 +2,6 @@ import os
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import FileResponse
-from shared_models import InferenceModel
 
 from starlette.status import HTTP_200_OK
 
@@ -38,36 +37,31 @@ def _media_type_for_path(file_path: str) -> str:
 @router.get("/classify_video_gradcam", status_code=HTTP_200_OK)
 async def inference_video(
     video_path: str,
-    inference_model: int,
+    inference_model_path: str,
+    inference_model_kind: str | None = None,
     videos_service: ClassificationService = Depends(get_classification_service),
 ) -> ClassificationResponseDto:
-    try:
-        model_enum = InferenceModel(inference_model)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Invalid inference_model '{inference_model}'. Expected one of: 0, 10, 20.",
-        ) from exc
-    inference_result, _ = await videos_service.classify_and_gradcam_video(video_path, model_enum)
+    inference_result, _ = await videos_service.classify_and_gradcam_video(
+        video_path,
+        inference_model_path,
+        inference_model_kind,
+    )
     return inference_result
 
 
 @router.get("/classify_video_gradcam_stream", status_code=HTTP_200_OK)
 async def inference_video_stream(
     video_path: str,
-    inference_model: int,
+    inference_model_path: str,
     background_tasks: BackgroundTasks,
+    inference_model_kind: str | None = None,
     videos_service: ClassificationService = Depends(get_classification_service),
 ) -> FileResponse:
-    try:
-        model_enum = InferenceModel(inference_model)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Invalid inference_model '{inference_model}'. Expected one of: 0, 10, 20.",
-        ) from exc
-
-    inference_result, temp_video_path = await videos_service.classify_and_gradcam_video(video_path, model_enum)
+    inference_result, temp_video_path = await videos_service.classify_and_gradcam_video(
+        video_path,
+        inference_model_path,
+        inference_model_kind,
+    )
     background_tasks.add_task(_cleanup_temp_file, inference_result.video_path)
     background_tasks.add_task(_cleanup_temp_file, temp_video_path)
 

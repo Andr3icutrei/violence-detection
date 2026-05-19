@@ -4,57 +4,39 @@ import os
 from fastapi import HTTPException
 from starlette import status
 
-from inference.slowfast.pipeline import prepare_slowfast_tensors
-from inference.slowfast.preprocess import preprocess_video_for_inference as preprocess_slowfast_video
-from inference.resnet3d.pipeline import prepare_r3d_tensor
-from inference.resnet3d.preprocess import preprocess_video_for_inference as preprocess_resnet3d_video
-from shared_models import InferenceModel
+from inference.onnx.pipeline import Onnx3dInferencePipeline
+from inference.onnx.preprocess import preprocess_video_for_inference, prepare_input_tensors
 
 def run_classification_and_gradcam(
-    inference_model: InferenceModel,
+    inference_model_path: str,
     temp_video_path: str,
-    inference_runtime
+    inference_runtime,
+    inference_model_kind: str | None = None,
+    inference_model_cache_key: str | None = None,
 ) -> tuple[str, bool, float, float]:
     overlay_video_path = ""
     try:
-        if inference_model is InferenceModel.SLOWFAST_NETWORK:
-            config = inference_runtime.slowfast_config
-            frames = preprocess_slowfast_video(temp_video_path, inference_runtime.yolo_model_path, config)
-            if not frames:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Could not prepare input frames for inference.",
-                )
-            slow_tensor, fast_tensor = prepare_slowfast_tensors(frames, config)
-            pred_class, probs, heatmap = inference_runtime.slowfast_pipeline.predict_and_generate_cam(
-                slow_tensor,
-                fast_tensor,
-            )
-            confidence = float(max(probs))
-            predicted_class_probability = float(probs[pred_class])
-            overlays = inference_runtime.slowfast_pipeline.overlay_heatmap_on_frames(frames, heatmap)
-        elif inference_model is InferenceModel.RESNET3D_NETWORK:
-            config = inference_runtime.resnet3d_config
-            frames = preprocess_resnet3d_video(temp_video_path, inference_runtime.yolo_model, config)
-            if not frames:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Could not prepare input frames for inference.",
-                )
-
-            input_tensor = prepare_r3d_tensor(frames, config)
-            pred_class, probs, heatmap = inference_runtime.resnet3d_pipeline.predict_and_generate_cam(input_tensor)
-            confidence = float(max(probs))
-            predicted_class_probability = float(probs[pred_class])
-            overlays = inference_runtime.resnet3d_pipeline.overlay_heatmap_on_frames(frames, heatmap)
-        else:
+        pipeline = Onnx3dInferencePipeline(inference_model_path)
+        frames, frames_by_name = preprocess_video_for_inference(
+            temp_video_path,
+            inference_runtime.yolo_model,
+            pipeline.input_specs,
+        )
+        if not frames:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Unsupported inference model configured for this video's dataset."
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not prepare input frames for inference.",
             )
+
+        input_tensors = prepare_input_tensors(frames_by_name, pipeline.input_specs)
+        pred_class, probs, heatmap = pipeline.predict_and_generate_cam(input_tensors)
+        confidence = float(max(probs))
+        predicted_class_probability = float(probs[pred_class])
+        overlays = pipeline.overlay_heatmap_on_frames(frames, heatmap)
+
         overlay_video_path = write_overlay_video(
             overlays,
-            temp_video_path
+            temp_video_path,
         )
         return overlay_video_path, pred_class, confidence, predicted_class_probability
     except HTTPException:
@@ -73,6 +55,7 @@ def run_classification_and_gradcam(
 def write_overlay_video(overlays: list, source_video_path: str) -> str:
     import subprocess
     import numpy as np
+    import shutil
 
     if not overlays:
         raise ValueError("No Grad-CAM overlays were produced for this video.")
@@ -210,9 +193,21 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
 
     final_output_path = output_path + "_h264.mp4"
 
+    ffmpeg_path = os.getenv("FFMPEG_PATH")
+    if ffmpeg_path and not os.path.exists(ffmpeg_path):
+        ffmpeg_path = None
+    if not ffmpeg_path:
+        ffmpeg_path = shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
+
+    if not ffmpeg_path:
+        raise ValueError(
+            "ffmpeg was not found. Install ffmpeg or set FFMPEG_PATH to ffmpeg.exe to "
+            "enable H.264 MP4 output for browser playback."
+        )
+
     try:
         subprocess.run([
-            "ffmpeg", "-y", "-i", output_path,
+            ffmpeg_path, "-y", "-i", output_path,
             "-vcodec", "libx264", "-crf", "23", "-preset", "fast",
             "-pix_fmt", "yuv420p", final_output_path
         ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

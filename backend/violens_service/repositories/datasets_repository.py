@@ -55,6 +55,8 @@ class DatasetsRepository:
         name: str,
         videos: List[UploadFile],
         user_id: int,
+        inference_model_id: int | None = None,
+        is_official: bool = False,
     ) -> Dataset:
 
         video_models = []
@@ -87,10 +89,11 @@ class DatasetsRepository:
 
         dataset = Dataset(
             name=name,
-            is_official=False,
-            status=DatasetStatus.PENDING,
+            is_official=is_official,
+            status=DatasetStatus.ACCEPTED if is_official else DatasetStatus.PENDING,
             videos=video_models,
-            created_by_user_id=user_id
+            created_by_user_id=user_id,
+            inference_model_id=inference_model_id,
         )
 
         self.db.add(dataset)

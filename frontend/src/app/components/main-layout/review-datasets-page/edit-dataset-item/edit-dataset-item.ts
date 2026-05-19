@@ -99,6 +99,15 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     }
   }
 
+  public getInferenceModelLabel(): string | null {
+    const modelPath = this.currentDataset?.inference_model_path;
+    if (!modelPath) {
+      return null;
+    }
+    const pathParts = modelPath.split(/[\\/]/);
+    return pathParts[pathParts.length - 1] || modelPath;
+  }
+
   public loadCurrentDataset(): void {
     this.isDatasetLoading = true;
     this.datasetsService.getDatasetWithVideos(this.datasetId).subscribe({

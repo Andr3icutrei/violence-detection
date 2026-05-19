@@ -56,6 +56,8 @@
     "too-many-files-uploaded": "You have exceeded the maximum number of files allowed ({{max}}). Please select fewer files to upload.",
     "different-files-format": "All uploaded files must be {{format}} format. Please ensure all selected files have the same extension.",
     "files-too-large": "One or more of the selected files exceed the maximum allowed size of {{max}} MB. Please select smaller files to upload.",
+    "model-invalid-format": "Invalid file format. Please upload a model file in {{format}} format.",
+    "model-too-large": "The selected model exceeds the maximum allowed size of {{max}} MB. Please select a smaller file.",
     "account-banned": "Your account has been banned. Review your email for more information."
   },
   "verify-account": {
@@ -152,6 +154,7 @@
     "dataset-name": "Dataset Name",
     "dataset-name-placeholder": "Enter dataset name",
     "upload-videos": "Upload Videos",
+    "upload-model": "Upload Inference Model (.onnx)",
     "create-dataset-submit": "Create Dataset",
     "submit-successful": "Dataset created successfully! Your videos have been uploaded and are being processed. You will receive an email notification once the dataset is ready.",
     "submit-failed": "An error occurred while creating your dataset.",
@@ -199,6 +202,7 @@
     "duration": "Duration",
     "fps": "Framerate",
     "is-violent": "Is Violent",
+    "inference-model": "Inference Model",
     "save": "Save Changes",
     "edit-success-message": "Dataset edited successfully!",
     "dataset-not-found-error": "The dataset you are trying to edit does not exist.",

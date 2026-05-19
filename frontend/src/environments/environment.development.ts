@@ -1,4 +1,4 @@
-export const domain = 'sublime-certainly-requesting-toxic.trycloudflare.com';
+export const domain = 'latter-five-pressure-emotions.trycloudflare.com';
 
 export const environment = {
   production: false,

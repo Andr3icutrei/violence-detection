@@ -48,6 +48,24 @@
               >
             </div>
 
+            <div class="input-group">
+              <label
+                for="upload-model"
+                class="label-primary">
+                {{'create-dataset.upload-model' | translate}}
+              </label>
+              <input
+                id="upload-model"
+                class="videos-input"
+                type="file"
+                accept=".onnx"
+                (change)="onModelFileSelected($event)"
+              >
+              @if (selectedInferenceModel) {
+                <span class="detail-item-value">{{ selectedInferenceModel.name }}</span>
+              }
+            </div>
+
             <div class="create-dataset-submit-container">
               <button
                 class="btn-primary create-dataset-submit-btn"

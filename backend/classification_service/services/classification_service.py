@@ -4,9 +4,7 @@ import tempfile
 from fastapi import HTTPException
 from starlette import status
 
-from helpers.bucket_helper import download_object_to_file
-from shared_models import InferenceModel
-
+from helpers.bucket_helper import download_object_to_file, download_model_to_file
 from helpers.inference_helper import run_classification_and_gradcam
 from schemas.classification import ClassificationResponseDto
 from services.inference_runtime import InferenceRuntime
@@ -19,9 +17,11 @@ class ClassificationService:
     async def classify_and_gradcam_video(
         self,
         video_path: str,
-        inference_model: InferenceModel
+        inference_model_path: str,
+        inference_model_kind: str | None = None,
     ) -> tuple[ClassificationResponseDto, str]:
         temp_video_path = ""
+        temp_model_path = ""
         overlay_video_path = ""
         try:
             temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
@@ -33,11 +33,25 @@ class ClassificationService:
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Video file not found in storage."
                 )
+            model_suffix = os.path.splitext(inference_model_path)[1] or ".onnx"
+            temp_model_file = tempfile.NamedTemporaryFile(delete=False, suffix=model_suffix)
+            temp_model_path = temp_model_file.name
+            temp_model_file.close()
+            was_model_downloaded = await download_model_to_file(inference_model_path, temp_model_path)
+            if not was_model_downloaded:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Inference model not found in storage."
+                )
             overlay_video_path, predicted_label, confidence, predicted_class_probability = run_classification_and_gradcam(
-                inference_model,
+                temp_model_path,
                 temp_video_path,
-                self.inference_runtime
+                self.inference_runtime,
+                inference_model_kind=inference_model_kind,
+                inference_model_cache_key=inference_model_path,
             )
+            if temp_model_path and os.path.exists(temp_model_path):
+                os.remove(temp_model_path)
             result = ClassificationResponseDto(
                 video_path=overlay_video_path,
                 predicted_label=str(predicted_label),
@@ -46,7 +60,7 @@ class ClassificationService:
             )
             return result, temp_video_path
         except Exception as e:
-            for path in (overlay_video_path, temp_video_path):
+            for path in (overlay_video_path, temp_video_path, temp_model_path):
                 if path and os.path.exists(path):
                     os.remove(path)
             raise HTTPException(

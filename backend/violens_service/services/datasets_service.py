@@ -1,17 +1,18 @@
 import asyncio
 from typing import List
+import uuid
 
 from fastapi import HTTPException
 from fastapi_mail import ConnectionConfig
 from starlette import status
 
 from helpers.bucket_helper import create_unofficial_dataset_bucket, get_presigned_url, delete_dataset_videos, \
-    get_used_storage_gb
-from helpers.email_helper import send_dataset_approval_mail, send_dataset_rejection_mail
-from models import Dataset, User
+    get_used_storage_gb, upload_inference_model, delete_inference_model_object
+from models import Dataset, User, InferenceModel
 from models.dataset_status import DatasetStatus
 from notifier.dataset_events_notifier import DatasetEventsNotifier
 from repositories.datasets_repository import DatasetsRepository
+from repositories.inference_models_repository import InferenceModelsRepository
 from repositories.users_repository import UsersRepository
 from repositories.videos_repository import VideosRepository
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
@@ -26,11 +27,13 @@ class DatasetsService:
         datasets_repository: DatasetsRepository,
         users_repository: UsersRepository,
         videos_repository: VideosRepository,
+        inference_models_repository: InferenceModelsRepository,
         notifier: DatasetEventsNotifier
     ):
         self.datasets_repository = datasets_repository
         self.users_repository = users_repository
         self.videos_repository = videos_repository
+        self.inference_models_repository = inference_models_repository
         self.notifier = notifier
 
     async def get_accepted_datasets(self) -> List[DatasetResponseDto]:
@@ -77,6 +80,7 @@ class DatasetsService:
         ]
 
     async def create_unofficial_dataset(self, create_dataset_dto: CreateDatasetRequestDto, user_id: int) -> None:
+        model_record: InferenceModel | None = None
         already_existing_dataset: Dataset | None = await self.datasets_repository.get_by_name(create_dataset_dto.name)
         if already_existing_dataset is not None:
             raise HTTPException(
@@ -92,6 +96,7 @@ class DatasetsService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found."
             )
+        is_official = bool(user.is_admin)
         try:
             user_has_pending_datasets: bool = await self.datasets_repository.user_has_pending_datasets(user_id)
             if user_has_pending_datasets:
@@ -111,12 +116,24 @@ class DatasetsService:
             )
         await create_unofficial_dataset_bucket(create_dataset_dto.name, create_dataset_dto.videos)
         try:
+            if create_dataset_dto.inference_model is not None:
+                model_path = await upload_inference_model(create_dataset_dto.name, create_dataset_dto.inference_model)
+                model_name = f"{create_dataset_dto.name}-{uuid.uuid4().hex}"
+                model_record = await self.inference_models_repository.create(model_name, model_path)
             await self.datasets_repository.create_unofficial_dataset(
                 create_dataset_dto.name,
                 create_dataset_dto.videos,
                 user_id,
+                inference_model_id=model_record.id if model_record else None,
+                is_official=is_official,
             )
         except Exception as e:
+            if model_record is not None:
+                try:
+                    await delete_inference_model_object(model_record.path)
+                    await self.inference_models_repository.delete(model_record)
+                except Exception:
+                    pass
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to create dataset: {str(e)}"
@@ -249,10 +266,13 @@ class DatasetsService:
                 detail="Official datasets cannot be deleted."
             )
         try:
+            inference_model_id = dataset.inference_model_id
             await delete_dataset_videos(dataset.name)
             for video in dataset.videos:
                 await self.videos_repository.delete(video)
             await self.datasets_repository.delete(dataset)
+            if inference_model_id:
+                await self._delete_inference_model_if_unassigned(inference_model_id)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -284,6 +304,18 @@ class DatasetsService:
         await self.notifier.broadcast_dataset_updated(dataset_id=dataset.id)
         return await self.datasets_repository.save(dataset)
 
+    async def _delete_inference_model_if_unassigned(self, inference_model_id: int) -> None:
+        if not inference_model_id:
+            return
+        count = await self.inference_models_repository.count_datasets(inference_model_id)
+        if count > 0:
+            return
+        model = await self.inference_models_repository.get_by_id(inference_model_id)
+        if model is None:
+            return
+        await delete_inference_model_object(model.path)
+        await self.inference_models_repository.delete(model)
+
     async def get_datasets_stats(self) -> DatasetsStatsResponseDto:
         most_popular_dataset_classification, classification_videos_count = await self.datasets_repository.get_most_popular_dataset_classification() or (None, 0)
         most_popular_dataset_people_tracking, people_tracking_videos_count = await self.datasets_repository.get_most_popular_dataset_people_tracking() or (None, 0)
@@ -312,3 +344,6 @@ class DatasetsService:
             pending_datasets_count=pending_datasets_count,
             storage_used_gb=storage_used_gb
         )
+
+
+

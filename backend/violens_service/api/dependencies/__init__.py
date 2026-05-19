@@ -7,6 +7,7 @@ from api.dependencies.inference_actions_repository import get_inference_actions_
 from api.dependencies.inference_actions_service import get_inference_actions_service
 from api.dependencies.inference_history_repository import get_inference_history_repository
 from api.dependencies.inference_history_service import get_inference_history_service
+from api.dependencies.inference_models_repository import get_inference_models_repository
 from api.dependencies.token_from_cookie import get_token_from_cookie
 from api.dependencies.users_repository import get_users_repository
 from api.dependencies.users_service import get_users_service
@@ -25,6 +26,7 @@ __all__ = [
     "get_datasets_service",
     "get_inference_actions_service",
     "get_inference_history_service",
+    "get_inference_models_repository",
     "get_users_service",
     "get_token_from_cookie",
     "get_videos_service",
