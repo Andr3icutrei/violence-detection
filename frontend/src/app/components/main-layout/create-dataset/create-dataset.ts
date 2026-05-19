@@ -53,6 +53,7 @@ export class CreateDataset implements OnInit {
   ) {
     this.form = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.maxLength(20)]),
+      inferenceModelName: new FormControl(null, [Validators.required, Validators.maxLength(50)]),
     });
   }
 
@@ -123,6 +124,10 @@ export class CreateDataset implements OnInit {
     this.selectedFiles = filesArray;
   }
 
+  private isMp4File(file: File): boolean {
+    return file.type === 'video/mp4' || file.name.toLowerCase().endsWith('.mp4');
+  }
+
   public onModelFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedInferenceModel = null;
@@ -186,10 +191,6 @@ export class CreateDataset implements OnInit {
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
-  private isMp4File(file: File): boolean {
-    return file.type === 'video/mp4' || file.name.toLowerCase().endsWith('.mp4');
-  }
-
   public setNoFilesUploadedError(input: HTMLInputElement): void {
     this.form.setErrors({ noFilesUploaded: true });
     this.resetSelection(input);
@@ -220,7 +221,12 @@ export class CreateDataset implements OnInit {
   }
 
   public isFormValid(): boolean {
-    return this.form.valid && !this.isSubmitted && this.selectedFiles.length > 0;
+    return (
+      this.form.valid &&
+      !this.isSubmitted &&
+      this.selectedFiles.length > 0 &&
+      !!this.selectedInferenceModel
+    );
   }
 
   public onContentClick(event: MouseEvent): void {
@@ -310,6 +316,7 @@ export class CreateDataset implements OnInit {
 
     const formData = new FormData();
     formData.append('name', this.form.get('name')?.value);
+    formData.append('inference_model_name', this.form.get('inferenceModelName')?.value);
 
     for (const file of this.selectedFiles) {
       formData.append('videos', file, file.name);

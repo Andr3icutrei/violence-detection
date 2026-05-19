@@ -138,6 +138,52 @@ def prepare_input_tensors(
     kinetics_std = np.array([0.225, 0.225, 0.225], dtype=np.float32)
 
     inputs: dict[str, np.ndarray] = {}
+
+    slow_spec = next((s for s in input_specs if "slow" in s.name.lower()), None)
+    fast_spec = next((s for s in input_specs if "fast" in s.name.lower()), None)
+    is_slowfast = (slow_spec is not None and fast_spec is not None)
+
+    if is_slowfast:
+        slow_frames_list = frames_by_name.get(slow_spec.name, [])
+        fast_frames_list = frames_by_name.get(fast_spec.name, [])
+
+        if slow_frames_list and fast_frames_list:
+            total_frames = len(slow_frames_list)
+            fast_seq_len = fast_spec.num_frames * 1
+            slow_seq_len = slow_spec.num_frames * 1 * 4
+
+            required_len = max(fast_seq_len, slow_seq_len)
+            if total_frames < required_len:
+                indices = list(range(total_frames))
+                last_idx = max(0, total_frames - 1)
+                while len(indices) < required_len:
+                    indices.append(last_idx)
+            else:
+                start_idx = (total_frames - required_len) // 2
+                indices = list(range(start_idx, start_idx + required_len))
+
+            slow_indices = indices[::4][:slow_spec.num_frames]
+            while len(slow_indices) < slow_spec.num_frames:
+                slow_indices.append(slow_indices[-1] if slow_indices else 0)
+
+            fast_indices = indices[::1][:fast_spec.num_frames]
+            while len(fast_indices) < fast_spec.num_frames:
+                fast_indices.append(fast_indices[-1] if fast_indices else 0)
+
+            for spec, idxs in [(slow_spec, slow_indices), (fast_spec, fast_indices)]:
+                frames = frames_by_name.get(spec.name, [])
+                selected = [frames[i] for i in idxs]
+                stacked = np.stack(selected, axis=0).astype(np.float32) / 255.0
+                if spec.layout == "NCTHW":
+                    stacked = (stacked - kinetics_mean) / kinetics_std
+                    stacked = stacked.transpose(3, 0, 1, 2)
+                    stacked = np.expand_dims(stacked, axis=0)
+                else:
+                    stacked = (stacked - kinetics_mean) / kinetics_std
+                    stacked = np.expand_dims(stacked, axis=0)
+                inputs[spec.name] = stacked
+            return inputs
+
     for spec in input_specs:
         frames = frames_by_name.get(spec.name, [])
         if not frames:

@@ -3,6 +3,7 @@
 
 export type { Action } from './models/action';
 export type { BodyCreateUnofficialDatasetDatasetsCreateUnofficialDatasetPost } from './models/body-create-unofficial-dataset-datasets-create-unofficial-dataset-post';
+export type { ConfusionMatrixDto } from './models/confusion-matrix-dto';
 export type { CreateUserDto } from './models/create-user-dto';
 export type { DatasetResponseDto } from './models/dataset-response-dto';
 export type { DatasetsStatsResponseDto } from './models/datasets-stats-response-dto';
@@ -26,5 +27,7 @@ export type { UpdateInferenceActionRequestDto } from './models/update-inference-
 export type { UserBanRequestDto } from './models/user-ban-request-dto';
 export type { UserResponseDto } from './models/user-response-dto';
 export type { UsersStatsResponseDto } from './models/users-stats-response-dto';
+export type { ValidateModelRequestDto } from './models/validate-model-request-dto';
+export type { ValidateModelResponseDto } from './models/validate-model-response-dto';
 export type { ValidationError } from './models/validation-error';
 export type { VideoResponseDto } from './models/video-response-dto';

@@ -4,7 +4,6 @@
 import { DatasetStatus } from '../models/dataset-status';
 export interface DatasetResponseDto {
   id: number;
-  inference_model_path?: (string | null);
   is_official: boolean;
   name: string;
   status: DatasetStatus;

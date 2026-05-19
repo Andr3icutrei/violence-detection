@@ -1,13 +1,16 @@
 import asyncio
+import datetime
 from typing import List
-import uuid
+import os
 
+import httpx
 from fastapi import HTTPException
 from fastapi_mail import ConnectionConfig
 from starlette import status
 
 from helpers.bucket_helper import create_unofficial_dataset_bucket, get_presigned_url, delete_dataset_videos, \
     get_used_storage_gb, upload_inference_model, delete_inference_model_object
+from helpers.env_helper import get_env_variable
 from models import Dataset, User, InferenceModel
 from models.dataset_status import DatasetStatus
 from notifier.dataset_events_notifier import DatasetEventsNotifier
@@ -16,9 +19,11 @@ from repositories.inference_models_repository import InferenceModelsRepository
 from repositories.users_repository import UsersRepository
 from repositories.videos_repository import VideosRepository
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
-    DatasetWithVideosResponseDto, DatasetsStatsResponseDto, MostPopularDatasetResponseDto
+    DatasetWithVideosResponseDto, DatasetsStatsResponseDto, MostPopularDatasetResponseDto, ValidateModelResponseDto, \
+    ConfusionMatrixDto
 from schemas.users_schema import UserResponseDto
 from schemas.videos_schema import VideoResponseDto, ReviewVideoRequestDto
+from helpers.email_helper import send_dataset_approval_mail, send_dataset_rejection_mail
 
 
 class DatasetsService:
@@ -116,15 +121,19 @@ class DatasetsService:
             )
         await create_unofficial_dataset_bucket(create_dataset_dto.name, create_dataset_dto.videos)
         try:
-            if create_dataset_dto.inference_model is not None:
-                model_path = await upload_inference_model(create_dataset_dto.name, create_dataset_dto.inference_model)
-                model_name = f"{create_dataset_dto.name}-{uuid.uuid4().hex}"
-                model_record = await self.inference_models_repository.create(model_name, model_path)
+            if create_dataset_dto.inference_model is None or not create_dataset_dto.inference_model_name:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Inference model file and name are required."
+                )
+            model_path = await upload_inference_model(create_dataset_dto.name, create_dataset_dto.inference_model)
+            model_name = create_dataset_dto.inference_model_name
+            model_record = await self.inference_models_repository.create(model_name, model_path)
             await self.datasets_repository.create_unofficial_dataset(
                 create_dataset_dto.name,
                 create_dataset_dto.videos,
                 user_id,
-                inference_model_id=model_record.id if model_record else None,
+                inference_model_id=model_record.id,
                 is_official=is_official,
             )
         except Exception as e:
@@ -146,18 +155,10 @@ class DatasetsService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Dataset not found."
             )
-        if dataset.is_official:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Official datasets cannot be reviewed."
-            )
-
         tasks = [get_presigned_url(video.path) for video in dataset.videos]
         presigned_urls = await asyncio.gather(*tasks)
-
         for video, url in zip(dataset.videos, presigned_urls):
             video.path = url
-
         return DatasetWithVideosResponseDto(
             id=dataset.id,
             name=dataset.name,
@@ -196,11 +197,6 @@ class DatasetsService:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Dataset already reviewed."
-            )
-        if dataset.is_official:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Only official datasets can be reviewed."
             )
         dataset.comment = review_comment
         result = None
@@ -251,7 +247,11 @@ class DatasetsService:
         for video in list(dataset.videos):
             dataset.videos.remove(video)
             await self.videos_repository.delete(video)
-        return await self.datasets_repository.save(dataset)
+        inference_model_id = dataset.inference_model_id
+        await self.datasets_repository.delete(dataset)
+        if inference_model_id:
+            await self._delete_inference_model_if_unassigned(inference_model_id)
+        return dataset
 
     async def delete_dataset(self, dataset_id: int) -> None:
         dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
@@ -260,15 +260,11 @@ class DatasetsService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Dataset not found."
             )
-        if dataset.is_official:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Official datasets cannot be deleted."
-            )
         try:
             inference_model_id = dataset.inference_model_id
             await delete_dataset_videos(dataset.name)
-            for video in dataset.videos:
+            for video in list(dataset.videos):
+                dataset.videos.remove(video)
                 await self.videos_repository.delete(video)
             await self.datasets_repository.delete(dataset)
             if inference_model_id:
@@ -303,6 +299,70 @@ class DatasetsService:
                 )
         await self.notifier.broadcast_dataset_updated(dataset_id=dataset.id)
         return await self.datasets_repository.save(dataset)
+
+    async def validate_dataset_model(self, dataset_id: int, videos: List[ReviewVideoRequestDto]) -> ValidateModelResponseDto:
+        dataset: Dataset | None = await self.datasets_repository.get_by_id_with_videos(dataset_id)
+        if dataset is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found.")
+        
+        model_record = None
+        if dataset.inference_model_id:
+            model_record = await self.inference_models_repository.get_by_id(dataset.inference_model_id)
+
+        if not model_record:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inference model not found for this dataset.")
+
+        classification_url: str = get_env_variable("CLASSIFICATION_SERVICE_URL")
+        
+        tp = 0
+        tn = 0
+        fp = 0
+        fn = 0
+        
+        async with httpx.AsyncClient(verify=False) as client:
+            for review_video_dto in videos:
+                db_video = next((v for v in dataset.videos if v.id == review_video_dto.video_id), None)
+                if not db_video:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Video with id {review_video_dto.video_id} not found in dataset.")
+                
+                try:
+                    response = await client.get(
+                        f"{classification_url}/classification/classify_video",
+                        params={"video_path": db_video.path, "inference_model_path": model_record.path},
+                        timeout=500.0,
+                    )
+                    if response.status_code != 200:
+                        raise HTTPException(status_code=response.status_code, detail=response.text)
+                    
+                    data = response.json()
+                    predicted_label = str(data.get("predicted_label", "")).lower()
+                    
+                    is_violent_pred = "viol" in predicted_label and "non" not in predicted_label
+                    is_violent_gt = review_video_dto.is_violent
+
+                    if is_violent_gt and is_violent_pred:
+                        tp += 1
+                    elif not is_violent_gt and not is_violent_pred:
+                        tn += 1
+                    elif not is_violent_gt and is_violent_pred:
+                        fp += 1
+                    elif is_violent_gt and not is_violent_pred:
+                        fn += 1
+                except Exception as e:
+                    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Classification failed for video {db_video.id}: {str(e)}")
+                    
+        total = tp + tn + fp + fn
+        accuracy = (tp + tn) / total if total > 0 else 0.0
+
+        return ValidateModelResponseDto(
+            accuracy=accuracy,
+            confusion_matrix=ConfusionMatrixDto(
+                true_positive=tp,
+                true_negative=tn,
+                false_positive=fp,
+                false_negative=fn
+            )
+        )
 
     async def _delete_inference_model_if_unassigned(self, inference_model_id: int) -> None:
         if not inference_model_id:

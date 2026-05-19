@@ -8,10 +8,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [ReactiveFormsModule],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.css',
+  standalone: true,
 })
 export class SearchBar implements OnInit {
   searchControl!: FormControl;
-  @Input({required : true}) placeholderText!: string;
+  @Input({ required: true }) placeholderText!: string;
   @Output() onDebouncedSearch: EventEmitter<string> = new EventEmitter();
   private currentSearchTerm: string = '';
 

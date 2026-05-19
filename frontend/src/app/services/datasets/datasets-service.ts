@@ -7,6 +7,7 @@ import { DatasetStatus } from '../../core/api/models/dataset-status';
 import { DatasetToReviewResponseDto } from '../../core/api/models/dataset-to-review-response-dto';
 import { DatasetWithVideosResponseDto } from '../../core/api/models/dataset-with-videos-response-dto';
 import { DatasetsStatsResponseDto } from '../../core/api/models/datasets-stats-response-dto';
+import { ValidateModelResponseDto } from '../../core/api/models/validate-model-response-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -101,6 +102,20 @@ export class DatasetsService {
     };
     return this.httpClient.patch<DatasetResponseDto>(
       `${environment.apiUrl}datasets/edit_dataset/${datasetId}`,
+      body,
+      { withCredentials: true },
+    );
+  }
+
+  public validateDatasetModel(
+    datasetId: number,
+    videos: { video_id: number; is_violent: boolean }[],
+  ): Observable<ValidateModelResponseDto> {
+    const body = {
+      videos: videos,
+    };
+    return this.httpClient.post<ValidateModelResponseDto>(
+      `${environment.apiUrl}datasets/validate_dataset_model/${datasetId}`,
       body,
       { withCredentials: true },
     );

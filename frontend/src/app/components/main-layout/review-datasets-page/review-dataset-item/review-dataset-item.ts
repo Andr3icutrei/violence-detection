@@ -16,6 +16,8 @@ import { DatasetResponseDto } from '../../../../core/api/models/dataset-response
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';
 import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
+import { ValidateModelResponseDto } from '../../../../core/api/models/validate-model-response-dto';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-review-dataset-item',
@@ -34,9 +36,16 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
   submitMessage: string | null = null;
   isSubmitSuccessful: boolean = false;
 
+  isValidationInProgress: boolean = false;
+  isValidationSuccessful: boolean = false;
+  hasValidated: boolean = false;
+  validationMessage: string | null = null;
+  validationResult: ValidateModelResponseDto | null = null;
+
   form: FormGroup;
 
   datasetUpdatedSubscription!: Subscription;
+  formChangesSubscription!: Subscription;
 
   public constructor(
     private datasetsService: DatasetsService,
@@ -57,6 +66,14 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
         this.loadDataset();
       },
     });
+    this.formChangesSubscription = this.form.valueChanges.subscribe(() => {
+      if (this.hasValidated) {
+        this.hasValidated = false;
+        this.validationResult = null;
+        this.validationMessage = null;
+        this.isValidationSuccessful = false;
+      }
+    });
   }
 
   get videoReviews(): FormArray {
@@ -70,7 +87,7 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
     this.dataset.videos.forEach((video: VideoResponseDto) => {
       const videoGroup = this.formBuilder.group({
         id: [video.id],
-        isViolent: [false, Validators.required],
+        isViolent: [false],
       });
       this.videoReviews.push(videoGroup);
     });
@@ -82,6 +99,10 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
       next: (dataset) => {
         this.dataset = dataset;
         this.populateVideoReviews();
+        this.hasValidated = false;
+        this.validationResult = null;
+        this.validationMessage = null;
+        this.isValidationSuccessful = false;
         this.isDatasetLoading = false;
         this.cdr.detectChanges();
       },
@@ -101,16 +122,47 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
   }
 
   public isFormValid(): boolean {
-    return this.form.valid && !this.isSubmitted;
+    return this.form.valid && !this.isSubmitted && this.hasValidated;
+  }
+
+  private buildVideoReviewPayload(): { video_id: number; is_violent: boolean }[] {
+    return this.videoReviews.controls.map((videoGroup) => ({
+      video_id: videoGroup.get('id')!.value as number,
+      is_violent: videoGroup.get('isViolent')!.value as boolean,
+    }));
+  }
+
+  public validateDataset(): void {
+    if (this.isValidationInProgress) {
+      return;
+    }
+    this.isValidationInProgress = true;
+    this.validationMessage = null;
+    this.isValidationSuccessful = false;
+    this.validationResult = null;
+
+    const videos = this.buildVideoReviewPayload();
+    this.datasetsService.validateDatasetModel(this.datasetId, videos).subscribe({
+      next: (result) => {
+        this.validationResult = result;
+        this.validationMessage = 'review-datasets.validation-success-message';
+        this.isValidationSuccessful = true;
+        this.hasValidated = true;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.validationMessage = 'review-datasets.validation-failed-message';
+        this.isValidationSuccessful = false;
+        this.hasValidated = false;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   public reviewDataset(action: 'ACCEPT' | 'REJECT'): void {
-    const videos: { video_id: number; is_violent: boolean }[] = this.videoReviews.controls.map(
-      (videoGroup) => ({
-        video_id: videoGroup.get('id')!.value as number,
-        is_violent: videoGroup.get('isViolent')!.value as boolean,
-      }),
-    );
+    const videos: { video_id: number; is_violent: boolean }[] = this.buildVideoReviewPayload();
     const isApproved = action === 'ACCEPT';
     const comment = this.form.get('reviewComment')!.value as string;
     this.isSubmitted = true;
@@ -120,6 +172,7 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
           ? 'review-datasets.approval-success-message'
           : 'review-datasets.rejection-success-message';
         this.isSubmitSuccessful = true;
+        this.datasetUpdatedService.emitUpdate();
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -139,5 +192,6 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.datasetUpdatedService.disconnect();
     this.datasetUpdatedSubscription.unsubscribe();
+    this.formChangesSubscription.unsubscribe();
   }
 }

@@ -13,6 +13,7 @@ import { EditDatasetItem } from '../edit-dataset-item/edit-dataset-item';
   imports: [TitleCasePipe, TranslatePipe, ReviewDatasetItem, ConfirmationPopup, EditDatasetItem],
   templateUrl: './dataset-item.html',
   styleUrl: './dataset-item.css',
+  standalone: true,
 })
 export class DatasetItem {
   @Input({ required: true }) dataset!: DatasetToReviewResponseDto;
@@ -28,8 +29,7 @@ export class DatasetItem {
   }
 
   public openReviewDatasetItem(): void {
-    if(this.dataset.status !== DatasetStatusModel.PENDING)
-      return;
+    if (this.dataset.status !== DatasetStatusModel.PENDING) return;
     this.isDatasetReviewModalOpen = true;
   }
 

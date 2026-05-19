@@ -81,7 +81,7 @@ async def inference_video(
     videos_service: VideosService = Depends(get_videos_service),
     current_user: User = Depends(get_current_user),
 ):
-    inference_result = await videos_service.classify_and_gradcam_video(video_id, current_user)
+    inference_result = await videos_service.classify_and_occlusion_video(video_id, current_user)
     background_tasks.add_task(_cleanup_temp_file, inference_result.video_path)
 
     formatted_conf = _format_score(inference_result.confidence)

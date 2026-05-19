@@ -113,7 +113,7 @@ class VideosService:
                 detail=f"Error while updating user credits: {str(e)}"
             ) from e
 
-    async def classify_and_gradcam_video(self, video_id: int, current_user: User) -> InferenceVideoResult:
+    async def classify_and_occlusion_video(self, video_id: int, current_user: User) -> InferenceVideoResult:
         overlay_video_path: str | None = None
         should_cleanup = True
         db_user = await self._get_user_or_404(current_user.id)

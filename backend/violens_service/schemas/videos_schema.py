@@ -10,7 +10,7 @@ class VideoResponseDto(BaseModel):
     dataset_id: int
     dataset_name: str
     dataset_is_official: bool
-    is_violent: bool
+    is_violent: bool | None
     duration: int
     frame_rate: int
 

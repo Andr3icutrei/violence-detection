@@ -40,7 +40,7 @@ class Dataset(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False, server_default=text("''"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
-    deleted_at: Mapped[date] = mapped_column(Date, nullable=True, server_default=func.now())
+    deleted_at: Mapped[date] = mapped_column(Date, nullable=True)
     is_official: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
     status: Mapped[DatasetStatus] = mapped_column(DatasetStatusIntType(), nullable=False, server_default=text("10"))
     comment: Mapped[str] = mapped_column(Text, nullable=True)

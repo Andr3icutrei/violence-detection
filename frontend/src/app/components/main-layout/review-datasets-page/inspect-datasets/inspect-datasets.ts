@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
 import { DatasetStatus } from '../../../../core/api/models/dataset-status';
 import { DatasetToReviewResponseDto } from '../../../../core/api/models/dataset-to-review-response-dto';
@@ -10,14 +10,17 @@ import {SearchBar} from '../../../search-bar/search-bar';
 import { Paginator } from '../../../paginator/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
+import { merge, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-inspect-datasets',
   imports: [TranslatePipe, DatasetItem, SearchBar, Paginator, ReactiveFormsModule, TitleCasePipe],
+  standalone: true,
   templateUrl: './inspect-datasets.html',
   styleUrl: './inspect-datasets.css',
 })
-export class InspectDatasets implements OnInit {
+export class InspectDatasets implements OnInit, OnDestroy {
   readonly pageSize: number = 10;
   searchTerm: string = '';
   page: number = 0;
@@ -31,13 +34,22 @@ export class InspectDatasets implements OnInit {
     (value) => typeof value === 'number',
   ) as DatasetStatusModel[];
 
+  private datasetUpdatedSubscription!: Subscription;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private datasetsService: DatasetsService,
+    private datasetUpdatedService: DatasetUpdatedService,
   ) {}
 
   ngOnInit(): void {
     this.loadDatasets();
+    this.datasetUpdatedSubscription = merge(
+      this.datasetUpdatedService.connect(),
+      this.datasetUpdatedService.updates(),
+    ).subscribe(() => {
+      this.loadDatasets();
+    });
   }
 
   public debouncedSearch(searchTerm: string): void {
@@ -72,7 +84,7 @@ export class InspectDatasets implements OnInit {
     this.datasetsToReview = [];
     this.isLoadingDatasets = true;
     this.datasetsService
-      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus, false)
+      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus)
       .subscribe({
         next: (data: DatasetToReviewResponseDto[]): void => {
           this.hasMoreDatasets = data.length > this.pageSize;
@@ -106,5 +118,10 @@ export class InspectDatasets implements OnInit {
     this.selectedDatasetStatus = null;
     this.isLoadingDatasets = false;
     this.hasMoreDatasets = false;
+  }
+
+  ngOnDestroy(): void {
+    this.datasetUpdatedService.disconnect();
+    this.datasetUpdatedSubscription.unsubscribe();
   }
 }

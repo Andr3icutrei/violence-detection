@@ -24,17 +24,24 @@ class DatasetToReviewResponseDto(DatasetResponseDto):
 @dataclass
 class CreateDatasetRequestDto:
     name: str
+    inference_model_name: str
     videos: list[UploadFile]
-    inference_model: UploadFile | None
+    inference_model: UploadFile
 
     @classmethod
     def as_form(
         cls,
         name: Annotated[str, Form(...)],
+        inference_model_name: Annotated[str, Form(...)],
         videos: Annotated[list[UploadFile], File(...)],
-        inference_model: Annotated[UploadFile | None, File()] = None,
+        inference_model: Annotated[UploadFile, File(...)],
     ) -> "CreateDatasetRequestDto":
-        return cls(name=name, videos=videos, inference_model=inference_model)
+        return cls(
+            name=name,
+            inference_model_name=inference_model_name,
+            videos=videos,
+            inference_model=inference_model,
+        )
 
 class DatasetWithVideosResponseDto(DatasetResponseDto):
     videos: List[VideoResponseDto]
@@ -46,6 +53,19 @@ class ReviewDatasetRequestDto(BaseModel):
 
 class EditDatasetRequestDto(BaseModel):
     videos: List[ReviewVideoRequestDto]
+
+class ValidateModelRequestDto(BaseModel):
+    videos: List[ReviewVideoRequestDto]
+
+class ConfusionMatrixDto(BaseModel):
+    true_positive: int
+    true_negative: int
+    false_positive: int
+    false_negative: int
+
+class ValidateModelResponseDto(BaseModel):
+    accuracy: float
+    confusion_matrix: ConfusionMatrixDto
 
 class MostPopularDatasetResponseDto(DatasetResponseDto):
     inferences_videos_count: int

@@ -10,13 +10,13 @@ import { RequestBuilder } from '../../request-builder';
 import { DatasetResponseDto } from '../../models/dataset-response-dto';
 import { EditDatasetRequestDto } from '../../models/edit-dataset-request-dto';
 
-export interface ReviewDatasetDatasetsEditDatasetDatasetIdPatch$Params {
+export interface EditDatasetDatasetsEditDatasetDatasetIdPatch$Params {
   dataset_id: number;
       body: EditDatasetRequestDto
 }
 
-export function reviewDatasetDatasetsEditDatasetDatasetIdPatch(http: HttpClient, rootUrl: string, params: ReviewDatasetDatasetsEditDatasetDatasetIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<DatasetResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, reviewDatasetDatasetsEditDatasetDatasetIdPatch.PATH, 'patch');
+export function editDatasetDatasetsEditDatasetDatasetIdPatch(http: HttpClient, rootUrl: string, params: EditDatasetDatasetsEditDatasetDatasetIdPatch$Params, context?: HttpContext): Observable<StrictHttpResponse<DatasetResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, editDatasetDatasetsEditDatasetDatasetIdPatch.PATH, 'patch');
   if (params) {
     rb.path('dataset_id', params.dataset_id, {});
     rb.body(params.body, 'application/json');
@@ -32,4 +32,4 @@ export function reviewDatasetDatasetsEditDatasetDatasetIdPatch(http: HttpClient,
   );
 }
 
-reviewDatasetDatasetsEditDatasetDatasetIdPatch.PATH = '/datasets/edit_dataset/{dataset_id}';
+editDatasetDatasetsEditDatasetDatasetIdPatch.PATH = '/datasets/edit_dataset/{dataset_id}';

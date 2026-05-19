@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   imports: [TranslatePipe],
   templateUrl: './form-submit-detail.html',
   styleUrl: './form-submit-detail.css',
+  standalone: true,
 })
 export class FormSubmitDetail {
   @Input({ required: true }) message!: string;

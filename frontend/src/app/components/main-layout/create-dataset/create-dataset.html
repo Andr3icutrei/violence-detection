@@ -31,6 +31,41 @@
             <app-control-error [control]="form.get('name')!"></app-control-error>
           </div>
 
+          <div class="input-group">
+            <label
+              for="inferenceModelName"
+              class="label-primary"
+              [class.required-asterisk]="isControlRequired('inferenceModelName')">
+              {{'create-dataset.inference-model-name' | translate}}
+            </label>
+            <input
+              id="inferenceModelName"
+              name="inferenceModelName"
+              class="input-text-primary"
+              type="text"
+              [placeholder]="'create-dataset.inference-model-name-placeholder' | translate"
+              formControlName="inferenceModelName"/>
+            <app-control-error [control]="form.get('inferenceModelName')!"></app-control-error>
+          </div>
+
+          <div class="input-group">
+            <label
+              for="upload-model"
+              class="label-primary">
+              {{'create-dataset.upload-model' | translate}}
+            </label>
+            <input
+              id="upload-model"
+              class="videos-input"
+              type="file"
+              accept=".onnx"
+              (change)="onModelFileSelected($event)"
+            >
+            @if (selectedInferenceModel) {
+              <span class="detail-item-value">{{ selectedInferenceModel.name }}</span>
+            }
+          </div>
+
           <div class="videos-to-input-container">
             <label
               for="upload-videos"
@@ -46,24 +81,6 @@
                 (change)="onFileSelected($event)"
                 multiple
               >
-            </div>
-
-            <div class="input-group">
-              <label
-                for="upload-model"
-                class="label-primary">
-                {{'create-dataset.upload-model' | translate}}
-              </label>
-              <input
-                id="upload-model"
-                class="videos-input"
-                type="file"
-                accept=".onnx"
-                (change)="onModelFileSelected($event)"
-              >
-              @if (selectedInferenceModel) {
-                <span class="detail-item-value">{{ selectedInferenceModel.name }}</span>
-              }
             </div>
 
             <div class="create-dataset-submit-container">

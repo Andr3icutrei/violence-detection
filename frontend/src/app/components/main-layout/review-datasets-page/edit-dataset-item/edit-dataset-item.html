@@ -22,6 +22,13 @@
           </div>
         }
 
+        @if (getInferenceModelName()) {
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'edit-dataset.inference-model-name' | translate }} </span>
+            <span class="detail-item-value">{{ getInferenceModelName() }}</span>
+          </div>
+        }
+
         <div class="input-group edit-videos-input-group">
           <label
             for="review-videos"
@@ -80,6 +87,13 @@
 
         <div class="submit-btns-container">
           <button
+            type="button"
+            class="btn-submit btn-validate"
+            [disabled]="isValidationInProgress"
+            (click)="validateDataset()">
+            {{ 'edit-dataset.validate-dataset' | translate }}
+          </button>
+          <button
             type="submit"
             class="btn-submit btn-approve btn-edit"
             [disabled]="!isFormValid()"
@@ -87,6 +101,40 @@
             {{ 'edit-dataset.save' | translate }}
           </button>
         </div>
+
+        @if (validationMessage) {
+          <div class="submit-message-container">
+            <app-form-submit-detail
+              [message]="validationMessage!"
+              [success]="isValidationSuccessful">
+            </app-form-submit-detail>
+          </div>
+        }
+
+        @if (validationResult) {
+          <div class="validation-results-container">
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'edit-dataset.validation-accuracy' | translate }} </span>
+              <span class="detail-item-value">{{ validationResult.accuracy }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'edit-dataset.validation-true-positive' | translate }} </span>
+              <span class="detail-item-value">{{ validationResult.confusion_matrix.true_positive }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'edit-dataset.validation-true-negative' | translate }} </span>
+              <span class="detail-item-value">{{ validationResult.confusion_matrix.true_negative }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'edit-dataset.validation-false-positive' | translate }} </span>
+              <span class="detail-item-value">{{ validationResult.confusion_matrix.false_positive }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label">{{ 'edit-dataset.validation-false-negative' | translate }} </span>
+              <span class="detail-item-value">{{ validationResult.confusion_matrix.false_negative }}</span>
+            </div>
+          </div>
+        }
 
         @if (submitMessage) {
           <div class="submit-message-container">

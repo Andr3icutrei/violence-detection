@@ -7,7 +7,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {TranslatePipe} from "@ngx-translate/core";
 import { DatasetWithVideosResponseDto } from '../../../../core/api/models/dataset-with-videos-response-dto';
 import { DatasetsService } from '../../../../services/datasets/datasets-service';
@@ -16,10 +16,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormSubmitDetail } from '../../../form-submit-detail/form-submit-detail';
 import { Subscription } from 'rxjs';
 import { DatasetUpdatedService } from '../../../../services/dataset_updated/dataset-updated.service';
+import { ValidateModelResponseDto } from '../../../../core/api/models/validate-model-response-dto';
 
 @Component({
   selector: 'app-edit-dataset-item',
   imports: [ReactiveFormsModule, TranslatePipe, FormSubmitDetail],
+  standalone: true,
   templateUrl: './edit-dataset-item.html',
   styleUrl: './edit-dataset-item.css',
 })
@@ -35,9 +37,16 @@ export class EditDatasetItem implements OnInit, OnDestroy {
   submitMessage: string | null = null;
   isSubmitSuccessful: boolean = false;
 
+  isValidationInProgress: boolean = false;
+  isValidationSuccessful: boolean = false;
+  hasValidated: boolean = false;
+  validationMessage: string | null = null;
+  validationResult: ValidateModelResponseDto | null = null;
+
   form: FormGroup;
 
   datasetUpdatedSubscription!: Subscription;
+  formChangesSubscription!: Subscription;
 
   public constructor(
     private datasetsService: DatasetsService,
@@ -57,6 +66,14 @@ export class EditDatasetItem implements OnInit, OnDestroy {
         this.loadCurrentDataset();
       },
     });
+    this.formChangesSubscription = this.form.valueChanges.subscribe(() => {
+      if (this.hasValidated) {
+        this.hasValidated = false;
+        this.validationResult = null;
+        this.validationMessage = null;
+        this.isValidationSuccessful = false;
+      }
+    });
   }
 
   get videoReviews(): FormArray {
@@ -69,7 +86,7 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     for (let i = 0; i < this.currentDataset?.videos.length; i++) {
       const videoGroup = this.formBuilder.group({
         id: [this.currentDataset.videos[i].id],
-        isViolent: [this.currentDataset.videos[i].is_violent, Validators.required],
+        isViolent: [this.currentDataset.videos[i].is_violent],
       });
       this.videoReviews.push(videoGroup);
     }
@@ -108,6 +125,10 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     return pathParts[pathParts.length - 1] || modelPath;
   }
 
+  public getInferenceModelName(): string | null {
+    return this.currentDataset?.inference_model_name ?? null;
+  }
+
   public loadCurrentDataset(): void {
     this.isDatasetLoading = true;
     this.datasetsService.getDatasetWithVideos(this.datasetId).subscribe({
@@ -115,6 +136,10 @@ export class EditDatasetItem implements OnInit, OnDestroy {
         this.currentDataset = dataset;
         this.populateVideoReviews();
         this.loadOriginalDataset();
+        this.hasValidated = false;
+        this.validationResult = null;
+        this.validationMessage = null;
+        this.isValidationSuccessful = false;
         this.isDatasetLoading = false;
         this.cdr.detectChanges();
       },
@@ -130,7 +155,7 @@ export class EditDatasetItem implements OnInit, OnDestroy {
   }
 
   public isFormValid(): boolean {
-    return this.form.valid && !this.isSubmitted && this.isFormChanged();
+    return this.form.valid && !this.isSubmitted && this.isFormChanged() && this.hasValidated;
   }
 
   private isFormChanged(): boolean {
@@ -148,18 +173,50 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     return false;
   }
 
+  private buildVideoReviewPayload(): { video_id: number; is_violent: boolean }[] {
+    return this.videoReviews.controls.map((videoGroup) => ({
+      video_id: videoGroup.get('id')!.value as number,
+      is_violent: videoGroup.get('isViolent')!.value as boolean,
+    }));
+  }
+
+  public validateDataset(): void {
+    if (this.isValidationInProgress) {
+      return;
+    }
+    this.isValidationInProgress = true;
+    this.validationMessage = null;
+    this.isValidationSuccessful = false;
+    this.validationResult = null;
+
+    const videos = this.buildVideoReviewPayload();
+    this.datasetsService.validateDatasetModel(this.datasetId, videos).subscribe({
+      next: (result) => {
+        this.validationResult = result;
+        this.validationMessage = 'edit-dataset.validation-success-message';
+        this.isValidationSuccessful = true;
+        this.hasValidated = true;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.validationMessage = 'edit-dataset.validation-failed-message';
+        this.isValidationSuccessful = false;
+        this.hasValidated = false;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   public editDataset(): void {
-    const videos: { video_id: number; is_violent: boolean }[] = this.videoReviews.controls.map(
-      (videoGroup) => ({
-        video_id: videoGroup.get('id')!.value as number,
-        is_violent: videoGroup.get('isViolent')!.value as boolean,
-      }),
-    );
+    const videos = this.buildVideoReviewPayload();
     this.isSubmitted = true;
     this.datasetsService.editDataset(this.datasetId, videos).subscribe({
       next: (data: DatasetResponseDto) => {
         this.submitMessage = 'edit-dataset.edit-success-message';
         this.isSubmitSuccessful = true;
+        this.datasetUpdatedService.emitUpdate();
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -179,5 +236,6 @@ export class EditDatasetItem implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.datasetUpdatedService.disconnect();
     this.datasetUpdatedSubscription.unsubscribe();
+    this.formChangesSubscription.unsubscribe();
   }
 }

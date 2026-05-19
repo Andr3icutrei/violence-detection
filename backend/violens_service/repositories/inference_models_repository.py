@@ -26,7 +26,9 @@ class InferenceModelsRepository:
 
     async def count_datasets(self, model_id: int) -> int:
         result = await self.db.execute(
-            select(func.count(Dataset.id)).filter(Dataset.inference_model_id == model_id)
+            select(func.count(Dataset.id)).filter(
+                Dataset.inference_model_id == model_id,
+                Dataset.deleted_at.is_(None)
+            )
         )
         return int(result.scalar_one())
-

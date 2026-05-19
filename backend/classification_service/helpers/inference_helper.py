@@ -7,7 +7,7 @@ from starlette import status
 from inference.onnx.pipeline import Onnx3dInferencePipeline
 from inference.onnx.preprocess import preprocess_video_for_inference, prepare_input_tensors
 
-def run_classification_and_gradcam(
+def run_classification_and_occlusion(
     inference_model_path: str,
     temp_video_path: str,
     inference_runtime,
@@ -29,7 +29,7 @@ def run_classification_and_gradcam(
             )
 
         input_tensors = prepare_input_tensors(frames_by_name, pipeline.input_specs)
-        pred_class, probs, heatmap = pipeline.predict_and_generate_cam(input_tensors)
+        pred_class, probs, heatmap = pipeline.predict_and_generate_occlusion(input_tensors)
         confidence = float(max(probs))
         predicted_class_probability = float(probs[pred_class])
         overlays = pipeline.overlay_heatmap_on_frames(frames, heatmap)
@@ -48,9 +48,42 @@ def run_classification_and_gradcam(
             os.remove(overlay_video_path)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to build Grad-CAM video output: {exc}",
+            detail=f"Failed to build Occlusion video output: {exc}",
         )
 
+def run_classification_only(
+    inference_model_path: str,
+    temp_video_path: str,
+    inference_runtime,
+    inference_model_kind: str | None = None,
+    inference_model_cache_key: str | None = None,
+) -> tuple[str, float, float]:
+    try:
+        pipeline = Onnx3dInferencePipeline(inference_model_path)
+        frames, frames_by_name = preprocess_video_for_inference(
+            temp_video_path,
+            inference_runtime.yolo_model,
+            pipeline.input_specs,
+        )
+        if not frames:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not prepare input frames for inference.",
+            )
+
+        input_tensors = prepare_input_tensors(frames_by_name, pipeline.input_specs)
+        pred_class, probs = pipeline.predict(input_tensors)
+        confidence = float(max(probs))
+        predicted_class_probability = float(probs[pred_class])
+        
+        return str(pred_class), confidence, predicted_class_probability
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to run classification: {exc}",
+        )
 
 def write_overlay_video(overlays: list, source_video_path: str) -> str:
     import subprocess
@@ -58,7 +91,7 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     import shutil
 
     if not overlays:
-        raise ValueError("No Grad-CAM overlays were produced for this video.")
+        raise ValueError("No Occlusion overlays were produced for this video.")
 
     first_frame = overlays[0]
     if first_frame is None or len(first_frame.shape) < 2:
@@ -132,7 +165,7 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     output_path, writer = _create_temp_writer(output_fps, (width, height))
     if not writer.isOpened():
-        raise ValueError("Could not initialize video writer for Grad-CAM output.")
+        raise ValueError("Could not initialize video writer for Occlusion output.")
 
     if total_source_frames <= 0:
         total_source_frames = len(overlays)
@@ -186,10 +219,10 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
     if written_frames == 0:
         if os.path.exists(output_path):
             os.remove(output_path)
-        raise ValueError("Grad-CAM output video contains zero writable frames.")
+        raise ValueError("Occlusion output video contains zero writable frames.")
 
     if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
-        raise ValueError("Grad-CAM output file is empty after encoding.")
+        raise ValueError("Occlusion output file is empty after encoding.")
 
     final_output_path = output_path + "_h264.mp4"
 

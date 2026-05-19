@@ -41,12 +41,26 @@ async def inference_video(
     inference_model_kind: str | None = None,
     videos_service: ClassificationService = Depends(get_classification_service),
 ) -> ClassificationResponseDto:
-    inference_result, _ = await videos_service.classify_and_gradcam_video(
+    inference_result, _ = await videos_service.classify_and_occlusion_video(
         video_path,
         inference_model_path,
         inference_model_kind,
     )
     return inference_result
+
+@router.get("/classify_video", status_code=HTTP_200_OK)
+async def inference_video_only_classification(
+    video_path: str,
+    inference_model_path: str,
+    inference_model_kind: str | None = None,
+    videos_service: ClassificationService = Depends(get_classification_service),
+) -> ClassificationResponseDto:
+    result = await videos_service.classify_video(
+        video_path,
+        inference_model_path,
+        inference_model_kind,
+    )
+    return result
 
 
 @router.get("/classify_video_gradcam_stream", status_code=HTTP_200_OK)
@@ -57,7 +71,7 @@ async def inference_video_stream(
     inference_model_kind: str | None = None,
     videos_service: ClassificationService = Depends(get_classification_service),
 ) -> FileResponse:
-    inference_result, temp_video_path = await videos_service.classify_and_gradcam_video(
+    inference_result, temp_video_path = await videos_service.classify_and_occlusion_video(
         video_path,
         inference_model_path,
         inference_model_kind,

@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from datetime import date
 
 from fastapi import UploadFile
 from sqlalchemy import select, func
@@ -20,20 +21,30 @@ class DatasetsRepository:
         self.db = db
 
     async def get_by_name(self, name: str) -> Dataset | None:
-        result = await self.db.execute(select(Dataset).filter(Dataset.name == name))
+        result = await self.db.execute(
+            select(Dataset).filter(Dataset.name == name, Dataset.deleted_at.is_(None))
+        )
         return result.scalars().first()
 
     async def get_by_id(self, dataset_id: int) -> Dataset | None:
-        result = await self.db.execute(select(Dataset).filter(Dataset.id == dataset_id))
+        result = await self.db.execute(
+            select(Dataset).filter(Dataset.id == dataset_id, Dataset.deleted_at.is_(None))
+        )
         return result.scalars().first()
 
     async def get_all_accepted(self) -> List[Dataset]:
-        result = await self.db.execute(select(Dataset).filter(Dataset.status == DatasetStatus.ACCEPTED))
+        result = await self.db.execute(
+            select(Dataset).filter(
+                Dataset.status == DatasetStatus.ACCEPTED,
+                Dataset.deleted_at.is_(None)
+            )
+        )
         return list(result.scalars().all())
 
     async def get_all(self, search_term: str | None, page: int, page_size: int, dataset_status: DatasetStatus | None, is_official: bool | None) -> List[Dataset]:
         query = (
             select(Dataset)
+            .filter(Dataset.deleted_at.is_(None))
             .options(
                 selectinload(Dataset.created_by_user),
                 selectinload(Dataset.videos),
@@ -90,7 +101,7 @@ class DatasetsRepository:
         dataset = Dataset(
             name=name,
             is_official=is_official,
-            status=DatasetStatus.ACCEPTED if is_official else DatasetStatus.PENDING,
+            status=DatasetStatus.PENDING,
             videos=video_models,
             created_by_user_id=user_id,
             inference_model_id=inference_model_id,
@@ -102,13 +113,19 @@ class DatasetsRepository:
         return dataset
 
     async def user_has_pending_datasets(self, user_id: int) -> bool:
-        result = await self.db.execute(select(Dataset).filter(Dataset.created_by_user_id == user_id, Dataset.status == DatasetStatus.PENDING))
+        result = await self.db.execute(
+            select(Dataset).filter(
+                Dataset.created_by_user_id == user_id,
+                Dataset.status == DatasetStatus.PENDING,
+                Dataset.deleted_at.is_(None)
+            )
+        )
         return result.scalars().first() is not None
 
     async def get_by_id_with_videos(self, dataset_id: int) -> Dataset | None:
         result = await self.db.execute(
             select(Dataset)
-            .filter(Dataset.id == dataset_id)
+            .filter(Dataset.id == dataset_id, Dataset.deleted_at.is_(None))
             .join(Dataset.videos)
             .join(Dataset.created_by_user)
             .options(
@@ -125,14 +142,16 @@ class DatasetsRepository:
         return dataset
 
     async def delete(self, dataset: Dataset) -> None:
-        await self.db.delete(dataset)
-        await self.db.flush()
+        dataset.deleted_at = date.today()
+        self.db.add(dataset)
         await self.db.commit()
+        await self.db.refresh(dataset)
 
     async def get_most_popular_dataset_classification(self) -> Tuple[Dataset, int] | None:
         inferences_count = func.coalesce(func.count(InferenceHistoryClassification.id), 0)
         result = await self.db.execute(
             select(Dataset, inferences_count)
+            .filter(Dataset.deleted_at.is_(None))
             .join(Dataset.videos)
             .join(Video.inference_history)
             .join(InferenceHistory.inference_history_classification)
@@ -145,6 +164,7 @@ class DatasetsRepository:
         inferences_count = func.coalesce(func.count(InferenceHistoryPeopleTracking.id), 0)
         result = await self.db.execute(
             select(Dataset, inferences_count)
+            .filter(Dataset.deleted_at.is_(None))
             .join(Dataset.videos)
             .join(Video.inference_history)
             .join(InferenceHistory.inference_history_people_tracking)
@@ -154,13 +174,28 @@ class DatasetsRepository:
         return result.first()
 
     async def get_official_datasets_count(self) -> int:
-        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == True))
+        result = await self.db.execute(
+            select(func.count(Dataset.id)).filter(
+                Dataset.is_official == True,
+                Dataset.deleted_at.is_(None)
+            )
+        )
         return result.scalar_one()
 
     async def get_unofficial_datasets_count(self) -> int:
-        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.is_official == False))
+        result = await self.db.execute(
+            select(func.count(Dataset.id)).filter(
+                Dataset.is_official == False,
+                Dataset.deleted_at.is_(None)
+            )
+        )
         return result.scalar_one()
 
     async def get_pending_datasets_count(self) -> int:
-        result = await self.db.execute(select(func.count(Dataset.id)).filter(Dataset.status == DatasetStatus.PENDING))
+        result = await self.db.execute(
+            select(func.count(Dataset.id)).filter(
+                Dataset.status == DatasetStatus.PENDING,
+                Dataset.deleted_at.is_(None)
+            )
+        )
         return result.scalar_one()

@@ -8,7 +8,8 @@ from starlette import status
 from api.dependencies import get_datasets_service
 from models.dataset_status import DatasetStatus
 from schemas.datasets_schema import DatasetResponseDto, CreateDatasetRequestDto, DatasetToReviewResponseDto, \
-    DatasetWithVideosResponseDto, ReviewDatasetRequestDto, EditDatasetRequestDto, DatasetsStatsResponseDto
+    DatasetWithVideosResponseDto, ReviewDatasetRequestDto, EditDatasetRequestDto, DatasetsStatsResponseDto, \
+    ValidateModelRequestDto, ValidateModelResponseDto
 from services.auth_service import get_current_admin_user, get_current_user
 
 router = APIRouter(
@@ -82,13 +83,23 @@ async def delete_dataset(
     await datasets_service.delete_dataset(dataset_id)
 
 @router.patch("/edit_dataset/{dataset_id}", response_model=DatasetResponseDto, status_code=status.HTTP_200_OK)
-async def review_dataset(
+async def edit_dataset(
     dataset_id: int,
     request: EditDatasetRequestDto,
     current_admin_user=Depends(get_current_admin_user),
     datasets_service = Depends(get_datasets_service)
 ):
     result = await datasets_service.edit_dataset(dataset_id, request.videos)
+    return result
+
+@router.post("/validate_dataset_model/{dataset_id}", response_model=ValidateModelResponseDto, status_code=status.HTTP_200_OK)
+async def validate_dataset_model(
+    dataset_id: int,
+    request: ValidateModelRequestDto,
+    current_admin_user=Depends(get_current_admin_user),
+    datasets_service = Depends(get_datasets_service)
+):
+    result = await datasets_service.validate_dataset_model(dataset_id, request.videos)
     return result
 
 @router.get("/get_datasets_stats", response_model=DatasetsStatsResponseDto, status_code=status.HTTP_200_OK)

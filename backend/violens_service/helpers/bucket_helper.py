@@ -1,6 +1,5 @@
 import os
 from typing import Any, List
-import uuid
 import tempfile
 
 import aiofiles
@@ -154,7 +153,7 @@ async def upload_inference_model(dataset_name: str, model_file: UploadFile) -> s
         )
 
     safe_name = os.path.basename(model_file.filename)
-    object_key = f"models/{dataset_name}/{uuid.uuid4().hex}_{safe_name}"
+    object_key = f"models/{dataset_name}/{safe_name}"
     try:
         async with session.client(
             service_name='s3',
