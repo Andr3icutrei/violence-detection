@@ -84,7 +84,7 @@ export class InspectDatasets implements OnInit, OnDestroy {
     this.datasetsToReview = [];
     this.isLoadingDatasets = true;
     this.datasetsService
-      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus)
+      .getDatasets(this.searchTerm, this.page, this.pageSize, this.selectedDatasetStatus, false)
       .subscribe({
         next: (data: DatasetToReviewResponseDto[]): void => {
           this.hasMoreDatasets = data.length > this.pageSize;

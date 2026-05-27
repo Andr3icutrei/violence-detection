@@ -3,5 +3,6 @@
 
 import { ReviewVideoRequestDto } from '../models/review-video-request-dto';
 export interface ValidateModelRequestDto {
+  excluded_video_ids?: (Array<number> | null);
   videos: Array<ReviewVideoRequestDto>;
 }

@@ -3,6 +3,7 @@
 
 import { ReviewVideoRequestDto } from '../models/review-video-request-dto';
 export interface ReviewDatasetRequestDto {
+  excluded_video_ids?: (Array<number> | null);
   is_approved: boolean;
   review_comment: string;
   videos: Array<ReviewVideoRequestDto>;

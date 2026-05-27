@@ -512,9 +512,9 @@ input[type="password"]::-ms-clear {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background-color: var(--color-review-icon-faded);
-  color: var(--color-review-icon);
-  border: 1px solid var(--color-review-icon);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   padding: 0.25rem 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
@@ -524,9 +524,9 @@ input[type="password"]::-ms-clear {
 }
 
 .btn-validate:hover:not(:disabled) {
-  background-color: var(--color-review-icon);
+  background-color: var(--color-primary);
   color: var(--color-white-text);
-  box-shadow: 0 0 10px var(--color-review-icon-faded);
+  box-shadow: 0 0 10px var(--color-primary-outline);
 }
 
 .btn-reject {

@@ -1,6 +1,6 @@
 from typing import Literal, cast
 
-from fastapi import APIRouter, status, Depends, Response, Request
+from fastapi import APIRouter, status, Depends, Response
 
 from api.dependencies import get_auth_service
 from helpers.env_helper import get_env_variable
@@ -16,7 +16,8 @@ router = APIRouter(
 )
 
 ACCESS_TOKEN_COOKIE = "access_token"
-ACCESS_TOKEN_MAX_AGE_SECONDS = 3600
+ACCESS_TOKEN_MAX_AGE_SECONDS = 3600 * 24
+ACCESS_TOKEN_EXPIRES_MINUTES = 60
 raw_samesite_value = get_env_variable("ACCESS_TOKEN_COOKIE_SAMESITE", "none").lower()
 if raw_samesite_value not in {"lax", "strict", "none"}:
     raw_samesite_value = "none"
@@ -27,19 +28,15 @@ ACCESS_TOKEN_COOKIE_SECURE = get_env_variable("ACCESS_TOKEN_COOKIE_SECURE", "tru
 ACCESS_TOKEN_COOKIE_DOMAIN = get_env_variable("ACCESS_TOKEN_COOKIE_DOMAIN", "").strip() or None
 
 
-@router.post("/login", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED)
-async def login(
-    login_dto: LoginRequestDto,
-    response: Response,
-    auth_service: AuthService = Depends(get_auth_service)
-):
-    user: User = await auth_service.login(login_dto.email, login_dto.password)
-    token_payload = {
+def _build_token_payload(user: User) -> dict:
+    return {
         "sub": str(user.id),
         "email": user.email,
         "is_admin": user.is_admin,
     }
-    jwt_token: str = create_jwt_token(token_payload, "SECRET_JWT_KEY", expires=60)
+
+
+def _set_auth_cookie(response: Response, jwt_token: str) -> None:
     response.set_cookie(
         key=ACCESS_TOKEN_COOKIE,
         value=jwt_token,
@@ -50,6 +47,18 @@ async def login(
         path="/",
         domain=ACCESS_TOKEN_COOKIE_DOMAIN,
     )
+
+
+@router.post("/login", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED)
+async def login(
+    login_dto: LoginRequestDto,
+    response: Response,
+    auth_service: AuthService = Depends(get_auth_service)
+):
+    user: User = await auth_service.login(login_dto.email, login_dto.password)
+    token_payload = _build_token_payload(user)
+    jwt_token: str = create_jwt_token(token_payload, "SECRET_JWT_KEY", expires=ACCESS_TOKEN_EXPIRES_MINUTES)
+    _set_auth_cookie(response, jwt_token)
     return user
 
 
@@ -60,22 +69,9 @@ async def login_google(
     auth_service: AuthService = Depends(get_auth_service)
 ):
     user: User = await auth_service.login_google(data)
-    token_payload = {
-        "sub": str(user.id),
-        "email": user.email,
-        "is_admin": user.is_admin,
-    }
-    jwt_token: str = create_jwt_token(token_payload, "SECRET_JWT_KEY", expires=60)
-    response.set_cookie(
-        key=ACCESS_TOKEN_COOKIE,
-        value=jwt_token,
-        httponly=True,
-        max_age=ACCESS_TOKEN_MAX_AGE_SECONDS,
-        samesite=ACCESS_TOKEN_COOKIE_SAMESITE,
-        secure=ACCESS_TOKEN_COOKIE_SECURE,
-        path="/",
-        domain=ACCESS_TOKEN_COOKIE_DOMAIN,
-    )
+    token_payload = _build_token_payload(user)
+    jwt_token: str = create_jwt_token(token_payload, "SECRET_JWT_KEY", expires=ACCESS_TOKEN_EXPIRES_MINUTES)
+    _set_auth_cookie(response, jwt_token)
     return user
 
 

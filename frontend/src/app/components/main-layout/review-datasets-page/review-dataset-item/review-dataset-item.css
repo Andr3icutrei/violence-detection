@@ -110,6 +110,12 @@
   gap: 1rem;
   margin-bottom: 0.75rem;
   border: 1px solid var(--color-background-faded);
+  transition: opacity 0.2s, filter 0.2s;
+}
+
+.disabled-card {
+  opacity: 0.5;
+  filter: grayscale(1);
 }
 
 .video-container {
@@ -169,7 +175,19 @@
   gap: 1.5rem;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 0;
+  width: 100%;
+}
+
+.submit-btns-container .btn-validate {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border-color: var(--color-primary);
+}
+
+.submit-btns-container .btn-validate:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  color: var(--color-white-text);
 }
 
 .btn-submit:disabled {
@@ -183,14 +201,93 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .validation-results-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: var(--color-shadow-faint);
+  background: var(--color-background);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-background-faded);
+  border: 1px solid var(--color-primary-faded);
+}
+
+.validation-summary-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.validation-message-placeholder {
+  min-height: 2.25rem;
+}
+
+.submit-section {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 0;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-faded);
+}
+
+.submit-actions-container {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.submit-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+}
+
+.confusion-matrix-table-container {
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.confusion-matrix-table {
+  width: fit-content;
+  min-width: 14rem;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: var(--color-background);
+}
+
+.confusion-matrix-table th,
+.confusion-matrix-table td {
+  border: 1px solid var(--color-primary-faded);
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+}
+
+.confusion-matrix-table th {
+  background: var(--color-primary-light);
+  font-weight: 600;
+}
+
+.confusion-matrix-table td {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.confusion-matrix-table tbody th {
+  background: var(--color-primary-more-faded);
+  color: var(--color-text);
 }

@@ -1,4 +1,4 @@
-export const domain = 'oklahoma-prairie-ear-girls.trycloudflare.com';
+export const domain = 'surf-promises-peter-untitled.trycloudflare.com';
 
 export const environment = {
   production: false,

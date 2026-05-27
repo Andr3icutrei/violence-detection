@@ -25,7 +25,7 @@
           @if (dataset?.videos) {
             <div class="video-review-container">
               @for (video of dataset?.videos; track video.id; let i = $index) {
-                <div class="video-review-item-container" [formGroup]="$any(videoReviews.controls[i])">
+                <div class="video-review-item-container" [formGroup]="$any(videoReviews.controls[i])" [class.disabled-card]="videoReviews.controls[i].get('isExcluded')?.value">
                   <div class="video-container">
                     <div class="video-item-header">
                       <strong>{{ video.name }}</strong>
@@ -52,7 +52,7 @@
                       <span class="detail-item-value"> {{ video.frame_rate }} fps</span>
                     </div>
 
-                    <div class="detail-item detail-item-last">
+                    <div class="detail-item">
                       <label class="detail-item-label required-asterisk"
                         for="isViolent-{{ video.id }}">
                         {{ 'review-datasets.is-violent' | translate }}
@@ -64,12 +64,35 @@
                         class="input-checkbox-primary"
                         formControlName="isViolent"/>
                     </div>
+
+                    <div class="detail-item detail-item-last">
+                      <label
+                        class="detail-item-label"
+                        for="isExcluded-{{ video.id }}">
+                        {{ 'review-datasets.exclude-video' | translate }}
+                      </label>
+                      <input
+                        type="checkbox"
+                        [id]="'isExcluded-' + video.id"
+                        [name]="'isExcluded-' + video.id"
+                        class="input-checkbox-primary"
+                        formControlName="isExcluded"/>
+                    </div>
                   </div>
                 </div>
               }
             </div>
           }
         </div>
+
+        @if (areAllVideosExcluded) {
+          <div class="submit-message-container">
+            <app-form-submit-detail
+              [message]="'review-datasets.submit-no-videos-message' | translate"
+              [success]="false">
+            </app-form-submit-detail>
+          </div>
+        }
 
         <div class="input-group review-comment-input-group">
           <label
@@ -88,74 +111,79 @@
           </textarea>
         </div>
 
-        <div class="submit-btns-container">
-          <button
-            type="button"
-            class="btn-submit btn-validate"
-            [disabled]="isValidationInProgress"
-            (click)="validateDataset()">
-            {{ 'review-datasets.validate-dataset' | translate }}
-          </button>
+        <div class="submit-section">
+          <div class="submit-actions-container">
+            <div class="submit-actions-stack">
+              <div class="submit-btns-container">
+                <button
+                  type="button"
+                  class="btn-submit btn-validate"
+                  [disabled]="isValidationInProgress"
+                  (click)="validateDataset()">
+                  {{ 'review-datasets.validate-dataset' | translate }}
+                </button>
 
-          <button
-            type="submit"
-            class="btn-submit btn-approve"
-            [disabled]="!isFormValid()"
-            (click)="reviewDataset('ACCEPT')">
-            {{ 'review-datasets.approve' | translate }}
-          </button>
+                <button
+                  type="submit"
+                  class="btn-submit btn-approve"
+                  [disabled]="!isFormValid()"
+                  (click)="reviewDataset('ACCEPT')">
+                  {{ 'review-datasets.approve' | translate }}
+                </button>
 
-          <button
-            type="submit"
-            class="btn-submit btn-reject"
-            [disabled]="!isFormValid()"
-            (click)="reviewDataset('REJECT')">
-            {{ 'review-datasets.reject' | translate }}
-          </button>
+                <button
+                  type="submit"
+                  class="btn-submit btn-reject"
+                  [disabled]="!isFormValid()"
+                  (click)="reviewDataset('REJECT')">
+                  {{ 'review-datasets.reject' | translate }}
+                </button>
+              </div>
+
+              @if (submitMessage) {
+                <div class="submit-message-container">
+                  <app-form-submit-detail
+                    [message]="submitMessage!"
+                    [success]="isSubmitSuccessful">
+                  </app-form-submit-detail>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="validation-summary-container">
+
+            <div class="validation-results-container">
+              <div class="detail-item">
+                <span class="detail-item-label">{{ 'review-datasets.validation-accuracy' | translate }} </span>
+                <span class="detail-item-value">{{ validationResult?.accuracy ?? '-' }}</span>
+              </div>
+              <div class="confusion-matrix-table-container">
+                <table class="confusion-matrix-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Predicted +</th>
+                      <th>Predicted -</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>Actual +</th>
+                      <td>{{ validationResult?.confusion_matrix?.true_positive ?? '-' }}</td>
+                      <td>{{ validationResult?.confusion_matrix?.false_negative ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                      <th>Actual -</th>
+                      <td>{{ validationResult?.confusion_matrix?.false_positive ?? '-' }}</td>
+                      <td>{{ validationResult?.confusion_matrix?.true_negative ?? '-' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-
-        @if (validationMessage) {
-          <div class="submit-message-container">
-            <app-form-submit-detail
-              [message]="validationMessage!"
-              [success]="isValidationSuccessful">
-            </app-form-submit-detail>
-          </div>
-        }
-
-        @if (validationResult) {
-          <div class="validation-results-container">
-            <div class="detail-item">
-              <span class="detail-item-label">{{ 'review-datasets.validation-accuracy' | translate }} </span>
-              <span class="detail-item-value">{{ validationResult.accuracy }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-item-label">{{ 'review-datasets.validation-true-positive' | translate }} </span>
-              <span class="detail-item-value">{{ validationResult.confusion_matrix.true_positive }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-item-label">{{ 'review-datasets.validation-true-negative' | translate }} </span>
-              <span class="detail-item-value">{{ validationResult.confusion_matrix.true_negative }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-item-label">{{ 'review-datasets.validation-false-positive' | translate }} </span>
-              <span class="detail-item-value">{{ validationResult.confusion_matrix.false_positive }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-item-label">{{ 'review-datasets.validation-false-negative' | translate }} </span>
-              <span class="detail-item-value">{{ validationResult.confusion_matrix.false_negative }}</span>
-            </div>
-          </div>
-        }
-
-        @if (submitMessage) {
-          <div class="submit-message-container">
-            <app-form-submit-detail
-              [message]="submitMessage!"
-              [success]="isSubmitSuccessful">
-            </app-form-submit-detail>
-          </div>
-        }
       </form>
     </div>
   </div>

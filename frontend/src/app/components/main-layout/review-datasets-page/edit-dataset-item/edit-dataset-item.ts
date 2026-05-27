@@ -80,6 +80,12 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     return this.form.get('videoReviews') as FormArray;
   }
 
+  public get areAllVideosExcluded(): boolean {
+    if (!this.videoReviews?.controls) return false;
+    return this.videoReviews.controls.length > 0 &&
+           this.videoReviews.controls.every(c => c.get('isExcluded')?.value);
+  }
+
   public populateVideoReviews(): void {
     if (!this.currentDataset?.videos) return;
     this.videoReviews.clear();
@@ -87,6 +93,7 @@ export class EditDatasetItem implements OnInit, OnDestroy {
       const videoGroup = this.formBuilder.group({
         id: [this.currentDataset.videos[i].id],
         isViolent: [this.currentDataset.videos[i].is_violent],
+        isExcluded: [false],
       });
       this.videoReviews.push(videoGroup);
     }
@@ -162,6 +169,12 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     if (!this.originalDataset?.videos || !this.videoReviews?.controls) {
       return false;
     }
+    const hasExcludedVideos = this.videoReviews.controls.some(
+      (videoGroup) => videoGroup.get('isExcluded')!.value as boolean,
+    );
+    if (hasExcludedVideos) {
+      return true;
+    }
     for (let i = 0; i < this.currentDataset.videos.length; i++) {
       const originalValue = this.originalDataset.videos[i].is_violent;
       const currentFormValue = this.videoReviews.controls[i].get('isViolent')?.value;
@@ -173,11 +186,19 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     return false;
   }
 
-  private buildVideoReviewPayload(): { video_id: number; is_violent: boolean }[] {
-    return this.videoReviews.controls.map((videoGroup) => ({
-      video_id: videoGroup.get('id')!.value as number,
-      is_violent: videoGroup.get('isViolent')!.value as boolean,
-    }));
+  private buildVideoReviewPayload(excludedIds: Set<number>): { video_id: number; is_violent: boolean }[] {
+    return this.videoReviews.controls
+      .filter((videoGroup) => !excludedIds.has(videoGroup.get('id')!.value as number))
+      .map((videoGroup) => ({
+        video_id: videoGroup.get('id')!.value as number,
+        is_violent: videoGroup.get('isViolent')!.value as boolean,
+      }));
+  }
+
+  private getExcludedVideoIds(): number[] {
+    return this.videoReviews.controls
+      .filter((videoGroup) => videoGroup.get('isExcluded')!.value as boolean)
+      .map((videoGroup) => videoGroup.get('id')!.value as number);
   }
 
   public validateDataset(): void {
@@ -189,30 +210,52 @@ export class EditDatasetItem implements OnInit, OnDestroy {
     this.isValidationSuccessful = false;
     this.validationResult = null;
 
-    const videos = this.buildVideoReviewPayload();
-    this.datasetsService.validateDatasetModel(this.datasetId, videos).subscribe({
-      next: (result) => {
-        this.validationResult = result;
-        this.validationMessage = 'edit-dataset.validation-success-message';
-        this.isValidationSuccessful = true;
-        this.hasValidated = true;
-        this.isValidationInProgress = false;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.validationMessage = 'edit-dataset.validation-failed-message';
-        this.isValidationSuccessful = false;
-        this.hasValidated = false;
-        this.isValidationInProgress = false;
-        this.cdr.detectChanges();
-      },
-    });
+    const excludedVideoIds = this.getExcludedVideoIds();
+    const videos = this.buildVideoReviewPayload(new Set(excludedVideoIds));
+    if (videos.length === 0) {
+      this.validationMessage = 'edit-dataset.validation-no-videos-message';
+      this.isValidationSuccessful = false;
+      this.hasValidated = false;
+      this.isValidationInProgress = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.datasetsService
+      .validateDatasetModel(this.datasetId, videos, excludedVideoIds)
+      .subscribe({
+        next: (result) => {
+          this.validationResult = result;
+          this.validationMessage = 'edit-dataset.validation-success-message';
+          this.isValidationSuccessful = true;
+          this.hasValidated = true;
+          this.isValidationInProgress = false;
+          this.cdr.detectChanges();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.validationMessage =
+            error.status === 400
+              ? 'edit-dataset.validation-invalid-videos-message'
+              : 'edit-dataset.validation-failed-message';
+          this.isValidationSuccessful = false;
+          this.hasValidated = false;
+          this.isValidationInProgress = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   public editDataset(): void {
-    const videos = this.buildVideoReviewPayload();
+    const excludedVideoIds = this.getExcludedVideoIds();
+    const videos = this.buildVideoReviewPayload(new Set(excludedVideoIds));
+    if (videos.length === 0) {
+      this.isSubmitSuccessful = false;
+      this.submitMessage = 'edit-dataset.submit-no-videos-message';
+      this.cdr.detectChanges();
+      return;
+    }
     this.isSubmitted = true;
-    this.datasetsService.editDataset(this.datasetId, videos).subscribe({
+    this.datasetsService.editDataset(this.datasetId, videos, excludedVideoIds).subscribe({
       next: (data: DatasetResponseDto) => {
         this.submitMessage = 'edit-dataset.edit-success-message';
         this.isSubmitSuccessful = true;
@@ -222,7 +265,7 @@ export class EditDatasetItem implements OnInit, OnDestroy {
       error: (error: HttpErrorResponse) => {
         this.isSubmitSuccessful = false;
         if (error.status === 400) {
-          this.submitMessage = 'edit-dataset.videos-not-found-error';
+          this.submitMessage = 'edit-dataset.invalid-videos-error';
         } else if (error.status === 403) {
           this.submitMessage = 'edit-dataset.permission-error';
         } else if (error.status === 404) {

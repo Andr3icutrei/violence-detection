@@ -5,8 +5,8 @@ import { DatasetStatus } from '../models/dataset-status';
 import { VideoResponseDto } from '../models/video-response-dto';
 export interface DatasetWithVideosResponseDto {
   id: number;
-  inference_model_name?: string;
-  inference_model_path?: string;
+  inference_model_name?: (string | null);
+  inference_model_path?: (string | null);
   is_official: boolean;
   name: string;
   status: DatasetStatus;

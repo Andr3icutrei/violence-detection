@@ -1,6 +1,7 @@
 import os
 from typing import Any, List
 import tempfile
+from contextlib import asynccontextmanager
 
 import aiofiles
 import aioboto3
@@ -23,7 +24,8 @@ SECRET_AWS_KEY = os.getenv("SECRET_AWS_KEY")
 
 session = aioboto3.Session()
 
-async def get_presigned_url(object_key: str, expiration: int = 3600) -> str:
+@asynccontextmanager
+async def _s3_client():
     async with session.client(
         service_name='s3',
         endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
@@ -31,6 +33,10 @@ async def get_presigned_url(object_key: str, expiration: int = 3600) -> str:
         aws_secret_access_key=SECRET_AWS_KEY,
         region_name="auto"
     ) as s3_client:
+        yield s3_client
+
+async def get_presigned_url(object_key: str, expiration: int = 3600) -> str:
+    async with _s3_client() as s3_client:
         url = await s3_client.generate_presigned_url(
             ClientMethod='get_object',
             Params={
@@ -42,25 +48,13 @@ async def get_presigned_url(object_key: str, expiration: int = 3600) -> str:
         return url
 
 async def get_object(object_key: str) -> Any :
-    async with session.client(
-            service_name='s3',
-            endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-            aws_access_key_id=ACCESS_KEY,
-            aws_secret_access_key=SECRET_AWS_KEY,
-            region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         response = await s3_client.get_object(Bucket=BUCKET_NAME_DATASETS, Key=object_key)
         return response
 
 
 async def put_object(object_key: str, body: bytes, content_type: str = "application/octet-stream") -> None:
-    async with session.client(
-        service_name='s3',
-        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_AWS_KEY,
-        region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         await s3_client.put_object(
             Bucket=BUCKET_NAME_DATASETS,
             Key=object_key,
@@ -70,13 +64,7 @@ async def put_object(object_key: str, body: bytes, content_type: str = "applicat
 
 
 async def download_object_to_file(object_key: str, target_path: str, chunk_size: int = 1024 * 1024) -> bool:
-    async with session.client(
-        service_name='s3',
-        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_AWS_KEY,
-        region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         try:
             response = await s3_client.get_object(Bucket=BUCKET_NAME_DATASETS, Key=object_key)
         except Exception:
@@ -155,13 +143,7 @@ async def upload_inference_model(dataset_name: str, model_file: UploadFile) -> s
     safe_name = os.path.basename(model_file.filename)
     object_key = f"models/{dataset_name}/{safe_name}"
     try:
-        async with session.client(
-            service_name='s3',
-            endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-            aws_access_key_id=ACCESS_KEY,
-            aws_secret_access_key=SECRET_AWS_KEY,
-            region_name="auto"
-        ) as s3_client:
+        async with _s3_client() as s3_client:
             with open(temp_path, "rb") as file_obj:
                 await s3_client.put_object(
                     Bucket=BUCKET_NAME_MODELS,
@@ -176,13 +158,7 @@ async def upload_inference_model(dataset_name: str, model_file: UploadFile) -> s
 
 
 async def delete_dataset_videos(dataset_name: str) -> None:
-    async with session.client(
-        service_name='s3',
-        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_AWS_KEY,
-        region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         paginator = s3_client.get_paginator('list_objects_v2')
         async for page in paginator.paginate(Bucket=BUCKET_NAME_DATASETS, Prefix=f"{dataset_name}/"):
             if 'Contents' in page:
@@ -197,25 +173,26 @@ async def delete_inference_model_object(object_key: str) -> None:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="BUCKET_NAME_MODELS is not configured."
         )
-    async with session.client(
-        service_name='s3',
-        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_AWS_KEY,
-        region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         await s3_client.delete_object(Bucket=BUCKET_NAME_MODELS, Key=object_key)
 
 
+async def delete_dataset_video_objects(object_keys: List[str]) -> None:
+    if not object_keys:
+        return
+    async with _s3_client() as s3_client:
+        chunk_size = 1000
+        for i in range(0, len(object_keys), chunk_size):
+            chunk = object_keys[i:i + chunk_size]
+            delete_objects = [{'Key': key} for key in chunk]
+            await s3_client.delete_objects(
+                Bucket=BUCKET_NAME_DATASETS,
+                Delete={'Objects': delete_objects}
+            )
+
 async def get_used_storage_gb() -> float:
     total_size_bytes = 0
-    async with session.client(
-        service_name='s3',
-        endpoint_url=f"https://{ACCOUNT_ID}.r2.cloudflarestorage.com",
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_AWS_KEY,
-        region_name="auto"
-    ) as s3_client:
+    async with _s3_client() as s3_client:
         paginator = s3_client.get_paginator('list_objects_v2')
         async for page in paginator.paginate(Bucket=BUCKET_NAME_DATASETS):
             if 'Contents' in page:

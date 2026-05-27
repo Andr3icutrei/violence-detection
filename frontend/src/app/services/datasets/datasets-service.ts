@@ -72,12 +72,21 @@ export class DatasetsService {
     isApproved: boolean,
     videos: { video_id: number; is_violent: boolean }[],
     reviewComment: string,
+    excludedVideoIds?: number[],
   ): Observable<DatasetResponseDto> {
-    const body = {
+    const body: {
+      is_approved: boolean;
+      videos: { video_id: number; is_violent: boolean }[];
+      review_comment: string;
+      excluded_video_ids?: number[];
+    } = {
       is_approved: isApproved,
       videos: videos,
       review_comment: reviewComment,
     };
+    if (excludedVideoIds && excludedVideoIds.length > 0) {
+      body.excluded_video_ids = excludedVideoIds;
+    }
     return this.httpClient.patch<DatasetResponseDto>(
       `${environment.apiUrl}datasets/review_dataset/${datasetId}`,
       body,
@@ -95,11 +104,19 @@ export class DatasetsService {
   public editDataset(
     datasetId: number,
     videos: { video_id: number; is_violent: boolean }[],
+    excludedVideoIds?: number[],
   ): Observable<DatasetResponseDto> {
-    const body = {
+    const body: {
+      dataset_id: number;
+      videos: { video_id: number; is_violent: boolean }[];
+      excluded_video_ids?: number[];
+    } = {
       dataset_id: datasetId,
       videos: videos,
     };
+    if (excludedVideoIds && excludedVideoIds.length > 0) {
+      body.excluded_video_ids = excludedVideoIds;
+    }
     return this.httpClient.patch<DatasetResponseDto>(
       `${environment.apiUrl}datasets/edit_dataset/${datasetId}`,
       body,
@@ -110,10 +127,17 @@ export class DatasetsService {
   public validateDatasetModel(
     datasetId: number,
     videos: { video_id: number; is_violent: boolean }[],
+    excludedVideoIds?: number[],
   ): Observable<ValidateModelResponseDto> {
-    const body = {
+    const body: {
+      videos: { video_id: number; is_violent: boolean }[];
+      excluded_video_ids?: number[];
+    } = {
       videos: videos,
     };
+    if (excludedVideoIds && excludedVideoIds.length > 0) {
+      body.excluded_video_ids = excludedVideoIds;
+    }
     return this.httpClient.post<ValidateModelResponseDto>(
       `${environment.apiUrl}datasets/validate_dataset_model/${datasetId}`,
       body,

@@ -16,6 +16,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-create-dataset',
   imports: [TranslatePipe, ReactiveFormsModule, ControlError, FormSubmitDetail],
+  standalone: true,
   templateUrl: './create-dataset.html',
   styleUrl: './create-dataset.css',
 })
@@ -34,6 +35,7 @@ export class CreateDataset implements OnInit {
   submitStatusKey: string | null = null;
   success: boolean | null = null;
   submitMessageTranslateParams: Record<string, string | number> = {};
+  showModelInfo: boolean = false;
   @Output() closeModal = new EventEmitter<void>();
 
   private readonly formErrorPriority: string[] = [
@@ -233,6 +235,15 @@ export class CreateDataset implements OnInit {
     event.stopPropagation();
   }
 
+  public openModelInfo(): void {
+    this.showModelInfo = true;
+  }
+
+
+  public closeModelInfo(): void {
+    this.showModelInfo = false;
+  }
+
   public close(): void {
     this.closeModal.emit();
   }
@@ -279,7 +290,7 @@ export class CreateDataset implements OnInit {
   }
 
   private toKebabCase(value: string): string {
-    return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/_/g, '-').toLowerCase();
   }
 
   private resolveConflictErrorCode(error: HttpErrorResponse): string | null {
@@ -337,7 +348,12 @@ export class CreateDataset implements OnInit {
         this.isSubmitted = false;
         this.success = false;
         if (error.status === 400) {
-          this.submitStatusKey = 'invalidFileFormat';
+          const detailCode = this.resolveConflictErrorCode(error);
+          if (detailCode && detailCode.startsWith('ONNX_')) {
+            this.submitStatusKey = detailCode;
+          } else {
+            this.submitStatusKey = 'invalidFileFormat';
+          }
         } else if (error.status === 404) {
           this.submitStatusKey = 'submitFailed';
         } else if (error.status === 409) {

@@ -71,7 +71,7 @@ async def review_dataset(
     current_admin_user = Depends(get_current_admin_user),
     datasets_service = Depends(get_datasets_service)
 ):
-    result = await datasets_service.review_dataset(dataset_id, request.is_approved, request.videos, request.review_comment, conf)
+    result = await datasets_service.review_dataset(dataset_id, request.is_approved, request.videos, request.review_comment, conf, request.excluded_video_ids)
     return result
 
 @router.delete("/delete_dataset/{dataset_id}", status_code=status.HTTP_200_OK)
@@ -89,7 +89,7 @@ async def edit_dataset(
     current_admin_user=Depends(get_current_admin_user),
     datasets_service = Depends(get_datasets_service)
 ):
-    result = await datasets_service.edit_dataset(dataset_id, request.videos)
+    result = await datasets_service.edit_dataset(dataset_id, request.videos, request.excluded_video_ids)
     return result
 
 @router.post("/validate_dataset_model/{dataset_id}", response_model=ValidateModelResponseDto, status_code=status.HTTP_200_OK)
@@ -99,7 +99,7 @@ async def validate_dataset_model(
     current_admin_user=Depends(get_current_admin_user),
     datasets_service = Depends(get_datasets_service)
 ):
-    result = await datasets_service.validate_dataset_model(dataset_id, request.videos)
+    result = await datasets_service.validate_dataset_model(dataset_id, request.videos, request.excluded_video_ids)
     return result
 
 @router.get("/get_datasets_stats", response_model=DatasetsStatsResponseDto, status_code=status.HTTP_200_OK)

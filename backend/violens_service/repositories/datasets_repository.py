@@ -130,7 +130,8 @@ class DatasetsRepository:
             .join(Dataset.created_by_user)
             .options(
                 contains_eager(Dataset.created_by_user),
-                contains_eager(Dataset.videos)
+                contains_eager(Dataset.videos),
+                selectinload(Dataset.inference_model),
             )
         )
         return result.scalars().first()

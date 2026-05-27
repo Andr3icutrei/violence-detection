@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager
 
 from models import Dataset, Video
+from models.dataset_status import DatasetStatus
 from models.inference_history import InferenceHistory
 from models.inference_history_classification import InferenceHistoryClassification
 from models.inference_history_people_tracking import InferenceHistoryPeopleTracking
@@ -16,18 +17,22 @@ class VideosRepository:
         self.db = db
 
     async def get_videos_paged(
-            self,
-            search_term: str | None,
-            dataset_id: int | None = None,
-            is_violent: bool | None = None,
-            asc: bool | None = None,
-            page: int = 0,
-            page_size: int = 40,
+        self,
+        search_term: str | None,
+        dataset_id: int | None = None,
+        is_violent: bool | None = None,
+        dataset_status: DatasetStatus | None = None,
+        asc: bool | None = None,
+        page: int = 0,
+        page_size: int = 40,
     ) -> Sequence[Video]:
         query = select(Video).join(Video.dataset).options(contains_eager(Video.dataset))
 
         if dataset_id is not None:
             query = query.where(Video.dataset_id == dataset_id)
+
+        if dataset_status is not None:
+            query = query.where(Dataset.status == dataset_status)
 
         if search_term is not None:
             search_lower = search_term.lower()

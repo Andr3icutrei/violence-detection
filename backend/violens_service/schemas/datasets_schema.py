@@ -45,17 +45,22 @@ class CreateDatasetRequestDto:
 
 class DatasetWithVideosResponseDto(DatasetResponseDto):
     videos: List[VideoResponseDto]
+    inference_model_name: str | None = None
+    inference_model_path: str | None = None
 
 class ReviewDatasetRequestDto(BaseModel):
     is_approved: bool
     videos: List[ReviewVideoRequestDto]
     review_comment: str
+    excluded_video_ids: List[int] | None = None
 
 class EditDatasetRequestDto(BaseModel):
     videos: List[ReviewVideoRequestDto]
+    excluded_video_ids: List[int] | None = None
 
 class ValidateModelRequestDto(BaseModel):
     videos: List[ReviewVideoRequestDto]
+    excluded_video_ids: List[int] | None = None
 
 class ConfusionMatrixDto(BaseModel):
     true_positive: int

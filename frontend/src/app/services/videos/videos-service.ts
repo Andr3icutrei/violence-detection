@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { VideoResponseDto } from '../../core/api/models/video-response-dto';
 import { environment } from '../../../environments/environment.development';
+import { DatasetStatus } from '../../core/api/models/dataset-status';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class VideosService {
     page_size: number,
     search_term?: string,
     dataset_id?: number,
+    dataset_status?: DatasetStatus
   ): Observable<VideoResponseDto[]> {
     let params = new HttpParams().set('page', page).set('page_size', page_size).set('asc', asc);
     if (search_term) {
@@ -23,6 +25,9 @@ export class VideosService {
     }
     if (dataset_id && dataset_id !== 0) {
       params = params.set('dataset_id', dataset_id);
+    }
+    if (dataset_status) {
+      params = params.set('dataset_status', dataset_status);
     }
     return this.httpClient.get<VideoResponseDto[]>(`${environment.apiUrl}videos/get_videos_paged`, {
       params: params,

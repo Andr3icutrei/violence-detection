@@ -59,11 +59,11 @@ async def send_reset_password_email(to_email: str, reset_password_link: str, con
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">We received a request to reset your password. To proceed with resetting your password, please click the button below:</p>
 
             <div style="text-align: center; margin: 35px 0;">
-                <a href="{reset_password_link}" style="background-color: #e74c3c; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; display: inline-block;">Reset Password</a>
+                <a href="{reset_password_link}" style="background-color: #3498db; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; display: inline-block;">Reset Password</a>
             </div>
 
             <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">If you can't click the button, simply copy and paste this link into your browser's address bar:</p>
-            <p style="color: #e74c3c; font-size: 14px; word-break: break-all; margin-bottom: 30px;">{reset_password_link}</p>
+            <p style="color: #3498db; font-size: 14px; word-break: break-all; margin-bottom: 30px;">{reset_password_link}</p>
 
             <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
 
@@ -103,14 +103,14 @@ async def send_dataset_approval_mail(to_email: str, dataset_name: str, comment: 
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">Reviewer notes are included below:</p>
 
             <div style="background-color: #ecf0f1; padding: 20px; border-radius: 6px; margin: 20px 0;">
-                <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">{comment}</p>
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">{comment}</p>
             </div>
 
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">Your dataset status is now <strong>approved</strong>.</p>
 
             <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
 
-            <p style="color: #95a5a6; font-size: 12px; text-align: center;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
+            <p style="color: #95a5a6; font-size: 12px; text-align: center; line-height: 1.5;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
         </div>
     </div>
     """
@@ -143,14 +143,14 @@ async def send_dataset_rejection_mail(to_email: str, dataset_name: str, comment:
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">Please see the reviewer comments below for details:</p>
 
             <div style="background-color: #ecf0f1; padding: 20px; border-radius: 6px; margin: 20px 0;">
-                <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">{comment}</p>
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">{comment}</p>
             </div>
 
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">Your dataset status is now <strong>rejected</strong>.</p>
 
             <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
 
-            <p style="color: #95a5a6; font-size: 12px; text-align: center;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
+            <p style="color: #95a5a6; font-size: 12px; text-align: center; line-height: 1.5;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
         </div>
     </div>
     """
@@ -182,12 +182,12 @@ async def send_user_ban_email(to_email: str, reason: str, conf = ConnectionConfi
             <p style="color: #555555; font-size: 16px; line-height: 1.6;">We regret to inform you that your account on Violens has been banned due to the following reason:</p>
 
             <div style="background-color: #ecf0f1; padding: 20px; border-radius: 6px; margin: 20px 0;">
-                <p style="color: #7f8c8d; font-size: 14px; line-height: 1.5;">{reason}</p>
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">{reason}</p>
             </div>
 
             <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 20px 0;">
 
-            <p style="color: #95a5a6; font-size: 12px; text-align: center;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
+            <p style="color: #95a5a6; font-size: 12px; text-align: center; line-height: 1.5;">Best regards,<br><strong style="color: #7f8c8d;">The Violens Team</strong></p>
         </div>
     </div>
     """
@@ -198,4 +198,13 @@ async def send_user_ban_email(to_email: str, reason: str, conf = ConnectionConfi
         subtype=MessageType.html
     )
 
-    fm = FastMail
+    fm = FastMail(conf)
+
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while sending the email to {to_email}: {str(e)}"
+        )
+

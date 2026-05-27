@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 
 from api.dependencies import get_videos_service
 from models import User, Video
+from models.dataset_status import DatasetStatus
 from schemas.videos_schema import VideoResponseDto
 from services.auth_service import get_current_user
 from services.videos_service import VideosService
@@ -44,9 +45,10 @@ async def get_videos_paged(
     is_violent: bool | None = None,
     search_term: str | None = None,
     dataset_id: int | None = None,
+    dataset_status: DatasetStatus | None = None,
     videos_service: VideosService = Depends(get_videos_service),
 ):
-    videos: List[Video] = await videos_service.get_videos_paged(search_term, dataset_id, is_violent, asc, page, page_size)
+    videos: List[Video] = await videos_service.get_videos_paged(search_term, dataset_id, is_violent, dataset_status, asc, page, page_size)
     return [
         VideoResponseDto(
             id=video.id,
@@ -105,16 +107,14 @@ async def people_tracking(
     current_user: User = Depends(get_current_user),
     videos_service: VideosService = Depends(get_videos_service),
 ):
-    try:
-        processed_video_path, tracked_count = await videos_service.people_tracking(video_id, current_user)
-        background_tasks.add_task(_cleanup_temp_file, processed_video_path)
-        return FileResponse(
-            path=processed_video_path,
-            media_type=_media_type_for_path(processed_video_path),
-            filename=f"people_tracking_output{os.path.splitext(processed_video_path)[1]}",
-            headers={
-                "X-Tracked-People-Count": str(tracked_count),
-            },
-        )
-    except HTTPException:
-        raise
+    processed_video_path, tracked_count = await videos_service.people_tracking(video_id, current_user)
+    background_tasks.add_task(_cleanup_temp_file, processed_video_path)
+    return FileResponse(
+        path=processed_video_path,
+        media_type=_media_type_for_path(processed_video_path),
+        filename=f"people_tracking_output{os.path.splitext(processed_video_path)[1]}",
+        headers={
+            "X-Tracked-People-Count": str(tracked_count),
+        },
+    )
+

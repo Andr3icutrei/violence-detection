@@ -13,7 +13,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   return authService.me().pipe(
     map((data: UserResponseDto) => {
       const adminRole: boolean = !!data.is_admin;
-
       if (route.data['role'] === 'admin') {
         if (adminRole) {
           return true;
@@ -22,7 +21,6 @@ export const authGuard: CanActivateFn = (route, state) => {
           return false;
         }
       }
-
       return true;
     }),
     catchError((err: HttpErrorResponse) => {

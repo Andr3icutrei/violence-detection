@@ -11,6 +11,7 @@ import { Paginator } from '../../../paginator/paginator';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CreateDataset } from '../../create-dataset/create-dataset';
+import { DATASET_STATUS } from '../../../../core/api/models/dataset-status-array';
 
 @Component({
   selector: 'app-inspect-videos',
@@ -99,7 +100,7 @@ export class InspectVideos implements OnInit, AfterViewInit {
     this.isLoadingVideos = true;
 
     this.videosService
-      .getVideosPaged(this.asc, this.page, this.pageSize, this.searchTerm, this.selectedDataset?.id)
+      .getVideosPaged(this.asc, this.page, this.pageSize, this.searchTerm, this.selectedDataset?.id, 20)
       .subscribe({
         next: (data: VideoResponseDto[]): void => {
           this.hasMoreVideos = data.length === this.pageSize;
@@ -109,7 +110,7 @@ export class InspectVideos implements OnInit, AfterViewInit {
               uid: video.uid,
               name: video.name,
               path: video.path,
-              is_violent: video.is_violent,
+              is_violent: video.is_violent!,
               duration: video.duration,
               frameRate: video.frame_rate,
               dataset: {

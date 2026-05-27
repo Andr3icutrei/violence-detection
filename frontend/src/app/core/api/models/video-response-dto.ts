@@ -8,7 +8,7 @@ export interface VideoResponseDto {
   duration: number;
   frame_rate: number;
   id: number;
-  is_violent: boolean;
+  is_violent: (boolean | null);
   name: string;
   path: string;
   uid: string;

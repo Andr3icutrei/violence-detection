@@ -49,11 +49,45 @@
           </div>
 
           <div class="input-group">
-            <label
-              for="upload-model"
-              class="label-primary">
-              {{'create-dataset.upload-model' | translate}}
-            </label>
+            <div class="label-with-info model-info-container"
+              (mouseenter)="openModelInfo()"
+              (mouseleave)="closeModelInfo()"
+              (focusin)="openModelInfo()"
+              (focusout)="closeModelInfo()">
+              <label
+                for="upload-model"
+                class="label-primary">
+                {{'create-dataset.upload-model' | translate}}
+              </label>
+              <button
+                class="info-button"
+                type="button"
+                [attr.aria-label]="'create-dataset.model-requirements-button' | translate">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+              </button>
+              @if (showModelInfo) {
+                <div class="model-info-popover" (click)="onContentClick($event)">
+                  <div class="model-info-header">
+                    <h3 class="model-info-title">
+                      {{ 'create-dataset.model-requirements-title' | translate }}
+                    </h3>
+                    <button
+                      class="close-modal-btn"
+                      type="button"
+                      (click)="closeModelInfo()">
+                      <i class="fa fa-times close-modal-icon" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <ul class="model-info-list">
+                    <li>{{ 'create-dataset.model-requirements-input-shape' | translate }}</li>
+                    <li>{{ 'create-dataset.model-requirements-single-input' | translate }}</li>
+                    <li>{{ 'create-dataset.model-requirements-output' | translate }}</li>
+                    <li>{{ 'create-dataset.model-requirements-dummy-inference' | translate }}</li>
+                    <li>{{ 'create-dataset.model-requirements-file-type-size' | translate }}</li>
+                  </ul>
+                </div>
+              }
+            </div>
             <input
               id="upload-model"
               class="videos-input"
