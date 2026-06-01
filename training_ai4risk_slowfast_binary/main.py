@@ -3,76 +3,84 @@ import random
 import numpy as np
 from pathlib import Path
 import argparse
+from typing import Dict, List, Any
 
 from config import SlowFastConfig
 from train import SlowFastTrainer
 from evaluate import evaluate_model_multiview, HeatmapGeneratorSlowFast
 
 
-def set_seed(seed):
+def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
 
-def train_model(config):
+def train_model(config: SlowFastConfig) -> None:
     print("=" * 60)
     print(f"TRAINING SLOWFAST ON {config.DATASET_NAME.upper()} DATASET")
     print(f"MULTICLASS CLASSIFICATION - {config.NUM_CLASSES} CLASSES")
     print("=" * 60)
 
-    base_path = Path(config.VIOLENCE_PATH['path'])
+    base_path: Path = Path(config.VIOLENCE_PATH['path'])
 
-    class_videos = {}
+    class_videos: Dict[int, List[Path]] = {}
+    i: int
+    dir_name: str
     for i, dir_name in enumerate(['0', '1', '2', '3', '4']):
-        dir_path = base_path / dir_name
+        dir_path: Path = base_path / dir_name
         if dir_path.exists():
-            videos = list(dir_path.rglob('*'))
+            videos: List[Path] = list(dir_path.rglob('*'))
             class_videos[i] = videos
 
     print(f"\nDataset Statistics:")
-    total_videos = 0
+    total_videos: int = 0
+    class_name: str
     for i, class_name in enumerate(config.CLASS_NAMES):
         videos = class_videos.get(i, [])
-        train_count = int(len(videos) * config.SPLIT_RATIO)
-        val_count = len(videos) - train_count
+        train_count: int = int(len(videos) * config.SPLIT_RATIO)
+        val_count: int = len(videos) - train_count
         print(f"  Class {i} ({class_name}): {len(videos)} total -> {train_count} train, {val_count} val")
         total_videos += len(videos)
     print(f"  Total: {total_videos} videos")
     print()
 
-    trainer = SlowFastTrainer(config)
+    trainer: SlowFastTrainer = SlowFastTrainer(config)
     trainer.train()
 
     print("\nTraining completed!")
 
 
-def evaluate_trained_model(config):
+def evaluate_trained_model(config: SlowFastConfig) -> None:
     print("=" * 60)
     print(f"EVALUATING MODEL ON {config.DATASET_NAME.upper()} DATASET")
     print("=" * 60)
 
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    model_path: Path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
 
     if not model_path.exists():
         print(f"Model not found at {model_path}")
         return
 
+    accuracy: float
+    preds: List[int]
+    labels: List[int]
+    probs: List[float]
     accuracy, preds, labels, probs = evaluate_model_multiview(model_path, config)
 
     print("\n" + "=" * 60)
     print("GENERATING GRAD-CAM VISUALIZATIONS")
     print("=" * 60)
 
-    generator = HeatmapGeneratorSlowFast(model_path, config)
-    output_dir = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
+    generator: HeatmapGeneratorSlowFast = HeatmapGeneratorSlowFast(model_path, config)
+    output_dir: Path = Path(f"heatmap_visualizations_slowfast_{config.DATASET_NAME.lower()}")
     generator.save_visualization(output_dir, num_samples=10)
 
     print(f"\nVisualizations saved to {output_dir}")
 
 
-def show_dataset_info(config):
+def show_dataset_info(config: SlowFastConfig) -> None:
     print("=" * 60)
     print("DATASET INFORMATION")
     print("=" * 60)
@@ -80,36 +88,39 @@ def show_dataset_info(config):
     print(f"\n{config.DATASET_NAME} Dataset - Multiclass ({config.NUM_CLASSES} classes)")
     print("-" * 60)
 
-    base_path = Path(config.VIOLENCE_PATH['path'])
+    base_path: Path = Path(config.VIOLENCE_PATH['path'])
 
-    violence_dirs = config.VIOLENCE_PATH['violence_dirs']
-    non_violence_dirs = config.VIOLENCE_PATH['non_violence_dirs']
+    violence_dirs: List[str] = config.VIOLENCE_PATH['violence_dirs']
+    non_violence_dirs: List[str] = config.VIOLENCE_PATH['non_violence_dirs']
 
-    non_violence_videos = []
+    non_violence_videos: List[Path] = []
+    dir_name: str
     for dir_name in non_violence_dirs:
-        dir_path = base_path / dir_name
+        dir_path: Path = base_path / dir_name
         if dir_path.exists():
             non_violence_videos.extend(list(dir_path.rglob('*')))
 
-    violence_videos = []
+    violence_videos: List[Path] = []
     for dir_name in violence_dirs:
         dir_path = base_path / dir_name
         if dir_path.exists():
             violence_videos.extend(list(dir_path.rglob('*')))
 
-    class_videos = {
+    class_videos: Dict[int, List[Path]] = {
         0: non_violence_videos,
         1: violence_videos
     }
 
-    total_videos = 0
-    total_train = 0
-    total_val = 0
+    total_videos: int = 0
+    total_train: int = 0
+    total_val: int = 0
 
+    i: int
+    class_name: str
     for i, class_name in enumerate(config.CLASS_NAMES):
-        videos = class_videos.get(i, [])
-        train_count = int(len(videos) * config.SPLIT_RATIO)
-        val_count = len(videos) - train_count
+        videos: List[Path] = class_videos.get(i, [])
+        train_count: int = int(len(videos) * config.SPLIT_RATIO)
+        val_count: int = len(videos) - train_count
         print(f"Class {i} ({class_name}): {len(videos)} total -> {train_count} train, {val_count} val")
         total_videos += len(videos)
         total_train += train_count
@@ -122,12 +133,12 @@ def show_dataset_info(config):
     print("\nClass Distribution:")
     for i, class_name in enumerate(config.CLASS_NAMES):
         videos = class_videos.get(i, [])
-        percentage = 100 * len(videos) / total_videos if total_videos > 0 else 0
+        percentage: float = 100 * len(videos) / total_videos if total_videos > 0 else 0
         print(f"  {class_name}: {percentage:.1f}%")
 
 
-def main():
-    parser = argparse.ArgumentParser(description='SlowFast Violence Detection Pipeline')
+def main() -> None:
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(description='SlowFast Violence Detection Pipeline')
     parser.add_argument('--mode', type=str, required=True,
                         choices=['train', 'evaluate', 'info'],
                         help='Mode: train, evaluate, or info')
@@ -138,9 +149,9 @@ def main():
     parser.add_argument('--lr', type=float, default=None,
                         help='Learning rate for head')
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
-    config = SlowFastConfig()
+    config: SlowFastConfig = SlowFastConfig()
     set_seed(config.SEED)
 
     if args.batch_size is not None:
@@ -161,7 +172,8 @@ def main():
     print(f"Device: {config.DEVICE}")
     print(f"CUDA available: {torch.cuda.is_available()}")
     if torch.cuda.is_available():
-        print(f"GPU: {torch.cuda.get_device_name(0)}")
+        device_name: str = torch.cuda.get_device_name(0)
+        print(f"GPU: {device_name}")
     print(f"Batch size: {config.BATCH_SIZE}")
     print(f"Accumulation steps: {config.ACCUMULATION_STEPS}")
     print(f"Effective batch size: {config.EFFECTIVE_BATCH_SIZE}")

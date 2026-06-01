@@ -1,82 +1,80 @@
 from pathlib import Path
+from typing import List, Tuple, Dict, Any, Union
 
 
 class SlowFastConfig:
-    DATASET_PATH = Path("../../Datasets")
-    DATASET_NAME = "AI4RiSK_CROPPED_SR_V2"
+    DATASET_PATH: Path = Path("../../Datasets")
+    DATASET_NAME: str = "AI4RiSK_CROPPED_SR_V2"
 
-    VIOLENCE_PATH = None
-    NON_VIOLENCE_PATH = None
+    SEED: int = 42
 
-    SEED = 42
+    SPLIT_RATIO: float = 0.8
 
-    SPLIT_RATIO = 0.8
+    NUM_CLASSES: int = 2
+    CLASS_NAMES: List[str] = ['Non-Violence', 'Violence']
 
-    NUM_CLASSES = 2
-    CLASS_NAMES = ['Non-Violence', 'Violence']
+    SLOWFAST_ALPHA: int = 4
+    SLOWFAST_BETA: float = 0.125
 
-    SLOWFAST_ALPHA = 4
-    SLOWFAST_BETA = 0.125
+    SLOW_FRAMES: int = 8
+    FAST_FRAMES: int = 32
+    TEMPORAL_STRIDE: int = 1
 
-    SLOW_FRAMES = 8
-    FAST_FRAMES = 32
-    TEMPORAL_STRIDE = 1
+    INPUT_SIZE: int = 224
+    CROP_SIZE: int = 224
 
-    INPUT_SIZE = 224
-    CROP_SIZE = 224
+    USE_CROP: bool = False
 
-    USE_CROP = False
+    BATCH_SIZE_FROZEN: int = 16
+    BATCH_SIZE_UNFROZEN: int = 8
+    NUM_EPOCHS: int = 100
 
-    BATCH_SIZE_FROZEN = 16
-    BATCH_SIZE_UNFROZEN = 8
-    NUM_EPOCHS = 100
+    ACCUMULATION_STEPS_FROZEN: int = 2
+    ACCUMULATION_STEPS_UNFROZEN: int = 4
 
-    ACCUMULATION_STEPS_FROZEN = 2
-    ACCUMULATION_STEPS_UNFROZEN = 4
+    OPTIMIZER: str = "adamw"
+    BACKBONE_LR: float = 1e-5
+    HEAD_LR: float = 1e-4
+    WEIGHT_DECAY: float = 1e-2
+    BETAS: Tuple[float, float] = (0.9, 0.999)
+    EPS: float = 1e-8
 
-    OPTIMIZER = "adamw"
-    BACKBONE_LR = 1e-5
-    HEAD_LR = 1e-4
-    WEIGHT_DECAY = 1e-2
-    BETAS = (0.9, 0.999)
-    EPS = 1e-8
+    FREEZE_BACKBONE: bool = True
+    UNFREEZE_EPOCH: int = 20
 
-    FREEZE_BACKBONE = True
-    UNFREEZE_EPOCH = 20
+    NUM_WORKERS: int = 4
+    PIN_MEMORY: bool = True
 
-    NUM_WORKERS = 4
-    PIN_MEMORY = True
+    EARLY_STOPPING_PATIENCE: int = 15
 
-    EARLY_STOPPING_PATIENCE = 15
+    DROPOUT_P: float = 0.5
+    LABEL_SMOOTHING: float = 0.0
+    GRAD_CLIP: float = 5.0
 
-    DROPOUT_P = 0.5
-    LABEL_SMOOTHING = 0.0
-    GRAD_CLIP = 5.0
+    USE_FOCAL_LOSS: bool = False
+    FOCAL_GAMMA: float = 2.0
+    USE_CLASS_WEIGHTS: bool = True
+    USE_BALANCED_SAMPLING: bool = False
 
-    USE_FOCAL_LOSS = False
-    FOCAL_GAMMA = 2.0
-    USE_CLASS_WEIGHTS = True
-    USE_BALANCED_SAMPLING = False
+    USE_AMP: bool = True
 
-    USE_AMP = True
+    USE_SCHEDULER: bool = True
+    SCHEDULER_TYPE: str = "cosine"
+    T_0: int = 10
+    T_MULT: int = 2
+    ETA_MIN: float = 1e-7
 
-    USE_SCHEDULER = True
-    SCHEDULER_TYPE = "cosine"
-    T_0 = 10
-    T_MULT = 2
-    ETA_MIN = 1e-7
+    SAVE_DIR: Path = Path("checkpoints_slowfast_ai4risk_binary")
+    MODEL_NAME: str = "slowfast_violence_ai4risk_binary"
 
-    SAVE_DIR = Path("checkpoints_slowfast_ai4risk_binary")
-    MODEL_NAME = "slowfast_violence_ai4risk_binary"
+    DEVICE: str = "cuda"
 
-    DEVICE = "cuda"
+    KINETICS_MEAN: List[float] = [0.45, 0.45, 0.45]
+    KINETICS_STD: List[float] = [0.225, 0.225, 0.225]
 
-    KINETICS_MEAN = [0.45, 0.45, 0.45]
-    KINETICS_STD = [0.225, 0.225, 0.225]
+    USE_PRETRAINED: bool = True
 
-    USE_PRETRAINED = True
-
-    AVAILABLE_DATASETS = {
+    AVAILABLE_DATASETS: Dict[str, Dict[str, Any]] = {
         'AI4RiSK': {
             'path': DATASET_PATH / 'AI4RiSK_CROPPED_SR_V2',
             'non_violence_dirs': ['0'],
@@ -85,14 +83,17 @@ class SlowFastConfig:
         },
     }
 
-    def __init__(self):
+    VIOLENCE_PATH: Dict[str, Any]
+    NON_VIOLENCE_PATH: Dict[str, Any]
+
+    def __init__(self) -> None:
         self.set_dataset('AI4RiSK')
         self.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
-    def set_dataset(self, dataset_name):
+    def set_dataset(self, dataset_name: str) -> None:
         if dataset_name == 'AI4RiSK':
             self.DATASET_NAME = 'AI4RiSK'
-            dataset_info = self.AVAILABLE_DATASETS['AI4RiSK']
+            dataset_info: Dict[str, Any] = self.AVAILABLE_DATASETS['AI4RiSK']
             self.VIOLENCE_PATH = dataset_info
             self.NON_VIOLENCE_PATH = dataset_info
             self.SAVE_DIR = Path("checkpoints_slowfast_ai4risk_binary")
@@ -102,13 +103,13 @@ class SlowFastConfig:
             raise ValueError(f"Dataset {dataset_name} not supported. Only AI4RiSK is available.")
 
     @property
-    def BATCH_SIZE(self):
+    def BATCH_SIZE(self) -> int:
         return self.BATCH_SIZE_FROZEN if self.FREEZE_BACKBONE else self.BATCH_SIZE_UNFROZEN
 
     @property
-    def ACCUMULATION_STEPS(self):
+    def ACCUMULATION_STEPS(self) -> int:
         return self.ACCUMULATION_STEPS_FROZEN if self.FREEZE_BACKBONE else self.ACCUMULATION_STEPS_UNFROZEN
 
     @property
-    def EFFECTIVE_BATCH_SIZE(self):
+    def EFFECTIVE_BATCH_SIZE(self) -> int:
         return self.BATCH_SIZE * self.ACCUMULATION_STEPS
