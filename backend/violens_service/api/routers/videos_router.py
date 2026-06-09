@@ -60,7 +60,8 @@ async def get_videos_paged(
             dataset_name=video.dataset.name,
             duration=video.duration,
             frame_rate=int(video.frame_rate),
-            dataset_is_official=video.dataset.is_official
+            dataset_is_official=video.dataset.is_official,
+            inference_model_name=video.dataset.inference_model.name
         ) for video in videos
     ]
 

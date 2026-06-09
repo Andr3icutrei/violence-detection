@@ -8,6 +8,7 @@ export interface VideoResponseDto {
   duration: number;
   frame_rate: number;
   id: number;
+  inference_model_name: string;
   is_violent: (boolean | null);
   name: string;
   path: string;

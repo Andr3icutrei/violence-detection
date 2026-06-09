@@ -5,6 +5,7 @@ import { SidebarService } from '../../../services/sidebar/sidebar.service';
 @Component({
   selector: 'app-dashboard-page',
   imports: [InspectVideos],
+  standalone: true,
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
 })

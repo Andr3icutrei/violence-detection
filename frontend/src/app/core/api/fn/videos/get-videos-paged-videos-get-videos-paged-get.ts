@@ -7,6 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { DatasetStatus } from '../../models/dataset-status';
 import { VideoResponseDto } from '../../models/video-response-dto';
 
 export interface GetVideosPagedVideosGetVideosPagedGet$Params {
@@ -16,6 +17,7 @@ export interface GetVideosPagedVideosGetVideosPagedGet$Params {
   is_violent?: (boolean | null);
   search_term?: (string | null);
   dataset_id?: (number | null);
+  dataset_status?: (DatasetStatus | null);
 }
 
 export function getVideosPagedVideosGetVideosPagedGet(http: HttpClient, rootUrl: string, params?: GetVideosPagedVideosGetVideosPagedGet$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<VideoResponseDto>>> {
@@ -27,6 +29,7 @@ export function getVideosPagedVideosGetVideosPagedGet(http: HttpClient, rootUrl:
     rb.query('is_violent', params.is_violent, {});
     rb.query('search_term', params.search_term, {});
     rb.query('dataset_id', params.dataset_id, {});
+    rb.query('dataset_status', params.dataset_status, {});
   }
 
   return http.request(

@@ -157,7 +157,8 @@
     "predicted-confidence": "Confidence Score",
     "predicted-class-probability": "Class Probability",
     "tracked-people": "Tracked People",
-    "loading-metrics": "Loading metrics..."
+    "loading-metrics": "Loading metrics...",
+    "inference-model": "Inference Model"
   },
   "create-dataset": {
     "title": "Create a New Unofficial Dataset",

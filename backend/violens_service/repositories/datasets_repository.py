@@ -128,10 +128,11 @@ class DatasetsRepository:
             .filter(Dataset.id == dataset_id, Dataset.deleted_at.is_(None))
             .join(Dataset.videos)
             .join(Dataset.created_by_user)
+            .join(Dataset.inference_model)
             .options(
                 contains_eager(Dataset.created_by_user),
                 contains_eager(Dataset.videos),
-                selectinload(Dataset.inference_model),
+                contains_eager(Dataset.inference_model),
             )
         )
         return result.scalars().first()

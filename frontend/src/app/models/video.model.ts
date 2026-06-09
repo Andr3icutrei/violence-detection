@@ -9,4 +9,5 @@ export interface Video {
   duration: number;
   frameRate: number;
   dataset: DatasetModel;
+  inference_model_name: string;
 }

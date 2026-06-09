@@ -18,6 +18,7 @@ import { DATASET_STATUS } from '../../../../core/api/models/dataset-status-array
   imports: [SearchBar, VideoThumbnailCard, Paginator, CommonModule, TranslatePipe, CreateDataset],
   templateUrl: './inspect-videos.html',
   styleUrl: './inspect-videos.css',
+  standalone: true,
 })
 export class InspectVideos implements OnInit, AfterViewInit {
   @ViewChild('videosGrid') videosGrid!: ElementRef;
@@ -100,7 +101,14 @@ export class InspectVideos implements OnInit, AfterViewInit {
     this.isLoadingVideos = true;
 
     this.videosService
-      .getVideosPaged(this.asc, this.page, this.pageSize, this.searchTerm, this.selectedDataset?.id, 20)
+      .getVideosPaged(
+        this.asc,
+        this.page,
+        this.pageSize,
+        this.searchTerm,
+        this.selectedDataset?.id,
+        20,
+      )
       .subscribe({
         next: (data: VideoResponseDto[]): void => {
           this.hasMoreVideos = data.length === this.pageSize;
@@ -118,6 +126,7 @@ export class InspectVideos implements OnInit, AfterViewInit {
                 name: video.dataset_name,
                 is_official: video.dataset_is_official,
               } as DatasetModel,
+              inference_model_name: video.inference_model_name,
             }),
           );
           this.isLoadingVideos = false;

@@ -1,4 +1,4 @@
-export const domain = 'surf-promises-peter-untitled.trycloudflare.com';
+export const domain = 'remote-investigators-off-episode.trycloudflare.com';
 
 export const environment = {
   production: false,

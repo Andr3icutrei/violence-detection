@@ -26,7 +26,15 @@ class VideosRepository:
         page: int = 0,
         page_size: int = 40,
     ) -> Sequence[Video]:
-        query = select(Video).join(Video.dataset).options(contains_eager(Video.dataset))
+        query = (
+            select(Video)
+            .join(Video.dataset)
+            .join(Dataset.inference_model)
+            .options(
+                contains_eager(Video.dataset)
+                .contains_eager(Dataset.inference_model)
+            )
+        )
 
         if dataset_id is not None:
             query = query.where(Video.dataset_id == dataset_id)

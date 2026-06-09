@@ -71,6 +71,7 @@ class DatasetsService:
             duration=video.duration,
             frame_rate=int(video.frame_rate),
             dataset_is_official=video.dataset.is_official,
+            inference_model_name=video.dataset.inference_model.name
         )
 
     async def _get_dataset_or_404(self, dataset_id: int) -> Dataset:

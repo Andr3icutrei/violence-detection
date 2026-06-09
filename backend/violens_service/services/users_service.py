@@ -178,7 +178,7 @@ class UsersService:
             dynamic_secret,
             expires=15
         )
-        reset_password_link = f"http://localhost:4200/reset-password?token={reset_password_token}"
+        reset_password_link = f"https://localhost:4200/reset-password?token={reset_password_token}"
         await send_reset_password_email(str(user.email), reset_password_link, conf)
         return user
 

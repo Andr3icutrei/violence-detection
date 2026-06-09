@@ -18,6 +18,7 @@ import { SidebarService } from '../../../services/sidebar/sidebar.service';
 @Component({
   selector: 'app-inference-page',
   imports: [TranslatePipe, FormsModule, ReactiveFormsModule],
+  standalone: true,
   templateUrl: './inference-page.html',
   styleUrl: './inference-page.css',
 })

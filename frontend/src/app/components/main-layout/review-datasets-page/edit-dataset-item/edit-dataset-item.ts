@@ -118,7 +118,8 @@ export class EditDatasetItem implements OnInit, OnDestroy {
         frame_rate: 0,
         path: '',
         uid: '',
-        is_violent: this.currentDataset.videos[i].is_violent
+        is_violent: this.currentDataset.videos[i].is_violent,
+        inference_model_name: this.currentDataset.videos[i].inference_model_name,
       });
     }
   }

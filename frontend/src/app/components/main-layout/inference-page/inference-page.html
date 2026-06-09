@@ -123,6 +123,11 @@
               {{ videoDetails?.is_violent ? ('inference.yes' | translate) : ('inference.no' | translate) }}
             </span>
           </div>
+
+          <div class="detail-item">
+            <span class="detail-item-label">{{ 'inference.inference-model' | translate }}</span>
+            <span class="detail-item-value">{{ videoDetails?.inference_model_name }}</span>
+          </div>
         </div>
       </div>
     </div>

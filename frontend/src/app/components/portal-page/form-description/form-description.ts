@@ -7,6 +7,7 @@ import { PortalForm } from '../portal-form.type';
   imports: [TranslatePipe],
   templateUrl: './form-description.html',
   styleUrl: './form-description.css',
+  standalone: true,
 })
 export class FormDescription {
   @Input() type!: PortalForm;
