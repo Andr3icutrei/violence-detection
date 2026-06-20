@@ -169,28 +169,27 @@ export class ReviewDatasetItem implements OnInit, OnDestroy {
       return;
     }
 
-    this.datasetsService
-      .validateDatasetModel(this.datasetId, videos, excludedVideoIds)
-      .subscribe({
-        next: (result) => {
-          this.validationResult = result;
-          this.validationMessage = 'review-datasets.validation-success-message';
-          this.isValidationSuccessful = true;
-          this.hasValidated = true;
-          this.isValidationInProgress = false;
-          this.cdr.detectChanges();
-        },
-        error: (error: HttpErrorResponse) => {
-          this.validationMessage =
-            error.status === 400
-              ? 'review-datasets.validation-invalid-videos-message'
-              : 'review-datasets.validation-failed-message';
-          this.isValidationSuccessful = false;
-          this.hasValidated = false;
-          this.isValidationInProgress = false;
-          this.cdr.detectChanges();
-        },
-      });
+    this.datasetsService.validateDatasetModel(this.datasetId, videos, excludedVideoIds).subscribe({
+      next: (result) => {
+        this.validationResult = result;
+        this.validationResult.accuracy *= 100;
+        this.validationMessage = 'review-datasets.validation-success-message';
+        this.isValidationSuccessful = true;
+        this.hasValidated = true;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.validationMessage =
+          error.status === 400
+            ? 'review-datasets.validation-invalid-videos-message'
+            : 'review-datasets.validation-failed-message';
+        this.isValidationSuccessful = false;
+        this.hasValidated = false;
+        this.isValidationInProgress = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   public reviewDataset(action: 'ACCEPT' | 'REJECT'): void {

@@ -424,6 +424,8 @@ input[type="password"]::-ms-clear {
   font-size: 0.9rem;
   font-weight: 600;
   min-width: 0;
+  text-align: right;
+  word-break: break-word;
 }
 
 .detail-item-value.dataset-name {

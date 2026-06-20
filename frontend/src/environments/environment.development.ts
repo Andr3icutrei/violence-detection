@@ -1,4 +1,4 @@
-export const domain = 'remote-investigators-off-episode.trycloudflare.com';
+export const domain = 'configure-enzyme-nominated-managers.trycloudflare.com';
 
 export const environment = {
   production: false,

@@ -227,6 +227,7 @@ export class EditDatasetItem implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.validationResult = result;
+          this.validationResult.accuracy *= 100;
           this.validationMessage = 'edit-dataset.validation-success-message';
           this.isValidationSuccessful = true;
           this.hasValidated = true;

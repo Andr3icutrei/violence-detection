@@ -179,6 +179,10 @@ export class InferencePage implements OnInit, OnDestroy {
           this.predictedClassProbability = this.parseHeaderNumber(
             response.headers.get('X-Predicted-Class-Probability'),
           );
+          if(this.predictedClassProbability && this.predictedConfidence) {
+            this.predictedClassProbability = this.predictedClassProbability * 100;
+            this.predictedConfidence = this.predictedConfidence * 100;
+          }
           this.trackedPeople = null;
         } else if (selectedActionId === 20) {
           this.trackedPeople = this.parseHeaderNumber(
