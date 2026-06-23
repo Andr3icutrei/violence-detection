@@ -46,7 +46,7 @@ class UsersService:
             "is_admin": created_user.is_admin,
         }
         email_verification_token = create_jwt_token(email_verification_token_payload, "SECRET_JWT_EMAIL", expires=1440) # expires in 1 day
-        email_verification_link = f"http://localhost:4200/verify-account?token={email_verification_token}"
+        email_verification_link = f"https://localhost:4200/verify-account?token={email_verification_token}"
 
         await send_registration_email(str(user_create_data.email), email_verification_link, conf)
 
@@ -139,7 +139,7 @@ class UsersService:
             "is_admin": user_to_verify.is_admin,
         }
         email_verification_token = create_jwt_token(email_verification_token_payload, "SECRET_JWT_EMAIL", expires=1440) # expires in 1 day
-        email_verification_link = f"http://localhost:4200/verify-account?token={email_verification_token}"
+        email_verification_link = f"https://localhost:4200/verify-account?token={email_verification_token}"
 
         await send_registration_email(str(user_to_verify.email), email_verification_link, conf)
 

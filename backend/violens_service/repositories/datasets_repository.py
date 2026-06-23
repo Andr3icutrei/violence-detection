@@ -8,7 +8,7 @@ import cv2
 import tempfile
 import os
 
-from sqlalchemy.orm import contains_eager, selectinload
+from sqlalchemy.orm import selectinload
 
 from models import Dataset, Video, InferenceHistory
 from models.dataset_status import DatasetStatus
@@ -126,13 +126,10 @@ class DatasetsRepository:
         result = await self.db.execute(
             select(Dataset)
             .filter(Dataset.id == dataset_id, Dataset.deleted_at.is_(None))
-            .join(Dataset.videos)
-            .join(Dataset.created_by_user)
-            .join(Dataset.inference_model)
             .options(
-                contains_eager(Dataset.created_by_user),
-                contains_eager(Dataset.videos),
-                contains_eager(Dataset.inference_model),
+                selectinload(Dataset.created_by_user),
+                selectinload(Dataset.videos),
+                selectinload(Dataset.inference_model),
             )
         )
         return result.scalars().first()

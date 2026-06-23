@@ -8,13 +8,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /code/app
 
-COPY ./shared_models/ ../shared_models/
-
 COPY ./people_tracking_service/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
-
-RUN pip install ../shared_models
 
 COPY ./people_tracking_service .
 

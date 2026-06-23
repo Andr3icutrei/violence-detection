@@ -58,7 +58,6 @@ async def inference_video_only_classification(
     result = await videos_service.classify_video(
         video_path,
         inference_model_path,
-        inference_model_kind,
     )
     return result
 

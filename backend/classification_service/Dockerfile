@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsm6 \
     libxext6 \
@@ -8,13 +8,16 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /code/app
 
-COPY ./shared_models/ ../shared_models/
-
 COPY ./classification_service/requirements.txt ./requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-RUN pip install ../shared_models
+RUN pip install --no-cache-dir \
+    torch==2.12.0+cu130 \
+    torchvision==0.27.0+cu130 \
+    --index-url https://download.pytorch.org/whl/cu130
+
+RUN pip install --no-cache-dir -r ./requirements.txt
 
 COPY ./classification_service .
 

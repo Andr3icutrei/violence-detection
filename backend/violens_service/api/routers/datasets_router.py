@@ -51,7 +51,7 @@ async def get_datasets(
     page_size: int = 10,
     dataset_status: DatasetStatus | None = None,
     is_official: bool | None = None,
-    current_user = Depends(get_current_admin_user),
+    current_user = Depends(get_current_user),
     datasets_service = Depends(get_datasets_service)
 ):
     return await datasets_service.get_datasets(search_term, page, page_size, dataset_status, is_official)

@@ -3,6 +3,9 @@ import tempfile
 import os
 from fastapi import HTTPException
 from starlette import status
+import subprocess
+import numpy as np
+import shutil
 
 from inference.onnx.pipeline import Onnx3dInferencePipeline
 from inference.onnx.preprocess import preprocess_video_for_inference, prepare_input_tensors
@@ -55,8 +58,6 @@ def run_classification_only(
     inference_model_path: str,
     temp_video_path: str,
     inference_runtime,
-    inference_model_kind: str | None = None,
-    inference_model_cache_key: str | None = None,
 ) -> tuple[str, float, float]:
     try:
         pipeline = Onnx3dInferencePipeline(inference_model_path)
@@ -86,10 +87,6 @@ def run_classification_only(
         )
 
 def write_overlay_video(overlays: list, source_video_path: str) -> str:
-    import subprocess
-    import numpy as np
-    import shutil
-
     if not overlays:
         raise ValueError("No Occlusion overlays were produced for this video.")
 
@@ -159,9 +156,8 @@ def write_overlay_video(overlays: list, source_video_path: str) -> str:
         return output_path, cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"MJPG"), fps, size)
 
     output_fps = fps if fps > 0 else 24.0
-    print(f"DEBUG: S-a deschis video-ul. FPS={fps}, Frame-uri totale={total_source_frames}", flush=True)
+    print(f"DEBUG: FPS={fps}, Frameuri={total_source_frames}", flush=True)
     ret, test_frame = cap.read()
-    print(f"DEBUG: Primul frame a putut fi citit? {ret}", flush=True)
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     output_path, writer = _create_temp_writer(output_fps, (width, height))
     if not writer.isOpened():

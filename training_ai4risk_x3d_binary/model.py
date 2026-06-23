@@ -1,108 +1,142 @@
+from __future__ import annotations
+
+from typing import Optional
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
 class X3DViolence(nn.Module):
-    def __init__(self, num_classes=2, pretrained=True, dropout_p=0.5, x3d_version='m'):
-        super(X3DViolence, self).__init__()
+    """Wraps a pretrained X3D backbone with a binary classification head and Grad-CAM support."""
 
-        self.x3d_version = x3d_version.lower()
+    def __init__(
+        self,
+        num_classes: int = 2,
+        pretrained: bool = True,
+        dropout_p: float = 0.5,
+        x3d_version: str = "m",
+    ) -> None:
+        """Creates the requested X3D variant and replaces its projection layer."""
+
+        super().__init__()
+
+        self.x3d_version: str = x3d_version.lower()
+        self.backbone: nn.Module
 
         try:
-            if self.x3d_version == 'xs':
+            if self.x3d_version == "xs":
                 from pytorchvideo.models.hub import x3d_xs
+
                 self.backbone = x3d_xs(pretrained=pretrained)
-            elif self.x3d_version == 's':
+            elif self.x3d_version == "s":
                 from pytorchvideo.models.hub import x3d_s
+
                 self.backbone = x3d_s(pretrained=pretrained)
-            elif self.x3d_version == 'm':
+            elif self.x3d_version == "m":
                 from pytorchvideo.models.hub import x3d_m
+
                 self.backbone = x3d_m(pretrained=pretrained)
-            elif self.x3d_version == 'l':
+            elif self.x3d_version == "l":
                 from pytorchvideo.models.hub import x3d_l
+
                 self.backbone = x3d_l(pretrained=pretrained)
             else:
-                raise ValueError(f"Unknown X3D version: {x3d_version}. Use 'xs', 's', 'm', or 'l'")
+                raise ValueError(f"Unknown X3D version: {x3d_version}. Use 'xs', 's', 'm', or 'l'.")
 
-            proj_module = self.backbone.blocks[-1].proj
-            in_features = None
+            projection_module: nn.Module = self.backbone.blocks[-1].proj
+            input_features: Optional[int] = None
 
-            if isinstance(proj_module, nn.Linear):
-                in_features = proj_module.in_features
-            elif isinstance(proj_module, nn.Sequential):
-                for module in proj_module:
+            if isinstance(projection_module, nn.Linear):
+                input_features = projection_module.in_features
+            elif isinstance(projection_module, nn.Sequential):
+                for module in projection_module:
                     if isinstance(module, nn.Linear):
-                        in_features = module.in_features
+                        input_features = module.in_features
                         break
 
-            if in_features is None:
-                in_features = 2048
+            if input_features is None:
+                input_features = 2048
 
             self.backbone.blocks[-1].proj = nn.Sequential(
                 nn.Dropout(p=dropout_p),
-                nn.Linear(in_features, num_classes)
+                nn.Linear(input_features, num_classes),
             )
 
-        except ImportError:
-            raise ImportError(
-                "pytorchvideo not installed. Install with: pip install pytorchvideo"
-            )
+        except ImportError as exc:
+            raise ImportError("pytorchvideo is not installed. Install it with: pip install pytorchvideo.") from exc
 
-        self.gradients = None
-        self.activations = None
+        self.gradients: Optional[torch.Tensor] = None
+        self.activations: Optional[torch.Tensor] = None
 
-    def save_gradient(self, grad):
+    def save_gradient(self, grad: torch.Tensor) -> None:
+        """Stores gradients from the hooked feature map for Grad-CAM."""
+
         self.gradients = grad
 
-    def forward(self, x, return_cam=False):
+    def forward(self, x: torch.Tensor, return_cam: bool = False) -> torch.Tensor:
+        """Runs a forward pass and optionally registers a hook for Grad-CAM features."""
+
         if return_cam:
             for name, module in self.backbone.named_modules():
-                if 'blocks.4' in name and 'branch1_conv' in name:
-                    def hook(module, input, output):
-                        self.activations = output
-                        if output.requires_grad:
-                            output.register_hook(self.save_gradient)
+                if "blocks.4" in name and "branch1_conv" in name:
+                    def hook(
+                        hook_module: nn.Module,
+                        hook_input: tuple[torch.Tensor, ...],
+                        hook_output: torch.Tensor,
+                    ) -> None:
+                        """Captures feature activations and their gradients."""
+
+                        self.activations = hook_output
+                        if hook_output.requires_grad:
+                            hook_output.register_hook(self.save_gradient)
+
                     module.register_forward_hook(hook)
 
-        output = self.backbone(x)
+        output: torch.Tensor = self.backbone(x)
         return output
 
-    def get_cam(self, target_class):
+    def get_cam(self, target_class: int) -> Optional[torch.Tensor]:
+        """Computes normalized spatiotemporal Grad-CAM maps for the last hooked feature map."""
+
         if self.gradients is None or self.activations is None:
             return None
 
-        gradients = self.gradients.detach()
-        activations = self.activations.detach()
-
-        weights = torch.mean(gradients, dim=(2, 3, 4), keepdim=True)
-        cam = torch.sum(weights * activations, dim=1, keepdim=True)
+        gradients: torch.Tensor = self.gradients.detach()
+        activations: torch.Tensor = self.activations.detach()
+        weights: torch.Tensor = torch.mean(gradients, dim=(2, 3, 4), keepdim=True)
+        cam: torch.Tensor = torch.sum(weights * activations, dim=1, keepdim=True)
         cam = F.relu(cam)
         cam = cam.squeeze(1)
 
-        batch_size = cam.size(0)
-        cams = []
-        for i in range(batch_size):
-            single_cam = cam[i]
+        batch_size: int = cam.size(0)
+        cams: list[torch.Tensor] = []
+
+        for index in range(batch_size):
+            single_cam: torch.Tensor = cam[index]
             single_cam = single_cam - single_cam.min()
             single_cam = single_cam / (single_cam.max() + 1e-8)
             cams.append(single_cam)
 
-        return torch.stack(cams)
+        stacked_cams: torch.Tensor = torch.stack(cams)
+        return stacked_cams
 
-    def get_spatial_cam(self, target_class):
-        cam_3d = self.get_cam(target_class)
+    def get_spatial_cam(self, target_class: int) -> Optional[torch.Tensor]:
+        """Reduces spatiotemporal Grad-CAM maps into normalized spatial heatmaps."""
+
+        cam_3d: Optional[torch.Tensor] = self.get_cam(target_class)
         if cam_3d is None:
             return None
 
-        cam_2d = torch.sum(cam_3d, dim=1)
+        cam_2d: torch.Tensor = torch.sum(cam_3d, dim=1)
+        batch_size: int = cam_2d.size(0)
+        cams: list[torch.Tensor] = []
 
-        batch_size = cam_2d.size(0)
-        cams = []
-        for i in range(batch_size):
-            single_cam = cam_2d[i]
+        for index in range(batch_size):
+            single_cam: torch.Tensor = cam_2d[index]
             single_cam = single_cam - single_cam.min()
             single_cam = single_cam / (single_cam.max() + 1e-8)
             cams.append(single_cam)
 
-        return torch.stack(cams)
+        stacked_cams: torch.Tensor = torch.stack(cams)
+        return stacked_cams

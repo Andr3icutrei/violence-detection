@@ -139,3 +139,30 @@ def test_build_validate_model_response():
     assert result.accuracy == 4 / 5
     assert result.confusion_matrix.true_positive == 3
 
+
+def test_run_model_validation_treats_numeric_one_as_violent(monkeypatch):
+    service = make_service()
+    model_record = SimpleNamespace(path="model.onnx")
+    videos_to_validate = [SimpleNamespace(id=1, path="video.mp4")]
+    review_video_map = {1: ReviewVideoRequestDto(video_id=1, is_violent=True)}
+
+    class DummyClassificationClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return None
+
+        async def classify_video(self, video_path, inference_model_path):
+            return {"predicted_label": "1"}
+
+    monkeypatch.setattr(datasets_service, "ClassificationClient", lambda *_args, **_kwargs: DummyClassificationClient())
+    monkeypatch.setattr(datasets_service, "get_env_variable", lambda *_args, **_kwargs: "http://classification")
+    monkeypatch.setattr(datasets_service, "get_env_float", lambda *_args, **_kwargs: 1.0)
+
+    counts = run(service._run_model_validation(model_record, videos_to_validate, review_video_map))
+
+    assert counts.true_positive == 1
+    assert counts.false_negative == 0
+
+

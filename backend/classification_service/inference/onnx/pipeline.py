@@ -3,6 +3,8 @@ import onnxruntime as ort
 import torch
 import numpy as np
 import cv2
+import torch
+import torch.nn.functional as F
 
 from dataclasses import dataclass
 from onnx2torch import convert
@@ -85,7 +87,6 @@ def _ensure_conv_output(model: onnx.ModelProto, conv_output_name: str) -> onnx.M
 
 
 def load_onnx_metadata(model_path: str) -> OnnxModelMetadata:
-    import onnx
     model = onnx.load(model_path)
     input_specs = _extract_input_specs(model)
     output_names = [output.name for output in model.graph.output]
@@ -93,15 +94,12 @@ def load_onnx_metadata(model_path: str) -> OnnxModelMetadata:
 
 
 def gaussian_kernel1d(kernel_size, sigma, device, dtype):
-    import torch
     k = torch.arange(kernel_size, device=device, dtype=dtype) - kernel_size // 2
     g = torch.exp(-(k ** 2) / (2 * sigma ** 2))
     g = g / g.sum()
     return g
 
 def gaussian_blur_video(video, kernel_size=31, sigma=10.0):
-    import torch
-    import torch.nn.functional as F
     c, t, h, w = video.shape
     kernel_size = max(3, kernel_size | 1)
     g = gaussian_kernel1d(kernel_size, sigma, video.device, video.dtype)
@@ -111,8 +109,6 @@ def gaussian_blur_video(video, kernel_size=31, sigma=10.0):
     return flat.view(t, c, h, w).permute(1, 0, 2, 3)
 
 def gaussian_blur_map(saliency, kernel_size=31, sigma=10.0):
-    import torch
-    import torch.nn.functional as F
     kernel_size = max(3, kernel_size | 1)
     g = gaussian_kernel1d(kernel_size, sigma, saliency.device, saliency.dtype)
     s = saliency.unsqueeze(0).unsqueeze(0)
@@ -121,7 +117,6 @@ def gaussian_blur_map(saliency, kernel_size=31, sigma=10.0):
     return s[0, 0]
 
 def make_soft_mask(patch_size, device, dtype):
-    import torch
     yy, xx = torch.meshgrid(
         torch.arange(patch_size, device=device, dtype=dtype),
         torch.arange(patch_size, device=device, dtype=dtype),
@@ -134,9 +129,6 @@ def make_soft_mask(patch_size, device, dtype):
 
 class Onnx3dInferencePipeline:
     def __init__(self, model_path: str):
-        import onnx
-        import onnxruntime as ort
-        import torch
         self.model_path = model_path
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -165,18 +157,18 @@ class Onnx3dInferencePipeline:
         return pred_class, baseline_probs[0]
 
     def predict_and_generate_occlusion(
-        self,
-        inputs: dict[str, np.ndarray],
-        patch_size: int = 48,
-        stride: int = 24,
-        t_patch_ratio: float = 0.25,
-        t_stride_ratio: float = 0.125,
-        batch_size: int = 1,
+            self,
+            inputs: dict[str, np.ndarray],
+            patch_size: int = 48,
+            stride: int = 24,
+            t_patch_ratio: float = 0.25,
+            t_stride_ratio: float = 0.125,
+            batch_size: int = 8,
     ) -> tuple[int, np.ndarray, np.ndarray | None]:
-        import torch
-
-        baseline_inputs = {name: np.expand_dims(val, axis=0) if val.ndim == 4 else val for name, val in inputs.items()}
-        
+        baseline_inputs = {
+            name: np.expand_dims(val, axis=0) if val.ndim == 4 else val
+            for name, val in inputs.items()
+        }
         baseline_outputs = self.session.run(self.output_names, baseline_inputs)[0]
         baseline_probs = self._softmax_numpy(baseline_outputs)
         pred_class = np.argmax(baseline_probs[0])
@@ -184,96 +176,107 @@ class Onnx3dInferencePipeline:
 
         ref_input_name = self.input_names[0]
         ref_tensor = inputs[ref_input_name]
-        
+
         if ref_tensor.ndim == 5:
             _, c, ref_t_len, h, w = ref_tensor.shape
         else:
             c, ref_t_len, h, w = ref_tensor.shape
-            
+
         saliency = torch.zeros((ref_t_len, h, w), device=self.device)
         counts = torch.zeros((ref_t_len, h, w), device=self.device)
 
         blur_kernel = max(15, (patch_size // 2) | 1)
         blur_sigma = max(3.0, patch_size / 3.0)
-        
+
         inputs_pt = {}
         inputs_blur = {}
         for name, val in inputs.items():
             if val.ndim == 5:
                 val = val[0]
-            pt_tensor = torch.from_numpy(val).to(self.device)
-            inputs_pt[name] = pt_tensor
-            inputs_blur[name] = gaussian_blur_video(pt_tensor, kernel_size=blur_kernel, sigma=blur_sigma)
-            
-        soft = make_soft_mask(patch_size, self.device, inputs_pt[ref_input_name].dtype).view(1, 1, patch_size, patch_size)
+            pt = torch.from_numpy(val).to(self.device)
+            inputs_pt[name] = pt
+            inputs_blur[name] = gaussian_blur_video(pt, kernel_size=blur_kernel, sigma=blur_sigma)
+
+        soft = make_soft_mask(
+            patch_size, self.device, inputs_pt[ref_input_name].dtype
+        ).view(1, 1, patch_size, patch_size)  # (1, 1, H_p, W_p)
 
         y_positions = list(range(0, h - patch_size + 1, stride))
-        if not y_positions or y_positions[-1] != h - patch_size: y_positions.append(h - patch_size)
+        if not y_positions or y_positions[-1] != h - patch_size:
+            y_positions.append(h - patch_size)
 
         x_positions = list(range(0, w - patch_size + 1, stride))
-        if not x_positions or x_positions[-1] != w - patch_size: x_positions.append(w - patch_size)
+        if not x_positions or x_positions[-1] != w - patch_size:
+            x_positions.append(w - patch_size)
 
-        coords = []
-        for t_frac in np.arange(0.0, 1.0 - t_patch_ratio + 1e-5, t_stride_ratio):
-            for y in y_positions:
-                for x in x_positions:
-                    coords.append((float(t_frac), y, x))
+        coords = [
+            (float(t_frac), y, x)
+            for t_frac in np.arange(0.0, 1.0 - t_patch_ratio + 1e-5, t_stride_ratio)
+            for y in y_positions
+            for x in x_positions
+        ]
+
+        t_patch_frames = max(1, int(t_patch_ratio * ref_t_len))
+
+        batch_buffers = {
+            name: torch.empty(
+                (batch_size, *pt.shape), device=self.device, dtype=pt.dtype
+            )
+            for name, pt in inputs_pt.items()
+        }
 
         for i in range(0, len(coords), batch_size):
             batch_coords = coords[i: i + batch_size]
             b_size = len(batch_coords)
 
+            patch_ranges = [
+                (int(t_frac * ref_t_len),
+                 min(ref_t_len, int(t_frac * ref_t_len) + t_patch_frames),
+                 y, x)
+                for t_frac, y, x in batch_coords
+            ]
+
             batch_inputs_np = {}
-            for name, pt_tensor in inputs_pt.items():
-                batch_tensor = pt_tensor.unsqueeze(0).repeat(b_size, 1, 1, 1, 1).clone()
-                blur_tensor = inputs_blur[name]
-                t_len = pt_tensor.shape[1]
-                
-                for b_idx, (t_frac, y, x) in enumerate(batch_coords):
-                    t_start = int(t_frac * t_len)
-                    t_end = min(t_len, t_start + max(1, int(t_patch_ratio * t_len)))
-                    
-                    patch_orig = pt_tensor[:, t_start:t_end, y: y + patch_size, x: x + patch_size]
-                    patch_blur = blur_tensor[:, t_start:t_end, y: y + patch_size, x: x + patch_size]
-                    
-                    # soft is (1, 1, H_p, W_p) but patch is (C, T_p, H_p, W_p)
-                    # so numpy/torch broadcasting should work
-                    soft_expanded = soft.unsqueeze(1) # (1, 1, 1, H_p, W_p) if soft was (1, 1, H_p, W_p), wait
-                    
-                    batch_tensor[b_idx, :, t_start:t_end, y: y + patch_size, x: x + patch_size] = \
-                        patch_orig * (1 - soft) + patch_blur * soft
-                batch_inputs_np[name] = batch_tensor.cpu().numpy()
+            for name, pt in inputs_pt.items():
+                blur = inputs_blur[name]
+                buf = batch_buffers[name][:b_size]
+
+                buf[:] = pt.unsqueeze(0)
+
+                for b_idx, (t_start, t_end, y, x) in enumerate(patch_ranges):
+                    patch_orig = pt[:, t_start:t_end, y:y + patch_size, x:x + patch_size]
+                    patch_blur = blur[:, t_start:t_end, y:y + patch_size, x:x + patch_size]
+                    buf[b_idx, :, t_start:t_end, y:y + patch_size, x:x + patch_size] = (
+                            patch_orig * (1 - soft) + patch_blur * soft
+                    )
+
+                batch_inputs_np[name] = buf.cpu().numpy()
 
             outputs = self.session.run(self.output_names, batch_inputs_np)[0]
             scores = self._softmax_numpy(outputs)[:, pred_class]
 
-            importances = baseline_score - scores
-            importances = torch.tensor(importances, device=self.device)
-            importances = torch.clamp(importances, min=0.0)
+            importances = torch.clamp(
+                torch.tensor(baseline_score - scores, device=self.device), min=0.0
+            )
 
-            for b_idx, (t_frac, y, x) in enumerate(batch_coords):
-                t_start = int(t_frac * ref_t_len)
-                t_end = min(ref_t_len, t_start + max(1, int(t_patch_ratio * ref_t_len)))
-                
-                saliency[t_start:t_end, y: y + patch_size, x: x + patch_size] += importances[b_idx]
-                counts[t_start:t_end, y: y + patch_size, x: x + patch_size] += 1.0
+            for b_idx, (t_start, t_end, y, x) in enumerate(patch_ranges):
+                saliency[t_start:t_end, y:y + patch_size, x:x + patch_size] += importances[b_idx]
+                counts[t_start:t_end, y:y + patch_size, x:x + patch_size] += 1.0
 
-        counts = torch.clamp(counts, min=1.0)
-        saliency = saliency / counts
-        
-        # Spatial smooth
+        saliency /= torch.clamp(counts, min=1.0)
+
         for t_idx in range(ref_t_len):
             saliency[t_idx] = gaussian_blur_map(saliency[t_idx], kernel_size=blur_kernel, sigma=blur_sigma)
 
         saliency_np = saliency.cpu().numpy()
         lo, hi = np.percentile(saliency_np, 2), np.percentile(saliency_np, 98)
-        if hi - lo > 1e-8:
-            saliency_np = np.clip((saliency_np - lo) / (hi - lo), 0, 1)
-        else:
-            saliency_np = np.zeros_like(saliency_np)
+        saliency_np = (
+            np.clip((saliency_np - lo) / (hi - lo), 0, 1)
+            if hi - lo > 1e-8
+            else np.zeros_like(saliency_np)
+        )
 
         return pred_class, baseline_probs[0], saliency_np
-
     def overlay_heatmap_on_frames(
         self,
         frames: Iterable[np.ndarray],

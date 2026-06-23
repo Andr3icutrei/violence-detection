@@ -19,3 +19,9 @@ def test_is_violent_label_env_override(monkeypatch):
 def test_is_violent_label_unknown_returns_false():
     assert is_violent_label("friendly chat") is False
 
+
+def test_is_violent_label_numeric_class_id():
+    assert is_violent_label("1") is True
+    assert is_violent_label("0") is False
+
+

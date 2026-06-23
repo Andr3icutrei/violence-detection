@@ -1,89 +1,101 @@
+from __future__ import annotations
+
 from pathlib import Path
+from typing import ClassVar, Optional
+
+
+DatasetInfo = dict[str, Path | list[str] | str]
 
 
 class X3DConfig:
-    DATASET_PATH = Path("../../Datasets")
-    DATASET_NAME = "AI4RiSK_CROPPED_SR_V2"
+    """Stores dataset, model, optimizer, scheduler, and runtime configuration."""
 
-    VIOLENCE_PATH = None
-    NON_VIOLENCE_PATH = None
+    DATASET_PATH: ClassVar[Path] = Path("../../Datasets")
+    DATASET_NAME: ClassVar[str] = "AI4RiSK_CROPPED_SR_V2"
 
-    SPLIT_RATIO = 0.8
+    VIOLENCE_PATH: Optional[DatasetInfo] = None
+    NON_VIOLENCE_PATH: Optional[DatasetInfo] = None
 
-    X3D_VERSION = "m"
+    SPLIT_RATIO: float = 0.8
 
-    NUM_FRAMES = 16
-    TEMPORAL_STRIDE = 2
+    X3D_VERSION: str = "m"
 
-    INPUT_SIZE = 224
-    CROP_SIZE = 224
+    NUM_FRAMES: int = 16
+    TEMPORAL_STRIDE: int = 2
 
-    USE_CROP = False
+    INPUT_SIZE: int = 224
+    CROP_SIZE: int = 224
 
-    BATCH_SIZE = 12
-    NUM_EPOCHS = 100
+    USE_CROP: bool = False
 
-    ACCUMULATION_STEPS = 3
-    EFFECTIVE_BATCH_SIZE = BATCH_SIZE * ACCUMULATION_STEPS
+    BATCH_SIZE: int = 12
+    NUM_EPOCHS: int = 100
 
-    OPTIMIZER = "adamw"
-    BACKBONE_LR = 1e-5
-    HEAD_LR = 1e-4
-    WEIGHT_DECAY = 1e-3
-    BETAS = (0.9, 0.999)
-    EPS = 1e-8
+    ACCUMULATION_STEPS: int = 3
+    EFFECTIVE_BATCH_SIZE: int = BATCH_SIZE * ACCUMULATION_STEPS
 
-    FREEZE_BACKBONE = False
-    UNFREEZE_EPOCH = 20
+    OPTIMIZER: str = "adamw"
+    BACKBONE_LR: float = 1e-5
+    HEAD_LR: float = 1e-4
+    WEIGHT_DECAY: float = 1e-3
+    BETAS: tuple[float, float] = (0.9, 0.999)
+    EPS: float = 1e-8
 
-    NUM_WORKERS = 4
-    PIN_MEMORY = True
+    FREEZE_BACKBONE: bool = False
+    UNFREEZE_EPOCH: int = 20
 
-    EARLY_STOPPING_PATIENCE = 15
+    NUM_WORKERS: int = 4
+    PIN_MEMORY: bool = True
 
-    DROPOUT_P = 0.5
-    LABEL_SMOOTHING = 0.1
-    GRAD_CLIP = 2.0
+    EARLY_STOPPING_PATIENCE: int = 15
 
-    USE_SCHEDULER = True
-    SCHEDULER_TYPE = "cosine"
-    T_0 = 10
-    T_MULT = 2
-    ETA_MIN = 1e-7
+    DROPOUT_P: float = 0.5
+    LABEL_SMOOTHING: float = 0.1
+    GRAD_CLIP: float = 2.0
 
-    SAVE_DIR = Path("checkpoints_x3d_ai4risk")
-    MODEL_NAME = "x3d_violence_ai4risk"
+    USE_SCHEDULER: bool = True
+    SCHEDULER_TYPE: str = "cosine"
+    T_0: int = 10
+    T_MULT: int = 2
+    ETA_MIN: float = 1e-7
 
-    DEVICE = "cuda"
+    SAVE_DIR: Path = Path("checkpoints_x3d_ai4risk")
+    MODEL_NAME: str = "x3d_violence_ai4risk"
 
-    KINETICS_MEAN = [0.45, 0.45, 0.45]
-    KINETICS_STD = [0.225, 0.225, 0.225]
+    DEVICE: str = "cuda"
 
-    USE_PRETRAINED = True
+    KINETICS_MEAN: list[float] = [0.45, 0.45, 0.45]
+    KINETICS_STD: list[float] = [0.225, 0.225, 0.225]
 
-    USE_OPTICAL_FLOW = True
+    USE_PRETRAINED: bool = True
+    USE_OPTICAL_FLOW: bool = True
 
-    AVAILABLE_DATASETS = {
-        'AI4RiSK': {
-            'path': DATASET_PATH / 'AI4RiSK_CROPPED_SR_V2',
-            'non_violence_dirs': ['0'],
-            'violence_dirs': ['1', '2', '3', '4'],
-            'type': 'multiclass'
+    AVAILABLE_DATASETS: ClassVar[dict[str, DatasetInfo]] = {
+        "AI4RiSK": {
+            "path": DATASET_PATH / "AI4RiSK_CROPPED_SR_V2",
+            "non_violence_dirs": ["0"],
+            "violence_dirs": ["1", "2", "3", "4"],
+            "type": "multiclass",
         },
     }
 
-    def __init__(self):
-        self.set_dataset('AI4RiSK')
+    def __init__(self) -> None:
+        """Initializes the default dataset configuration and checkpoint directory."""
+
+        self.set_dataset("AI4RiSK")
         self.SAVE_DIR.mkdir(exist_ok=True, parents=True)
 
-    def set_dataset(self, dataset_name):
-        if dataset_name == 'AI4RiSK':
-            self.DATASET_NAME = 'AI4RiSK'
-            dataset_info = self.AVAILABLE_DATASETS['AI4RiSK']
-            self.VIOLENCE_PATH = dataset_info
-            self.NON_VIOLENCE_PATH = dataset_info
-            self.SAVE_DIR = Path("checkpoints_x3d_ai4risk")
-            self.MODEL_NAME = "x3d_violence_ai4risk"
-            self.USE_CROP = False
-        else:
-            raise ValueError(f"Dataset {dataset_name} not supported. Only AI4RiSK is available.")
+    def set_dataset(self, dataset_name: str) -> None:
+        """Selects a supported dataset and updates dataset-specific paths."""
+
+        dataset_info: Optional[DatasetInfo] = self.AVAILABLE_DATASETS.get(dataset_name)
+        if dataset_info is None:
+            supported_datasets: str = ", ".join(self.AVAILABLE_DATASETS)
+            raise ValueError(f"Dataset '{dataset_name}' is not supported. Available datasets: {supported_datasets}.")
+
+        self.DATASET_NAME = dataset_name
+        self.VIOLENCE_PATH = dataset_info
+        self.NON_VIOLENCE_PATH = dataset_info
+        self.SAVE_DIR = Path(f"checkpoints_x3d_{dataset_name.lower()}")
+        self.MODEL_NAME = f"x3d_violence_{dataset_name.lower()}"
+        self.USE_CROP = False

@@ -10,7 +10,9 @@ def _split_tokens(value: str) -> list[str]:
 
 
 def is_violent_label(label: str) -> bool:
-    normalized = label.lower()
+    normalized = label.strip().lower()
+    if normalized.isdigit():
+        return int(normalized) == 1
     positive_tokens = _split_tokens(get_env_variable("CLASSIFICATION_POSITIVE_LABELS", _DEFAULT_POSITIVE_TOKENS))
     negative_tokens = _split_tokens(get_env_variable("CLASSIFICATION_NEGATIVE_LABELS", _DEFAULT_NEGATIVE_TOKENS))
     if any(token in normalized for token in negative_tokens):

@@ -60,6 +60,7 @@ class DatasetsService:
         )
 
     def _video_to_response_dto(self, video) -> VideoResponseDto:
+        inference_model = getattr(video.dataset, "inference_model", None)
         return VideoResponseDto(
             id=video.id,
             uid=str(video.uid),
@@ -71,7 +72,7 @@ class DatasetsService:
             duration=video.duration,
             frame_rate=int(video.frame_rate),
             dataset_is_official=video.dataset.is_official,
-            inference_model_name=video.dataset.inference_model.name
+            inference_model_name=getattr(inference_model, "name", None)
         )
 
     async def _get_dataset_or_404(self, dataset_id: int) -> Dataset:
@@ -101,19 +102,19 @@ class DatasetsService:
                 detail="Dataset already reviewed."
             )
 
-    async def _send_approval_email(self, dataset: Dataset, review_comment: str, conf: ConnectionConfig) -> None:
+    async def _send_approval_email(self, recipient_email: str, dataset_name: str, review_comment: str, conf: ConnectionConfig) -> None:
         try:
-            await send_dataset_approval_mail(str(dataset.created_by_user.email), str(dataset.name), review_comment, conf)
+            await send_dataset_approval_mail(recipient_email, dataset_name, review_comment, conf)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to send approval email: {str(e)}"
             )
 
-    async def _send_rejection_cleanup(self, dataset: Dataset, review_comment: str, conf: ConnectionConfig) -> None:
+    async def _send_rejection_cleanup(self, recipient_email: str, dataset_name: str, review_comment: str, conf: ConnectionConfig) -> None:
         try:
-            await delete_dataset_videos(dataset.name)
-            await send_dataset_rejection_mail(str(dataset.created_by_user.email), str(dataset.name), review_comment, conf)
+            await delete_dataset_videos(dataset_name)
+            await send_dataset_rejection_mail(recipient_email, dataset_name, review_comment, conf)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -328,13 +329,15 @@ class DatasetsService:
         dataset = await self._get_dataset_or_404(dataset_id)
         self._ensure_dataset_pending(dataset)
         dataset.comment = review_comment
+        recipient_email = str(dataset.created_by_user.email)
+        dataset_name = str(dataset.name)
         result = None
         if is_approved:
             result = await self._accept_dataset(dataset, videos, excluded_video_ids)
-            await self._send_approval_email(dataset, review_comment, conf)
+            await self._send_approval_email(recipient_email, dataset_name, review_comment, conf)
         else:
             result = await self._reject_dataset(dataset, videos)
-            await self._send_rejection_cleanup(dataset, review_comment, conf)
+            await self._send_rejection_cleanup(recipient_email, dataset_name, review_comment, conf)
         await self.notifier.broadcast_dataset_updated(dataset_id=result.id)
         return result
 

@@ -13,7 +13,7 @@ class VideoResponseDto(BaseModel):
     is_violent: bool | None
     duration: int
     frame_rate: int
-    inference_model_name: str
+    inference_model_name: str | None = None
 
 class InferenceVideoRequestDto(BaseModel):
     model_config = ConfigDict(populate_by_name=True)

@@ -72,7 +72,6 @@ class ClassificationService:
         self,
         video_path: str,
         inference_model_path: str,
-        inference_model_kind: str | None = None,
     ) -> ClassificationResponseDto:
         temp_video_path = ""
         temp_model_path = ""
@@ -104,8 +103,6 @@ class ClassificationService:
                 temp_model_path,
                 temp_video_path,
                 self.inference_runtime,
-                inference_model_kind=inference_model_kind,
-                inference_model_cache_key=inference_model_path,
             )
 
             if temp_model_path and os.path.exists(temp_model_path):

@@ -38,7 +38,7 @@ class Dataset(Base):
     __tablename__ = "datasets"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String, unique=True, nullable=False, server_default=text("''"))
+    name: Mapped[str] = mapped_column(String, nullable=False, server_default=text("''"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     deleted_at: Mapped[date] = mapped_column(Date, nullable=True)
     is_official: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))

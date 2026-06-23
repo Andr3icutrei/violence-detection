@@ -1,162 +1,154 @@
-import torch
-from pathlib import Path
+from __future__ import annotations
+
 import argparse
+import logging
+from pathlib import Path
+from typing import Sequence
+
+import torch
 
 from config import X3DConfig
+from evaluate import HeatmapGenerator3DX3D, evaluate_model_multiview
 from train import X3DTrainer
-from evaluate import evaluate_model_multiview, HeatmapGenerator3DX3D
 
 
-def train_model(config):
-    print("=" * 60)
-    print(f"TRAINING X3D-{config.X3D_VERSION.upper()} ON {config.DATASET_NAME.upper()} DATASET")
-    print("=" * 60)
+logger: logging.Logger = logging.getLogger(__name__)
 
-    base_path = Path(config.VIOLENCE_PATH['path'])
 
-    v_videos = []
-    for dir_name in config.VIOLENCE_PATH['violence_dirs']:
+def count_dataset_videos(config: X3DConfig) -> tuple[int, int, int, int]:
+    """Counts violent and non-violent videos and returns train/validation split sizes."""
+
+    if config.VIOLENCE_PATH is None or config.NON_VIOLENCE_PATH is None:
+        raise ValueError("Dataset paths must be configured before counting videos.")
+
+    base_path: Path = Path(config.VIOLENCE_PATH["path"])
+    violent_videos: list[Path] = []
+    non_violent_videos: list[Path] = []
+
+    for dir_name in config.VIOLENCE_PATH["violence_dirs"]:
+        dir_path: Path = base_path / dir_name
+        if dir_path.exists():
+            violent_videos.extend(file_path for file_path in dir_path.rglob("*") if file_path.is_file())
+
+    for dir_name in config.NON_VIOLENCE_PATH["non_violence_dirs"]:
         dir_path = base_path / dir_name
         if dir_path.exists():
-            v_videos.extend(list(dir_path.rglob('*')))
+            non_violent_videos.extend(file_path for file_path in dir_path.rglob("*") if file_path.is_file())
 
-    nv_videos = []
-    for dir_name in config.NON_VIOLENCE_PATH['non_violence_dirs']:
-        dir_path = base_path / dir_name
-        if dir_path.exists():
-            nv_videos.extend(list(dir_path.rglob('*')))
+    violent_train: int = int(len(violent_videos) * config.SPLIT_RATIO)
+    violent_val: int = len(violent_videos) - violent_train
+    non_violent_train: int = int(len(non_violent_videos) * config.SPLIT_RATIO)
+    non_violent_val: int = len(non_violent_videos) - non_violent_train
 
-    v_train = int(len(v_videos) * config.SPLIT_RATIO)
-    v_val = len(v_videos) - v_train
-    nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
-    nv_val = len(nv_videos) - nv_train
+    return violent_train, violent_val, non_violent_train, non_violent_val
 
-    print(f"\nDataset Statistics:")
-    print(f"  Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
-    print(f"  Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
-    print(f"  Total: {len(v_videos) + len(nv_videos)} videos")
-    print()
 
-    trainer = X3DTrainer(config)
+def train_model(config: X3DConfig, verbose: bool = True) -> None:
+    """Trains the configured X3D model."""
+
+    trainer: X3DTrainer = X3DTrainer(config, verbose=verbose)
     trainer.train()
 
-    print("\nTraining completed!")
 
+def evaluate_trained_model(config: X3DConfig, num_clips: int = 10, save_heatmaps: bool = True) -> None:
+    """Evaluates the best saved checkpoint and optionally writes Grad-CAM visualizations."""
 
-def evaluate_trained_model(config):
-    print("=" * 60)
-    print(f"EVALUATING MODEL ON {config.DATASET_NAME.upper()} DATASET")
-    print("=" * 60)
-
-    model_path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
+    model_path: Path = config.SAVE_DIR / f"{config.MODEL_NAME}_best.pth"
 
     if not model_path.exists():
-        print(f"Model not found at {model_path}")
+        logger.error("Model checkpoint not found at %s.", model_path)
         return
 
-    accuracy, preds, labels, probs = evaluate_model_multiview(model_path, config)
+    evaluate_model_multiview(model_path, config, num_clips=num_clips)
 
-    print("\n" + "=" * 60)
-    print("GENERATING GRAD-CAM VISUALIZATIONS")
-    print("=" * 60)
-
-    generator = HeatmapGenerator3DX3D(model_path, config)
-    output_dir = Path(f"heatmap_visualizations_x3d_{config.DATASET_NAME.lower()}")
-    generator.save_visualization(output_dir, num_samples=10)
-
-    print(f"\nVisualizations saved to {output_dir}")
+    if save_heatmaps:
+        generator: HeatmapGenerator3DX3D = HeatmapGenerator3DX3D(model_path, config)
+        output_dir: Path = Path(f"heatmap_visualizations_x3d_{config.DATASET_NAME.lower()}")
+        generator.save_visualization(output_dir, num_samples=10)
 
 
-def show_dataset_info(config):
-    print("=" * 60)
-    print("DATASET INFORMATION")
-    print("=" * 60)
+def show_dataset_info(config: X3DConfig) -> None:
+    """Logs dataset split information."""
 
-    print(f"\n{config.DATASET_NAME} Dataset")
-    print("-" * 60)
+    violent_train: int
+    violent_val: int
+    non_violent_train: int
+    non_violent_val: int
+    violent_train, violent_val, non_violent_train, non_violent_val = count_dataset_videos(config)
 
-    base_path = Path(config.VIOLENCE_PATH['path'])
+    total_train: int = violent_train + non_violent_train
+    total_val: int = violent_val + non_violent_val
+    total_videos: int = total_train + total_val
 
-    v_videos = []
-    for dir_name in config.VIOLENCE_PATH['violence_dirs']:
-        dir_path = base_path / dir_name
-        if dir_path.exists():
-            v_videos.extend(list(dir_path.rglob('*')))
-
-    nv_videos = []
-    for dir_name in config.NON_VIOLENCE_PATH['non_violence_dirs']:
-        dir_path = base_path / dir_name
-        if dir_path.exists():
-            nv_videos.extend(list(dir_path.rglob('*')))
-
-    v_train = int(len(v_videos) * config.SPLIT_RATIO)
-    v_val = len(v_videos) - v_train
-    nv_train = int(len(nv_videos) * config.SPLIT_RATIO)
-    nv_val = len(nv_videos) - nv_train
-
-    print(f"Violence: {len(v_videos)} total -> {v_train} train, {v_val} val")
-    print(f"Non-Violence: {len(nv_videos)} total -> {nv_train} train, {nv_val} val")
-    print(f"Total: {len(v_videos) + len(nv_videos)} videos")
-
-    total_train = v_train + nv_train
-    total_val = v_val + nv_val
-
-    print(f"\nTraining set: {total_train} videos ({config.SPLIT_RATIO:.0%})")
-    print(f"Validation set: {total_val} videos ({1 - config.SPLIT_RATIO:.0%})")
+    logger.info(
+        "Dataset=%s | total=%d | train=%d | validation=%d | violence_train=%d | violence_validation=%d | non_violence_train=%d | non_violence_validation=%d",
+        config.DATASET_NAME,
+        total_videos,
+        total_train,
+        total_val,
+        violent_train,
+        violent_val,
+        non_violent_train,
+        non_violent_val,
+    )
 
 
-def main():
-    parser = argparse.ArgumentParser(description='X3D Violence Detection Pipeline')
-    parser.add_argument('--mode', type=str, required=True,
-                        choices=['train', 'evaluate', 'info'],
-                        help='Mode: train, evaluate, or info')
-    parser.add_argument('--batch_size', type=int, default=None,
-                        help='Batch size')
-    parser.add_argument('--epochs', type=int, default=None,
-                        help='Number of epochs')
-    parser.add_argument('--lr', type=float, default=None,
-                        help='Learning rate for head')
+def build_parser() -> argparse.ArgumentParser:
+    """Creates the command-line argument parser."""
 
-    args = parser.parse_args()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(description="X3D violence detection pipeline")
+    parser.add_argument("--mode", type=str, required=True, choices=["train", "evaluate", "info"])
+    parser.add_argument("--batch_size", type=int, default=None)
+    parser.add_argument("--epochs", type=int, default=None)
+    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--num_clips", type=int, default=10)
+    parser.add_argument("--no_heatmaps", action="store_true")
+    parser.add_argument("--quiet", action="store_true")
+    return parser
 
-    config = X3DConfig()
+
+def apply_cli_overrides(config: X3DConfig, args: argparse.Namespace) -> None:
+    """Applies command-line overrides to the configuration object."""
 
     if args.batch_size is not None:
         config.BATCH_SIZE = args.batch_size
+        config.EFFECTIVE_BATCH_SIZE = config.BATCH_SIZE * config.ACCUMULATION_STEPS
+
     if args.epochs is not None:
         config.NUM_EPOCHS = args.epochs
+
     if args.lr is not None:
         config.HEAD_LR = args.lr
         config.BACKBONE_LR = args.lr / 10
 
-    print(f"\n{'=' * 60}")
-    print(f"CONFIGURATION")
-    print(f"{'=' * 60}")
-    print(f"Model: X3D-{config.X3D_VERSION.upper()}")
-    print(f"Dataset: {config.DATASET_NAME}")
-    print(f"Device: {config.DEVICE}")
-    print(f"CUDA available: {torch.cuda.is_available()}")
-    if torch.cuda.is_available():
-        print(f"GPU: {torch.cuda.get_device_name(0)}")
-    print(f"Batch size: {config.BATCH_SIZE}")
-    print(f"Accumulation steps: {config.ACCUMULATION_STEPS}")
-    print(f"Effective batch size: {config.EFFECTIVE_BATCH_SIZE}")
-    print(f"Epochs: {config.NUM_EPOCHS}")
-    print(f"Frames: {config.NUM_FRAMES}, Temporal stride: {config.TEMPORAL_STRIDE}")
-    print(f"Backbone LR: {config.BACKBONE_LR}")
-    print(f"Head LR: {config.HEAD_LR}")
-    print(f"Weight Decay: {config.WEIGHT_DECAY}")
-    print(f"Dropout: {config.DROPOUT_P}")
-    print(f"Label Smoothing: {config.LABEL_SMOOTHING}")
-    if config.USE_SCHEDULER:
-        print(f"Scheduler: {config.SCHEDULER_TYPE}")
-    print(f"{'=' * 60}\n")
 
-    if args.mode == 'train':
-        train_model(config)
-    elif args.mode == 'evaluate':
-        evaluate_trained_model(config)
-    elif args.mode == 'info':
+def main(argv: Sequence[str] | None = None) -> None:
+    """Runs the selected pipeline mode from command-line arguments."""
+
+    parser: argparse.ArgumentParser = build_parser()
+    args: argparse.Namespace = parser.parse_args(argv)
+    logging.basicConfig(
+        level=logging.WARNING if args.quiet else logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
+
+    config: X3DConfig = X3DConfig()
+    apply_cli_overrides(config, args)
+
+    logger.info(
+        "Mode=%s | model=X3D-%s | dataset=%s | device=%s | cuda_available=%s",
+        args.mode,
+        config.X3D_VERSION.upper(),
+        config.DATASET_NAME,
+        config.DEVICE,
+        torch.cuda.is_available(),
+    )
+
+    if args.mode == "train":
+        train_model(config, verbose=not args.quiet)
+    elif args.mode == "evaluate":
+        evaluate_trained_model(config, num_clips=args.num_clips, save_heatmaps=not args.no_heatmaps)
+    elif args.mode == "info":
         show_dataset_info(config)
 
 

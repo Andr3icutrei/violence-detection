@@ -36,6 +36,12 @@ def _media_type_for_path(file_path: str) -> str:
         return "video/x-msvideo"
     return "video/mp4"
 
+
+def _get_inference_model_name(video: Video) -> str | None:
+    dataset = getattr(video, "dataset", None)
+    inference_model = getattr(dataset, "inference_model", None) if dataset is not None else None
+    return getattr(inference_model, "name", None)
+
 @router.get("/get_videos_paged", response_model=List[VideoResponseDto], status_code=HTTP_200_OK)
 async def get_videos_paged(
     current_user: User = Depends(get_current_user),
@@ -61,7 +67,7 @@ async def get_videos_paged(
             duration=video.duration,
             frame_rate=int(video.frame_rate),
             dataset_is_official=video.dataset.is_official,
-            inference_model_name=video.dataset.inference_model.name
+            inference_model_name=_get_inference_model_name(video)
         ) for video in videos
     ]
 
