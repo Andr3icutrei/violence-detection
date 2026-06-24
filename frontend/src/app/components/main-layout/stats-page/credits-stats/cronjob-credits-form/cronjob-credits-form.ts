@@ -7,6 +7,7 @@ import { CreditsService } from '../../../../../services/credits/credits.service'
 @Component({
   selector: 'app-cronjob-credits-form',
   imports: [ReactiveFormsModule, TranslatePipe],
+  standalone: true,
   templateUrl: './cronjob-credits-form.html',
   styleUrl: './cronjob-credits-form.css',
 })

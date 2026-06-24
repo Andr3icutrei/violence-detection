@@ -297,7 +297,8 @@
     "videos": "Videos",
     "per-action-credits": "Credits per Inference Action",
     "save": "Save Changes",
-    "update-credits": "Credits for user creation/daily credits"
+    "update-credits": "Credits for user creation/daily credits",
+    "daily-update": "Daily Update"
   },
   "datasets": {
     "official-datasets": "Official Datasets",
