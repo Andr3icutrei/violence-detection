@@ -90,6 +90,7 @@ dependencies:
       - fastapi-mail==1.6.4
       - ffmpeg==1.4
       - filelock==3.29.0
+      - flake8
       - flatbuffers==25.12.19
       - fonttools==4.63.0
       - frozenlist==1.8.0
