@@ -4,13 +4,12 @@ from typing import List, TYPE_CHECKING
 from sqlalchemy import Date, DateTime, func, ForeignKey, Boolean, TypeDecorator, Integer, String, Text, BigInteger, CheckConstraint, text
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from core.database import Base
-from .dataset_status import DatasetStatus
-from .video import Video
-from .user import User
-
 if TYPE_CHECKING:
     from .inference_model import InferenceModel
+    from core.database import Base
+    from .dataset_status import DatasetStatus
+    from .video import Video
+    from .user import User
 
 class DatasetStatusIntType(TypeDecorator):
     impl = Integer

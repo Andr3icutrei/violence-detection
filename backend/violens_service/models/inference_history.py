@@ -1,13 +1,14 @@
 from datetime import datetime
 from sqlalchemy import DateTime, func, ForeignKey, Integer, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from core.database import Base
-from .video import Video
-from .user import User
-from .inference_history_classification import InferenceHistoryClassification
-from .inference_history_people_tracking import InferenceHistoryPeopleTracking
+if TYPE_CHECKING:
+    from core.database import Base
+    from .video import Video
+    from .user import User
+    from .inference_history_classification import InferenceHistoryClassification
+    from .inference_history_people_tracking import InferenceHistoryPeopleTracking
 
 class InferenceHistory(Base):
     __tablename__ = "inference_history"

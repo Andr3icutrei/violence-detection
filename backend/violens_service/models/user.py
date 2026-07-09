@@ -3,11 +3,10 @@ from sqlalchemy import String, Boolean, DateTime, func, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, TYPE_CHECKING
 
-from core.database import Base
-
 if TYPE_CHECKING:
     from .inference_history import InferenceHistory
     from .dataset import Dataset
+    from core.database import Base
 
 class User(Base):
     __tablename__ = "users"

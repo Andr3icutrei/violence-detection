@@ -4,11 +4,10 @@ from sqlalchemy import String, ForeignKey, Integer, Boolean, Uuid, text
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from typing import TYPE_CHECKING, List
 
-from core.database import Base
-
 if TYPE_CHECKING:
     from .inference_history import InferenceHistory
     from .dataset import Dataset
+    from core.database import Base
 
 class Video(Base):
     __tablename__ = "videos"

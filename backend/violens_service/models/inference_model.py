@@ -1,10 +1,10 @@
-from core.database import Base
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .dataset import Dataset
+    from core.database import Base
 
 class InferenceModel(Base):
     __tablename__ = "inference_models"

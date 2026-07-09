@@ -1,9 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import BigInteger, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import TypeDecorator
 
-from core.database import Base
-from models.action import Action
+if TYPE_CHECKING:
+    from models.action import Action
+    from core.database import Base
 
 class ActionIntType(TypeDecorator):
     impl = Integer
