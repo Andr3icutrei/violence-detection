@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          pytest ./violens_service/tests
+          pytest ./backend/violens_service/tests
           
   deploy:
     needs: build-and-test
