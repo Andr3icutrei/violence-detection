@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.database import Base
-
+    from . import InferenceHistory
 
 class InferenceHistoryClassification(Base):
     __tablename__ = "inference_history_classification"

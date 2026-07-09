@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from core.database import Base
+    from . import InferenceHistory
 
 class InferenceHistoryPeopleTracking(Base):
     __tablename__ = "inference_history_people_tracking"
